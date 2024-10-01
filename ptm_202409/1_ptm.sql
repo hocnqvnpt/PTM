@@ -370,7 +370,7 @@ create table ptm_codinh_202409 as
                  , admin.v_donvi dmgt1
                  , admin.v_donvi dmgt2      
                 
-         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id  and db_old.ky_cuoc (+) = 20240701 	---thang n-1
+         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id  and db_old.ky_cuoc (+) = 20240801 	---thang n-1
 				and b.thuebao_id = db_old.thuebao_id (+)
                 and b.hdtb_id = v_hdtb.hdtb_id(+) and b.tthd_id in (6) and a.loaihd_id = lhd.loaihd_id
                 and a.hdkh_cha_id = a1.hdkh_id (+)
