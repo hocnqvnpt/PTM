@@ -1248,7 +1248,7 @@ create table ptm_codinh_202409 as
                 where loaitb_id in (15,17) 
 				   and exists (select thuebao_cha_id, count(*) sl_socon 
                                     from tinhcuoc.v_dbtb 
-                                     where ky_cuoc = 20240701 ---thang n-1
+                                     where ky_cuoc = 20240801 ---thang n-1
                                                     and thuebao_cha_id = a.thuebao_cha_id
                                      group by thuebao_cha_id having count(*)>=29     --tu 29 so con
 								)
@@ -1392,7 +1392,7 @@ create table ptm_codinh_202409 as
 			    select 202409, ma_daily, ten_daily, manv_qldaily, ma_to, ma_pb, ma_vtcv, ten_vtcv, thang_kyhd, ghichu
 								
 			    from ttkd_bsc.dm_daily_khdn a
-			    where a.thang = 202407
+			    where a.thang = 202408
 						 and not exists (select 1 from ttkd_bsc.dm_daily_khdn where thang > a.thang and ma_daily=a.ma_daily)
 			 ;
 			  --****-- Dai ly moi:
