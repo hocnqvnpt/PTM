@@ -1,5 +1,10 @@
 select * from ptm_codinh_202408;  
 drop table ptm_codinh_202408 purge;
+drop table ptm_codinh_202409_cd purge;
+drop table ptm_codinh_202409_tsl purge;
+drop table ptm_codinh_202409_cntt purge;
+drop table ptm_codinh_202409_br purge;
+
 create table ptm_codinh_202409 as
         with goi_dadv as (select b.thuebao_id,b.goi_id, b.nhomtb_id, c.ten_goi, row_number() over (partition by thuebao_id order by  nhomtb_id desc)rnk
                                                   from css.v_bd_goi_dadv b , css.v_goi_dadv c
