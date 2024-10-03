@@ -775,22 +775,22 @@ create table ptm_codinh_202409 as
 
 
 	-- Cuoc phat sinh:    ---chuyen len dataguard
-				select * from temp_ps;
-				drop table temp_ps purge
+				select * from ttkd_bsc.tmp_ct_no;
+				drop table ttkd_bsc.tmp_ct_no purge
 				;    
-				create table temp_ps as 
+				create table ttkd_bsc.tmp_ct_no as 
 				select distinct a.* from bcss.v_ct_no a
 				    where phanvung_id = 28 and ky_cuoc = 20240901 		--thang n
 					   and khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) 
-					   and exists(select 1 from ptm_codinh_202409 where thuebao_id=a.thuebao_id)
+					   and exists(select 1 from ttkd_bct.ptm_codinh_202409 where thuebao_id=a.thuebao_id)
 					   ;
-				create index temp_ps_tbid on temp_ps (thuebao_id);
+				create index ttkd_bsc.tmp_ct_no_tbid on ttkd_bsc.tmp_ct_no (thuebao_id);
 				
-				alter table ptm_codinh_202409 add dthu_ps number(12)
+				alter table ttkd_bct.ptm_codinh_202409 add dthu_ps number(12)
 --				update ptm_codinh_202409 a set dthu_ps=''
 				;
-				update ptm_codinh_202409 a 
-				    set dthu_ps = (select sum(nogoc) from temp_ps where thuebao_id=a.thuebao_id)
+				update ttkd_bct.ptm_codinh_202409 a 
+				    set dthu_ps = (select sum(nogoc) from ttkd_bsc.tmp_ct_no where thuebao_id=a.thuebao_id)
 		;
 		commit;
 
