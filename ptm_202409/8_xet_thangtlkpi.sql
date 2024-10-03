@@ -90,9 +90,10 @@ update ttkd_bsc.ct_bsc_ptm a
 				 and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%' )
 							)
 				  and nvl(thang_tlkpi, 999999)  >= a.thang_ptm 
+				  and dthu_goi >0
 				  and (dthu_ps > 0 
 									or (nvl(dthu_ps, 0) =0 and loaitb_id in (55,80,116,117,140,132,122,288,181,290,292,175,302) 
-													and dthu_goi >0 and thang_bddc >= a.thang_ptm
+													and thang_bddc >= a.thang_ptm
 										)
 							) 
 				and nocuoc_ptm is null 
@@ -151,9 +152,10 @@ commit;
 						and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')
 							)
 						and ( trangthaitb_id_n1=1 or (loaitb_id=20 and trangthaitb_id_n1=10) or (thoihan_id=1 and (dichvuvt_id in (7,8,9) or loaitb_id in (1,58,59,39,146))) or loaitb_id in (89,90,146) )
+						and dthu_goi >0
 						and (nvl(dthu_ps,0)+nvl(dthu_ps_n1,0)>0 
 									or (nvl(dthu_ps_n1, 0) =0 and loaitb_id in (55,80,116,117,140,132,122,288,181,290,292,175,302) 
-													and dthu_goi >0 and thang_bddc > a.thang_ptm		---thang n
+													and thang_bddc > a.thang_ptm		---thang n
 										)
 							) 
 						and nocuoc_n1 is null 
@@ -190,13 +192,14 @@ commit;
 			where thang_ptm = 202406 	---thang n-2
 							and nvl(thang_tlkpi, 999999) >= 202408  ---thang n
 							and (loaitb_id<>21 or ma_kh='GTGT rieng') and (chuquan_id in  (145,266) or chuquan_id is null)
-						   and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
-						  and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')
-								)
+							and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
+							and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')
+									)
 							  and ( trangthaitb_id_n2=1 or (loaitb_id=20 and trangthaitb_id_n2=10) or (thoihan_id=1 and (dichvuvt_id in (7,8,9) or loaitb_id in (1,58,59,39,146))) or loaitb_id in (89,90,146) )
+							  and dthu_goi >0
 							  and (nvl(dthu_ps,0)+nvl(dthu_ps_n1,0)+nvl(dthu_ps_n2,0)>0 
 											or (nvl(dthu_ps_n2, 0) =0 and loaitb_id in (55,80,116,117,140,132,122,288,181,290,292,175,302) 
-															and dthu_goi >0 and thang_bddc > a.thang_ptm        	
+															 and thang_bddc >= a.thang_ptm        	
 													)
 									) 
 							and nocuoc_n2 is null  
@@ -232,19 +235,20 @@ rollback;
 				, thang_tlkpi_hotro = 202408
 --		     select id, thang_ptm, doanhthu_kpi_nvptm, doanhthu_kpi_to, doanhthu_kpi_phong, ma_tb, ten_pb, ma_nguoigt, loai_ld , ma_to, heso_daily, thang_tldg_dt, thang_tlkpi, thang_tlkpi_to, thang_tlkpi_phong, lydo_khongtinh_luong, lydo_khongtinh_dongia from ttkd_bsc.ct_bsc_ptm a
 			where thang_ptm = 202405		---thang n-3
-								  and nvl(thang_tlkpi, 999999) >= 202408
-								  and (loaitb_id<>21 or ma_kh='GTGT rieng') and (chuquan_id in  (145,266) or chuquan_id is null)
-								   and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')
+								and nvl(thang_tlkpi, 999999) >= 202408
+								and (loaitb_id<>21 or ma_kh='GTGT rieng') and (chuquan_id in  (145,266) or chuquan_id is null)
+								and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')
 									) 
-								   and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
-								  and (trangthaitb_id_n3=1 or (loaitb_id=20 and trangthaitb_id_n3=10) or (thoihan_id=1 and (dichvuvt_id in (7,8,9) or loaitb_id in (1,58,59,39,146)))or loaitb_id in (89,90,146) )												  
-								    and (nvl(dthu_ps,0)+nvl(dthu_ps_n1,0)+nvl(dthu_ps_n2,0)+nvl(dthu_ps_n3,0)>0 
+								and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
+								and (trangthaitb_id_n3=1 or (loaitb_id=20 and trangthaitb_id_n3=10) or (thoihan_id=1 and (dichvuvt_id in (7,8,9) or loaitb_id in (1,58,59,39,146)))or loaitb_id in (89,90,146) )												  
+								and dthu_goi >0
+								and (nvl(dthu_ps,0)+nvl(dthu_ps_n1,0)+nvl(dthu_ps_n2,0)+nvl(dthu_ps_n3,0)>0 
 											or (nvl(dthu_ps_n2, 0) =0 and loaitb_id in (55,80,116,117,140,132,122,288,181,290,292,175,302) 
-															and dthu_goi >0 and thang_bddc > a.thang_ptm		--thang n
+															and thang_bddc > a.thang_ptm		--thang n
 												)
 									) 
-									and nocuoc_n3 is null					
-								  and ((loaitb_id not in (20,149) and trangthai_tt_id=1) or loaitb_id in (20,149))
+								and nocuoc_n3 is null					
+								and ((loaitb_id not in (20,149) and trangthai_tt_id=1) or loaitb_id in (20,149))
 				;
 commit;
 		
