@@ -13,8 +13,7 @@
 															    and trunc(ngaycapnhat_khkt) <= to_date('08/09/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
 														
 															    ;
-		delete from ttkd_bct.ptm_gtgt where thang = 202405;
-;
+
 		insert into ttkd_bct.ptm_gtgt
 			    ( thang , id, ma_duan_banhang, ngaycn_nvptm, ngaycn_ntl, dich_vu, dichvuvt_id, loaitb_id, ma_gd, ma_tb, sohopdong, 
 				  ten_kh, diachi_kh, mst,so_gt, ngay_nghiemthu, dthu_theohopdong, dthu_doitac, tendoitac, 
@@ -62,13 +61,13 @@
 												 where ptm.trangthai_tl=10 and ptm.dexuat=7 and ptm.ma_dichvu not in (20,149) 
 																and ptm.tienthu_khkt > 0 			--and id in (7301445)
 															    and trunc(ptm.ngaycapnhat) < trunc(sysdate, 'month') 			---ngay 1 thang n +1
-															    and trunc(ngaycapnhat_tl) <= to_date('08/09/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
-															    and trunc(ngaycapnhat_khkt) <= to_date('08/09/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
-															    and not exists(select 1 from ttkd_bct.ptm_gtgt where id=ptm.id)                 
+															    and trunc(ngaycapnhat_tl) <= to_date('08/10/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
+															    and trunc(ngaycapnhat_khkt) <= to_date('08/10/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
+															    and not exists(select * from ttkd_bct.ptm_gtgt where id=ptm.id)                 
 												 )
 --												 	select * from d where id in (7301445)
 --SELECT trunc(sysdate, 'month') FROM DUAL
-			    select 202408 thang, d.id, d.ma_yeucau, d.ngaycapnhat, d.ngaycapnhat_tl, d.loaihinh_tb, d.dichvuvt_id, d.loaitb_id_obss, d.ma_gd
+			    select 202409 thang, d.id, d.ma_yeucau, d.ngaycapnhat, d.ngaycapnhat_tl, d.loaihinh_tb, d.dichvuvt_id, d.loaitb_id_obss, d.ma_gd
 							   , d.ma_tb, d.sohopdong, d.ten_kh, d.sonha diachi_kh
 							   , d.masothue mst, d.so_gt, d.ngaynghiemthu, d.dt_hopdong, d.dt_doitac, d.tendoitac
 							   , d.sotienthu, d.ngaythanhtoan, d.sohoadon, d.tienthu_khkt tien_tt_khkt, d.ngaythanhtoan_khkt, d.sohoadon_khkt, d.ngaycapnhat_khkt
@@ -78,53 +77,21 @@
 							   , d.dthu_goi_goc,  d.dthu_goi, d.dthu_ps, d.heso_dichvu, 'web123-ID447', d.ghichu_ntl
 			
 			    from d
-							left join ttkd_bsc.nhanvien e on d.manv_ptm = e.ma_nv and e.thang = 202408
+							left join ttkd_bsc.nhanvien e on d.manv_ptm = e.ma_nv and e.thang = 202409
 --				where ma_yeucau = '235382'
 			    order by id
 			    ;
-			    rollback;
-			    commit;
---			    select 202404 thang, d.id, d.ma_yeucau, d.ngaycapnhat, d.ngaycapnhat_tl, b.loaihinh_tb dich_vu, b.dichvuvt_id, b.loaitb_id_obss, d.ma_gd,  
---							   d.ma_tb, d.sohopdong, upper(a.ten_khachhang) ten_kh, substr(trim(so_nha)||', '||nvl(ten_duong,'')||', '||nvl(ten_phuong,'')||', '||nvl(a.ten_quan,'') ,1,500) diachi_kh,
---							   a.masothue mst, a.masothue so_gt, d.ngaynghiemthu, d.dt_hopdong, d.dt_doitac, trim(substr(d.tendoitac,1,500)) tendoitac,
---							   d.sotienthu, d.ngaythanhtoan, d.sohoadon, d.tienthu_khkt tien_tt_khkt, d.ngaythanhtoan_khkt, d.sohoadon_khkt, d.ngaycapnhat_khkt,  
---							   145 chuquan_id, (select pb.pbh_id from ttkd_bsc.dm_phongban pb where pb.ma_pb=e.ma_pb and pb.active=1) pbh_ptm_id,
---							   d.manv_am manv_ptm, e.ten_nv tennv_ptm, e.ma_vtcv, e.ma_to, e.ten_to, e.ma_pb, e.ten_pb, e.loai_ld,
---							   c.manv_presale_hrm manv_hotro, c.tyle_nhom/100 tyle_hotro, c.tyle_nhom/100 tyle_hotro_nv, decode(tyle_am,0,1,c.tyle_am/100) tyle_am, 
---							   dt_goi_bsc dthu_goi_goc, dt_goi_dongia  dthu_goi, dt_goi_bsc dthu_ps, d.hesodichvu heso_dichvu, 'web123-ID447', d.ghichu_ntl
---			       from 
---							
---							(select * from ttkdhcm_ktnv.amas_duan_ngoai_doanhthu ptm
---								 where trangthai_tl=10 and dexuat=7 and ma_dichvu not in (20,149) --and id=4946446
---									    and trunc(ngaycapnhat) <= to_date('31/05/2024','dd/mm/yyyy') 			---ngay 31 thang n
---									    and trunc(ngaycapnhat_tl) <= to_date('08/06/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
---									    and not exists(select 1 from ttkd_bct.ptm_gtgt where id=ptm.id)                 
---								 )d
---								join  ttkdhcm_ktnv.amas_yeucau a on d.ma_yeucau = a.ma_yeucau
---								join ttkdhcm_ktnv.amas_loaihinh_tb b on d.ma_dichvu = b.loaitb_id  
---							    left join (select c1.*, f1.ma_dichvu 
---												from ttkdhcm_ktnv.amas_booking_presale c1, ttkdhcm_ktnv.amas_yeucau_dichvu f1 
---												 where c1.ps_truong=1 and c1.ma_yeucau=f1.ma_yeucau and c1.id_ycdv = f1.id_ycdv
---												 ) c on d.ma_yeucau = c.ma_yeucau and b.loaitb_id = c.ma_dichvu
---								
---							    left join ttkd_bsc.nhanvien e on d.manv_am = e.ma_nv and e.thang = 202405
-----, css_hcm.hd_thuebao hd
-----			    where d.ma_yeucau=a.ma_yeucau and d.ma_dichvu=b.loaitb_id  
-----				   and d.ma_yeucau=c.ma_yeucau(+) and b.loaitb_id=c.ma_dichvu(+) 
-----				   and d.manv_am=e.ma_nv(+)
---				   
---			    order by d.id
-    ;
+			 
     commit;
     rollback;
-select * from ttkd_bct.ptm_gtgt where thang=202408;  
+--select * from ttkd_bct.ptm_gtgt where thang=202408;  
 
 
 				-- ID447			------chay dot 2 vi doi anh Nghia duyet , chay file 3_447 moi chay.
-delete from ttkd_bsc.ct_bsc_ptm; 
-		-- select * from ttkd_bsc.ct_bsc_ptm 
-        where thang_ptm = 202408 and ma_duan_banhang = 235382
- and ma_kh='GTGT rieng';
+--delete from ttkd_bsc.ct_bsc_ptm; 
+--		-- select * from ttkd_bsc.ct_bsc_ptm 
+--        where thang_ptm = 202408 and ma_duan_banhang = 235382
+-- and ma_kh='GTGT rieng';
                
 			---thang n
 			insert into ttkd_bsc.ct_bsc_ptm 
@@ -135,7 +102,7 @@ delete from ttkd_bsc.ct_bsc_ptm;
 								   , ngay_tt,soseri,tien_tt, trangthai_tt_id,dthu_ps, dthu_goi_goc,dthu_goi,heso_dichvu,ma_duan_banhang,nguon, chuquan_id
 								   , tyle_am, heso_hotro_nvptm, heso_hotro_nvhotro, xacnhan_khkt, thang_xacnhan_khkt)
 								   
-			    select 202408 thang_ins, 202408 thang_ptm, id, case when ma_gd is not null then ma_gd else sohopdong end ma_gd, 'GTGT rieng' ma_kh, ma_tb, 1 loaihd_id
+			    select 202409 thang_ins, 202409 thang_ptm, id, case when ma_gd is not null then ma_gd else sohopdong end ma_gd, 'GTGT rieng' ma_kh, ma_tb, 1 loaihd_id
 							   ,sohopdong, dich_vu, 'Dat moi hop dong GTGT/CNTT', ten_kh, diachi_kh,so_gt,mst,sothang, ngay_nghiemthu, ngay_nghiemthu ngay_luuhs_ttkd, dichvuvt_id,loaitb_id
 							   , 1, 21 doituong_id, manv_ptm, ten_pb, ghi_chu
 							   , manv_hotro, tyle_hotro
@@ -143,48 +110,9 @@ delete from ttkd_bsc.ct_bsc_ptm;
 							   ,ngay_tt, sohoadon, tien_tt, 1 trangthai_tt_id, dthu_ps, dthu_theohopdong, dthu_goi, heso_dichvu
 							   ,ma_duan_banhang, nguon, chuquan_id, tyle_am, tyle_am heso_hotro_nvptm, tyle_hotro heso_hotro_nvhotro, tien_tt_khkt, to_char(ngaycapnhat_khkt, 'yyyymm')
 			    from ttkd_bct.ptm_gtgt a
-			    where thang = 202408 and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where id_447 = a.id) 
+			    where thang = 202409 and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where id_447 = a.id) 
 			    ;
 
 commit;
 rollback;
 
-delete from ttkd_bsc.ct_bsc_ptm a
-			    where a.thang_ptm = 202405 and exists(select * from ttkd_bct.ptm_gtgt where a.id_447 = id) 
-			    ;
---			    update ttkd_bsc.ct_bsc_ptm a set thang_luong = 4
---																		, loaihd_id = 1
-			select 
---						thang_luong, doituong_kh, thuebao_id, kiemtra_duan, ma_duan_banhang, khhh_khm, diaban, mien_hsgoc, phanloai_kh, luong_dongia_nvptm, doanhthu_dongia_nvptm
-						thang_xacnhan_khkt
-				from ttkd_bsc.ct_bsc_ptm a
-			    where a.thang_ptm = 202408 --and exists(select * from ttkd_bct.ptm_gtgt where a.id_447 = id)  
-				and id_447 is not null;in ('6448426', '6448425', '6387652')
-				;
-/*     
-
-select * from ttkd_bct.ptm_gtgt
-    where (loaitb_id, ten_kh) in (select loaitb_id, ten_kh from ttkd_bct.ptm_gtgt where thang=202403 group by loaitb_id, ten_kh having count(*)>1) 
-    order by loaitb_id, ten_kh;
-
-trangthai_tl --> 9: chua duyet tính luong; 10: da duyet tinh luong
-select * from ttkdhcm_ktnv.amas_yeucau_dichvu where id_ycdv in (1214603);
-select * from ttkdhcm_ktnv.amas_booking_presale where ma_yeucau=165465;
-select * from ttkdhcm_ktnv.amas_duan_ngoai_doanhthu d 
-    where ma_yeucau in (120816,
-126015,
-95547,
-142548,
-147688,
-127615,
-128447,
-143572,
-133275,
-95548,
-162565,
-225592,
-225595,
-189175);
-select * from ttkdhcm_ktnv.amas_yeucau where ma_yeucau=120721;
-select * from ttkdhcm_ktnv.amas_option;
-*/

@@ -13,7 +13,6 @@
 		, heso_quydinh_nvhotro, heso_diaban_tinhkhac, heso_hoso, heso_dichvu_dnhm, dongia
 		*/
 -- Kiem tra luu bang:
-select * from ttkd_bsc.ct_bsc_ptm_202404 where thang_ptm = 202405
 ;
 create table ttkd_bsc.ct_bsc_ptm_202406_l2 as
 	select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202306 		--thang n-24
@@ -54,12 +53,12 @@ create table ttkd_bsc.ct_bsc_ptm_202406_l2 as
 													(select ma_nv, ten_nv, ma_to, ten_to, ma_pb, ten_pb, ma_vtcv, loai_ld, nhomld_id
 																, thang, row_number() over (partition by ma_nv order by thang desc) rnk
 													  from ttkd_bsc.nhanvien 
-													  where thang >= 202406
+													  where thang >= 202408
 																	
 													  ) 
 											where ma_nv = a.manv_ptm and thang = a.thang_ptm
 											) 
---			select * from ttkd_bsc.ct_bsc_ptm a
+--			select  * from ttkd_bsc.ct_bsc_ptm a
 							    where  a.thang_ptm >= 202406 --and thang_luong = 4 
 											and tennv_ptm is null and ma_vtcv is null 
 											and nvl(thang_tldg_dt, 999999) >= 202409 and nvl(loaitb_id, 0) not in (21)
@@ -68,7 +67,7 @@ create table ttkd_bsc.ct_bsc_ptm_202406_l2 as
 						;
 				----END
 	   
--- Tien thanh toan hop dong dau vao:  (thang 6 ktra lai quet tren DATAGURAD day du, TTKDDB do dong bo
+-- Tien thanh toan hop dong dau vao:  (xet ngay thanh toan het ngay 10)
 		select * from hocnq_ttkd.temp_tt
 					where ma_gd in ('HCM-LD/01853014')
 				;
@@ -116,7 +115,7 @@ create table ttkd_bsc.ct_bsc_ptm_202406_l2 as
 					update SET ngay_tt = b.ngay_tt, soseri = b.soseri , tien_tt = b.tien, trangthai_tt_id = b.trangthai--, ht_tra_id = b.ht_tra_id and 
 --									, thang_luong = 4
 ---			select ma_tb, thuebao_id, ngay_tt, soseri, tien_tt, trangthai_tt_id, hdtb_id from ttkd_bsc.ct_bsc_ptm a
-			WHERE thang_ptm >= 202405 and chuquan_id <> 264 and thang_tldg_dt is null and nvl(trangthai_tt_id,0) = 0			--thang n -3
+			WHERE thang_ptm >= 202406 and chuquan_id <> 264 and thang_tldg_dt is null and nvl(trangthai_tt_id,0) = 0			--thang n -3
 								and loaitb_id not in (20, 21) --and ma_tb = 'hcm_hddt_00010808'
 								and exists(select 1 from hocnq_ttkd.temp_tt where hdtb_id = a.hdtb_id)
 --								and ma_gd in ('HCM-LD/01939638')
@@ -132,22 +131,22 @@ rollback;
                                                                      
 -- DTHU_PS:
 -- Dot 1: da update ps 1 lan 4/8/24
-		drop table ttkd_bsc.tmp_ct_no purge;
+		drop table ttkd_bsc.tmp_ct_no purge
 		;
-	select * from ttkd_bsc.tmp_ct_no
-	;
+--	select * from ttkd_bsc.tmp_ct_no;
+
 		create table ttkd_bsc.tmp_ct_no as 
 				select thuebao_id, khoanmuctt_id, nogoc 
 						from bcss.v_ct_no@dataguard 
-						where phanvung_id=28 and ky_cuoc=20240801
+						where phanvung_id=28 and ky_cuoc=20240901
 					;
-		create index idx_ctno__tbid on ttkd_bsc.tmp_ct_no (thuebao_id);
+		create index ttkd_bsc.idx_ctno__tbid on ttkd_bsc.tmp_ct_no (thuebao_id);
    
 -- dthu_ps thang n:
 		update ttkd_bsc.ct_bsc_ptm a 
 			   set dthu_ps = (select sum(nogoc) from ttkd_bsc.tmp_ct_no
 								    where khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) and thuebao_id=a.thuebao_id)
-		    where thang_ptm = 202408 and loaitb_id<>21 and dthu_ps is null 
+		    where thang_ptm = 202409 and loaitb_id<>21 and dthu_ps is null 
 			   and exists (select 1 from ttkd_bsc.tmp_ct_no
 								where nogoc>0 and khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) and thuebao_id=a.thuebao_id)
 		;
@@ -155,7 +154,7 @@ rollback;
 		update ttkd_bsc.ct_bsc_ptm a 
 			   set dthu_ps_n1 = (select sum(nogoc) from ttkd_bsc.tmp_ct_no
 										 where khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) and thuebao_id=a.thuebao_id)
-		    where thang_ptm = 202407 and loaitb_id not in (20,21,131)
+		    where thang_ptm = 202408 and loaitb_id not in (20,21,131)
 			   and dthu_ps_n1 is null
 			   and exists (select 1 from ttkd_bsc.tmp_ct_no
 							   where khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) and thuebao_id=a.thuebao_id)
@@ -164,7 +163,7 @@ rollback;
 			update ttkd_bsc.ct_bsc_ptm a 
 				   set dthu_ps_n2 = (select sum(nogoc) from ttkd_bsc.tmp_ct_no
 											 where khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) and thuebao_id=a.thuebao_id)
-			    where thang_ptm = 202406 and loaitb_id not in (20,21,131)
+			    where thang_ptm = 202407 and loaitb_id not in (20,21,131)
 				   and dthu_ps_n2 is null
 				   and exists (select 1 from ttkd_bsc.tmp_ct_no
 				   where khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) and thuebao_id=a.thuebao_id)
@@ -174,7 +173,7 @@ rollback;
 			update ttkd_bsc.ct_bsc_ptm a 
 				   set dthu_ps_n3 = (select sum(nogoc) from ttkd_bsc.tmp_ct_no
 											 where khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) and thuebao_id=a.thuebao_id)
-			    where thang_ptm = 202405 and loaitb_id not in (20,21,131)
+			    where thang_ptm = 202406 and loaitb_id not in (20,21,131)
 				   and dthu_ps_n3 is null
 				   and exists (select 1 from ttkd_bsc.tmp_ct_no
 								   where khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) and thuebao_id=a.thuebao_id);          
@@ -183,29 +182,29 @@ commit;
 -- Dot 2: vi co cuoc VNP, CNTT, GTGT vi sau ngay 5 moi tinh cuoc xong
 		update ttkd_bsc.ct_bsc_ptm a 
 			   set dthu_ps = (select sum(dthu) from ttkd_bct.cuoc_thuebao_ttkd where ma_tb=a.ma_tb and loaitb_id=a.loaitb_id)
-		    -- select * from ttkd_bsc.ct_bsc_ptm a
-		    where thang_ptm = 202408 and loaitb_id<>21 and nvl(dthu_ps, 0) = 0 
+--		     select * from ttkd_bsc.ct_bsc_ptm a
+		    where thang_ptm = 202409 and loaitb_id<>21 and nvl(dthu_ps, 0) = 0 
 			   and exists(select 1 from ttkd_bct.cuoc_thuebao_ttkd where dthu>0 and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id)
              ;   
                             
 		update ttkd_bsc.ct_bsc_ptm a 
 			   set dthu_ps_n1 = (select sum(dthu) from ttkd_bct.cuoc_thuebao_ttkd where ma_tb=a.ma_tb and loaitb_id=a.loaitb_id)
 --		    select * from ttkd_bsc.ct_bsc_ptm a
-		    where thang_ptm = 202407 and loaitb_id<>21 and nvl(dthu_ps_n1, 0) = 0
+		    where thang_ptm = 202408 and loaitb_id<>21 and nvl(dthu_ps_n1, 0) = 0
 			   and exists(select 1 from ttkd_bct.cuoc_thuebao_ttkd where dthu>0 and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id)
 			   ;
                 
 		update ttkd_bsc.ct_bsc_ptm a 
 			   set dthu_ps_n2 = (select sum(dthu) from ttkd_bct.cuoc_thuebao_ttkd where ma_tb=a.ma_tb and loaitb_id=a.loaitb_id)
 --		    select * from ttkd_bsc.ct_bsc_ptm a		    
-		    where thang_ptm = 202406 and loaitb_id<>21 and nvl(dthu_ps_n2, 0) = 0
+		    where thang_ptm = 202407 and loaitb_id<>21 and nvl(dthu_ps_n2, 0) = 0
 			   and exists(select 1 from ttkd_bct.cuoc_thuebao_ttkd where dthu>0 and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id)
 			   ;
                             
 			update ttkd_bsc.ct_bsc_ptm a 
 				   set dthu_ps_n3 = (select sum(dthu) from ttkd_bct.cuoc_thuebao_ttkd where ma_tb=a.ma_tb and loaitb_id=a.loaitb_id)
 --		    select * from ttkd_bsc.ct_bsc_ptm a		    
-			    where thang_ptm = 202405 and loaitb_id<>21 and nvl(dthu_ps_n3, 0) = 0
+			    where thang_ptm = 202406 and loaitb_id<>21 and nvl(dthu_ps_n3, 0) = 0
 				   and exists(select 1 from ttkd_bct.cuoc_thuebao_ttkd where dthu>0 and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id)
 				   ;
 commit;
@@ -224,7 +223,7 @@ commit;
 					 , dthu_goi = nvl(a.dthu_ps,0) + nvl(a.dthu_ps_n1,0) + nvl(a.dthu_ps_n2,0) + nvl(a.dthu_ps_n3,0)
 					 , thang_luong = 1                                      
 --		    select thang_luong, thang_ptm, ma_tb, trangthaitb_id, ngay_bbbg, ngay_cat, (select ngay_cat from css_hcm.db_thuebao where thuebao_id=a.thuebao_id) ngay_cat_dbonline, dthu_ps, dthu_ps_n1, dthu_ps_n2, dthu_ps_n3, dthu_goi, nvl(a.dthu_ps,0)+nvl(a.dthu_ps_n1,0)+nvl(a.dthu_ps_n2,0)+nvl(a.dthu_ps_n3,0) dthu_goi_new, ghi_chu from ttkd_bsc.ct_bsc_ptm a
-		    where thang_ptm >= 202405 and thoihan_id=1 and dichvuvt_id in (1, 10, 11, 4, 7, 8, 9) ---thang n-3
+		    where thang_ptm >= 202406 and thoihan_id=1 and dichvuvt_id in (1, 10, 11, 4, 7, 8, 9) ---thang n-3
 					   and (thang_tldg_dt is null 
 									or thang_tldg_dt = to_number(to_char(trunc(sysdate, 'month') - 1, 'yyyymm')) 	---thang n
 								)										
@@ -236,26 +235,18 @@ commit;
 			   ;      
             commit;
   
--- Tinh lai dthu goi cho CA, IVAN, HDDT, TAX, VNPT HKD chua co dthu_goi tai thang_ptm:
+-- Tinh lai dthu goi cho CA, IVAN, HDDT, TAX, VNPT HKD chua co dthu_goi tai thang_ptm, doi voi cac hop dong GIA HAN:
 			----Tbao DTHU_goi = 0, nhung tong dthu_ps >0 --> UPDATE DATCOC_CSD into DTHU_GOI
 			----Ap dung dich vu thang tinh 1 lan
-					drop table ttkd_bsc.tmp_ct_no purge;
-							;
-							create table ttkd_bsc.tmp_ct_no as 
-									select thuebao_id, khoanmuctt_id, nogoc 
-											from bcss.v_ct_no@dataguard 
-											where phanvung_id=28 and ky_cuoc=20240801
-										;
-							create index idx_ctno_tbid on ttkd_bsc.tmp_ct_no (thuebao_id);
-				
+					
 					drop table ttkd_bsc.tmp_db_datcoc purge
 							;
 							create table ttkd_bsc.tmp_db_datcoc as 
 									select thuebao_id, cuoc_dc, thang_kt, thang_kt_dc, thang_huy, thang_bd
 											from css.v_db_datcoc@dataguard 
-											where CUOC_DC > 0 and hieuluc=1 and ttdc_id = 0 and to_number(to_char(ngay_cn,'yyyymm')) >= 202405
+											where CUOC_DC > 0 and hieuluc=1 and ttdc_id = 0 and to_number(to_char(ngay_cn,'yyyymm')) >= 202406
 										;
-							create index idx_dc_tbid on ttkd_bsc.tmp_db_datcoc (thuebao_id)
+							create index ttkd_bsc.idx_dc_tbid on ttkd_bsc.tmp_db_datcoc (thuebao_id)
 							;
 				drop table hocnq_ttkd.temp_ps purge
 				;
@@ -263,29 +254,27 @@ commit;
 				create table hocnq_ttkd.temp_ps as
 --insert into hocnq_ttkd.temp_ps
 						with 
-								   ps as (select thuebao_id, sum(nogoc) dthu_ps_n
-										 from ttkd_bsc.tmp_ct_no
-											where khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953)
-											group by thuebao_id
-										 )
-								   , datcoc as (select thuebao_id, sum(round(cuoc_dc/1.1,0)) datcoc_csd_new
+--								   ps as (select thuebao_id, sum(nogoc) dthu_ps_n
+--										 from ttkd_bsc.tmp_ct_no
+--											where khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953)
+--											group by thuebao_id
+--										 )
+								    datcoc as (select thuebao_id, sum(round(cuoc_dc/1.1,0)) datcoc_csd_new
 																, min(months_between( to_date(least(thang_kt,nvl(thang_kt_dc,'999999'),nvl(thang_huy,'999999')) , 'yyyymm') , 
 																																	    to_date(thang_bd,'yyyymm'))+ 1) as sothang_dc_new
 																, min(thang_kt) thang_ktdc_new, min(thang_bd) thang_bddc_new
 --										select *
 										 from ttkd_bsc.tmp_db_datcoc
-										 --where hieuluc=1 and ttdc_id = 0 and to_number(to_char(ngay_cn,'yyyymm')) >= 202405
+										 --where hieuluc=1 and ttdc_id = 0 and to_number(to_char(ngay_cn,'yyyymm')) >= 202406
 										 group by thuebao_id
 										 )
 							select thang_ptm, a.thuebao_id, ma_gd, ma_tb, dthu_goi, dthu_ps, dthu_ps_n1, dthu_ps_n2, dthu_ps_n3
 										  , nvl(dthu_ps,0)+nvl(dthu_ps_n1,0)+nvl(dthu_ps_n2,0)+nvl(dthu_ps_n3,0) dthu_tong, datcoc_csd, sothang_dc, thang_bddc
---										  , ps.dthu_ps_n
 										  , datcoc_csd_new, sothang_dc_new, thang_ktdc_new, thang_bddc_new
 										 ,thang_tldg_dt, thang_tlkpi_to, thang_tlkpi_phong, lydo_khongtinh_dongia
 								from ttkd_bsc.ct_bsc_ptm a
 										    join datcoc on a.thuebao_id = datcoc.thuebao_id
---										    left join ps on a.thuebao_id = ps.thuebao_id
-								where thang_ptm >= 202405 and nvl(dthu_goi, 0) = 0 --dthu_goi is null		---thang n -3
+								where thang_ptm >= 202406 and nvl(dthu_goi, 0) = 0 --dthu_goi is null		---thang n -3
 										  and (thang_tldg_dt is null 
 																or thang_tldg_dt = to_number(to_char(trunc(sysdate, 'month') - 1, 'yyyymm'))											---thang n
 													)
@@ -297,16 +286,13 @@ commit;
       
       
 			update ttkd_bsc.ct_bsc_ptm a 
-							set   thang_luong='2' , 
---									, DTHU_PS = case when thang_ptm = 202406 then 1 end
---									, DTHU_PS_N1 = case when thang_ptm = 202405 then 1 end
---									, DTHU_PS_N2 = case when thang_ptm = 202404 then 1 end
---									, DTHU_PS_N3 = case when thang_ptm = 202403 then 1 end
-								   dthu_goi_goc = (select datcoc_csd_new from hocnq_ttkd.temp_ps where --dthu_tong>0 and 
-																				ma_gd=a.ma_gd and ma_tb =a.ma_tb  and thang_ptm=a.thang_ptm),
-								   dthu_goi = (select datcoc_csd_new from hocnq_ttkd.temp_ps where --dthu_tong>0 and 
-								   											ma_gd=a.ma_gd and ma_tb =a.ma_tb  and thang_ptm=a.thang_ptm), 
-								   datcoc_csd= (select datcoc_csd_new from hocnq_ttkd.temp_ps where --dthu_tong>0 and 
+							set   thang_luong='2' 
+
+								   , dthu_goi_goc = (select datcoc_csd_new from hocnq_ttkd.temp_ps where --dthu_tong>0 and 
+																				ma_gd=a.ma_gd and ma_tb =a.ma_tb  and thang_ptm=a.thang_ptm)
+								  , dthu_goi = (select datcoc_csd_new from hocnq_ttkd.temp_ps where --dthu_tong>0 and 
+								   											ma_gd=a.ma_gd and ma_tb =a.ma_tb  and thang_ptm=a.thang_ptm)
+								  , datcoc_csd= (select datcoc_csd_new from hocnq_ttkd.temp_ps where --dthu_tong>0 and 
 																			ma_gd=a.ma_gd and ma_tb =a.ma_tb  and thang_ptm=a.thang_ptm)
 								   , thang_bddc= (select thang_bddc_new from hocnq_ttkd.temp_ps where --dthu_tong>0 and 
 																			ma_gd=a.ma_gd and ma_tb =a.ma_tb  and thang_ptm=a.thang_ptm)
@@ -315,21 +301,20 @@ commit;
 								   , sothang_dc= (select sothang_dc_new from hocnq_ttkd.temp_ps where --dthu_tong>0 and 
 																			ma_gd=a.ma_gd and ma_tb =a.ma_tb  and thang_ptm=a.thang_ptm)
 --								   , thang_tldg_dt='', thang_tlkpi='', thang_tlkpi_to='', thang_tlkpi_phong=''      
---				 select thang_luong, thang_ptm, hdkh_id, thuebao_id, ma_tb,  dich_vu, tenkieu_ld, dthu_goi_goc, dthu_goi, thang_ptm, dthu_ps, dthu_ps_n1, dthu_ps_n2, dthu_ps_n3 , lydo_khongtinh_dongia, doanhthu_dongia_nvptm, luong_dongia_nvptm, thang_tldg_dt, thang_tlkpi, thang_tlkpi_to from ttkd_bsc.ct_bsc_ptm a
+--				 select id, thang_ptm, thang_luong, thang_ptm, hdkh_id, thuebao_id, ma_tb,  dich_vu, tenkieu_ld, dthu_goi_goc, dthu_goi, thang_ptm, dthu_ps, dthu_ps_n1, dthu_ps_n2, dthu_ps_n3 , lydo_khongtinh_dongia, doanhthu_dongia_nvptm, luong_dongia_nvptm, thang_tldg_dt, thang_tlkpi, thang_tlkpi_to from ttkd_bsc.ct_bsc_ptm a
 				where 
 							exists  (select dthu_tong from hocnq_ttkd.temp_ps 
-											where ma_gd=a.ma_gd and ma_tb =a.ma_tb and thang_ptm=a.thang_ptm) 
-							and 
-							nvl(dthu_goi, 0) = 0
+											where ma_gd = a.ma_gd and ma_tb =a.ma_tb and thang_ptm=a.thang_ptm) 
+							and nvl(dthu_goi, 0) = 0
 --						and ma_tb = 'hcm_ca_00067906'
 ;
 commit;
 rollback;
 
-				select thang_luong, thuebao_id, ma_tb,  dich_vu, tenkieu_ld, hdtb_id_dc, datcoc_csd, dthu_goi_goc, dthu_goi, thang_ptm, dthu_ps, dthu_ps_n1, dthu_ps_n2, dthu_ps_n3
+				select id, thang_ptm, thang_luong, thuebao_id, ma_tb,  dich_vu, tenkieu_ld, datcoc_csd, dthu_goi_goc, dthu_goi, thang_ptm, dthu_ps, dthu_ps_n1, dthu_ps_n2, dthu_ps_n3
 							, lydo_khongtinh_dongia, doanhthu_dongia_nvptm, luong_dongia_nvptm, thang_tldg_dt, thang_tlkpi, thang_tlkpi_to 
 				from ttkd_bsc.ct_bsc_ptm a
-					where thang_luong='2' 
+					where thang_luong = '2' 
 				;
 
 -- SMS Brandname: Tinh lai dthu goi, dthu_ps thang n va dthu_ps thang n+1
@@ -343,15 +328,15 @@ rollback;
 						 , cast(null as number(12)) dthu_goi_n1, cast(null as number(12)) dthu_goi_ngoaimang_n1
 						 , cast(null as number(12)) dthu_goi_bq, cast(null as number(12)) dthu_goi_ngoaimang_bq            
 		    from ttkd_bsc.ct_bsc_ptm a
-		    where thang_ptm = 202407 and loaitb_id=131 ---thang n -1
+		    where thang_ptm = 202408 and loaitb_id=131 ---thang n -1
 		    ;
 
 
 		update ttkd_bsc.tmp_bsc_smsbrn a 
 			    set dthu_goi_ngoaimang_n = (select sum(nogoc) from bcss.v_tonghop@dataguard  --thang n- 1
-															where phanvung_id=28 and ky_cuoc = 20240701 and khoanmuctc_id in (37,38,39,40,935,936,938,939,943,944,945,4097) and ma_tb=a.ma_tb)
+															where phanvung_id=28 and ky_cuoc = 20240801 and khoanmuctc_id in (37,38,39,40,935,936,938,939,943,944,945,4097) and ma_tb=a.ma_tb)
 				   ,dthu_goi_ngoaimang_n1= (select sum(nogoc) from bcss.v_tonghop@dataguard    ---thang n
-                                                            where phanvung_id=28 and ky_cuoc = 20240801 and khoanmuctc_id in (37,38,39,40,935,936,938,939,943,944,945,4097) and ma_tb=a.ma_tb)
+                                                            where phanvung_id=28 and ky_cuoc = 20240901 and khoanmuctc_id in (37,38,39,40,935,936,938,939,943,944,945,4097) and ma_tb=a.ma_tb)
 			;
              
 			update ttkd_bsc.tmp_bsc_smsbrn a 
@@ -371,7 +356,7 @@ rollback;
 					  (select nvl(dthu_goi_bq,0)+nvl(dthu_goi_ngoaimang_bq,0) , dthu_goi_bq, dthu_goi_ngoaimang_bq, to_number(to_char(trunc(sysdate, 'month') - 1, 'yyyymm'))		--thang n
 						 from ttkd_bsc.tmp_bsc_smsbrn
 						 where thuebao_id=a.thuebao_id)
-			    where thang_ptm = 202407 and loaitb_id=131  --thang n-1
+			    where thang_ptm = 202408 and loaitb_id=131  --thang n-1
 			    ;
             commit;
             rollback;
@@ -384,7 +369,6 @@ rollback;
 						and (dichvuvt_id!=2 or (dichvuvt_id=2 and loaitb_id<>21) ) and ma_kh<>'GTGT rieng' and doituong_kh is not null
 		    ;
 select khachhang_id from css_hcm.db_thuebao where ma_tb = 'hcm_edu_00009976';
-update ttkd_bsc.ct_bsc_ptm a set khachhang_id = 9441989 where ma_tb = 'hcm_edu_00009976' and thang_ptm = 202403;
 
 			-- Update doi voi ds tbao VNPts, hoac ktra cac th ngoai le                  
 				update ttkd_bsc.ct_bsc_ptm a
@@ -396,12 +380,12 @@ update ttkd_bsc.ct_bsc_ptm a set khachhang_id = 9441989 where ma_tb = 'hcm_edu_0
 --																when length(mst) >= 10 then 'KHDN'
 														else null end)
 --				  select thang_tldg_dt, thang_luong, thang_ptm, khachhang_id, ma_kh, ma_tb, ten_tb, doituong_id, doituong_kh, dich_vu, mst, loaitb_id from ttkd_bsc.ct_bsc_ptm a
-				    where thang_ptm = 202408   --- thang n
+				    where thang_ptm = 202409   --- thang n
 							and nvl(ma_kh, 'abv') <> 'GTGT rieng' and doituong_kh is null
 							and loaitb_id = 20-- and doituong_kh = 'KHCN' and doituong_id in (1, 25) and length(mst) >= 10
 							and loaitb_id<>21
 							and (lydo_khongtinh_luong is null or lydo_khongtinh_luong not like '%Chu quan khong thuoc TTKD%')
-							and nvl(thang_tldg_dt, 999999) >= 202408
+							and nvl(thang_tldg_dt, 999999) >= 202409
 					   ;
 			
 			---cac th con lai
@@ -414,16 +398,16 @@ update ttkd_bsc.ct_bsc_ptm a set khachhang_id = 9441989 where ma_tb = 'hcm_edu_0
 														--	when length(mst) >= 10 then 'KHDN'
 															    else null end)
 --			    	    select thang_tldg_dt, thang_luong, thang_ptm, khachhang_id, ma_tb, doituong_kh, dich_vu, dichvuvt_id, mst from ttkd_bsc.ct_bsc_ptm a
-			    where (thang_ptm = 202408   --- thang n
+			    where (thang_ptm = 202409   --- thang n
 								or thang_luong in (4))			---flag 4 file so 5 import dung thu chuyen dung that
 					 and nvl(ma_kh, 'abv') <> 'GTGT rieng'  and doituong_kh is null 
 				   and (dichvuvt_id !=2 or (dichvuvt_id=2 and loaitb_id<>21) )
-				   and nvl(thang_tldg_dt, 999999) >= 202408
+				   and nvl(thang_tldg_dt, 999999) >= 202409
 --				 and ma_duan_banhang = '241612'
 				   ;
 				   
 --                         select thang_tldg_dt, thang_luong, thang_ptm, khachhang_id, ma_tb, doituong_kh, dich_vu, mst, ten_tb from ttkd_bsc.ct_bsc_ptm a
---			    where thang_ptm = 202408 and DOITUONG_KH = 'KHCN' and taxcheck(mst) = 1
+--			    where thang_ptm = 202409 and DOITUONG_KH = 'KHCN' and taxcheck(mst) = 1
               
     
 		
@@ -455,9 +439,9 @@ rollback;
 																	and nvl(regexp_replace(a.ma_duan_banhang, '\D', ''), 'r') <> regexp_replace (ma_duan, '\D', '')
 --																	and nvl(a.ma_duan_banhang, 'r') <> replace(ma_duan, ' ', '')
 												)
-								and thang_ptm >= 202405
-								and nvl(thang_tldg_dt, 999999) >= 202408
-								and nvl(thang_tldg_dt_nvhotro, 999999) >= 202408			--- chua tinh luong
+								and thang_ptm >= 202406
+								and nvl(thang_tldg_dt, 999999) >= 202409
+								and nvl(thang_tldg_dt_nvhotro, 999999) >= 202409			--- chua tinh luong
 								and thang_luong not in (70, 71, 86, 87)			---loai tru cac ma_duan ct_ptm_ngoaictr_imp_insert
 --								and MA_DUAN_BANHANG is null
 --								and ma_tb = 'ravi217'
@@ -469,7 +453,7 @@ rollback;
 																	where MA_HIENTRANG <> 14
 																	)
 													, t as	 (select c.manv_presale_hrm, c.tyle/100 tyle_hotro, decode(tyle_am,0,1,c.tyle_am/100) tyle_am, d.loaitb_id_obss, b.ma_yeucau, b.ma_dichvu, c.tyle_nhom
-																		, NGAYHEN, NGAYCAPNHAT, NGAYNHANTIN_PS, NGAYXACNHAN, c.ps_truong
+																		, c.NGAYHEN, c.NGAYCAPNHAT, c.NGAYNHANTIN_PS, c.NGAYXACNHAN, c.ps_truong
 																 from yc_dv b, ttkdhcm_ktnv.amas_booking_presale c, ttkdhcm_ktnv.amas_loaihinh_tb d
 																					where b.ma_yeucau=c.ma_yeucau and b.id_ycdv=c.id_ycdv and b.ma_dichvu = d.loaitb_id
 																								and c.tyle>0 and c.ps_truong=1 and c.xacnhan=1  
@@ -492,7 +476,7 @@ rollback;
 --					  select thang_luong, thang_ptm, manv_hotro, tyle_hotro, tyle_am, ma_duan_banhang, loaitb_id, ma_gd from ttkd_bsc.ct_bsc_ptm a
 							where ma_duan_banhang is not null and manv_hotro is  null
 										and thang_tldg_dt_nvhotro is null and thang_tldg_dt is null
-										and (thang_ptm = 202408		---thang n - 3
+										and (thang_ptm = 202409		---thang n - 3
 													or thang_luong in (44, 70, 71, 86, 87))	--Flag nay update thong tin NV PGP hotro
 										 and exists (select distinct c.manv_presale_hrm, c.tyle/100, b.ma_yeucau, d.loaitb_id_obss
 															from ttkdhcm_ktnv.amas_yeucau_dichvu b, ttkdhcm_ktnv.amas_booking_presale c, ttkdhcm_ktnv.amas_loaihinh_tb d
@@ -508,9 +492,9 @@ rollback;
 			-----END bo sung thong tin QLDA
 
 -- QLDA: xoa , chay lai
-delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202408 and ma_duan_banhang = '152853';ma_duan_banhang = '202655'; and ma_tb = 'hcm_ca_00103739';and ma_tb = 'hcm_colo_00009265';
+delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202409; and ma_duan_banhang = '152853';ma_duan_banhang = '202655'; and ma_tb = 'hcm_ca_00103739';and ma_tb = 'hcm_colo_00009265';
 		;
-		select * from ttkd_bsc.ct_bsc_ptm_kiemtraduan a where thang = 202408 and ma_duan_banhang = '152853';227188; and ma_duan_banhang = '227812'; and ma_tb = 'hcm_ca_00103739'; and ma_gd = 'HCM-TD/00690780';hcm_hddt_inbot_00001044
+		select * from ttkd_bsc.ct_bsc_ptm_kiemtraduan a where thang = 202409; and ma_duan_banhang = '319602';227188; and ma_duan_banhang = '227812'; and ma_tb = 'hcm_ca_00103739'; and ma_gd = 'HCM-TD/00690780';hcm_hddt_inbot_00001044
 
 			insert into ttkd_bsc.ct_bsc_ptm_kiemtraduan
 								(thang, ptm_id, thang_ptm, ma_gd, ma_tb, dich_vu, ma_duan_banhang, mst, mst_tt
@@ -544,18 +528,18 @@ delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202408 and ma_duan_banha
 														then 0
 									else null
 							    end ) kt_nghiemthu
---			    select a.loaitb_id, mst, thang_ptm
+--			    select a.loaitb_id, mst, thang_ptm, ma_tb, ma_duan_banhang
 			    from ttkd_bsc.ct_bsc_ptm a, ttkdhcm_ktnv.amas_yeucau b
-			    where (a.thang_ptm = 202408			--- thang n
+			    where (a.thang_ptm = 202409			--- thang n
 								or a.thang_luong in (4, 44, 70, 71, 86, 87))			---flag 4, 44 file so 5 import dung thu chuyen dung that & bsung thong tin QLDA
-						and nvl(thang_tldg_dt, 999999) >= 202408
-						and nvl(thang_tlkpi_phong, 999999) >= 202408  --lay cac tbao chua chi dektra duan
+						and nvl(thang_tldg_dt, 999999) >= 202409
+--						and nvl(thang_tlkpi_phong, 999999) >= 202409  --lay cac tbao chua chi dektra duan
 						and dichvuvt_id <> 2                  --thuebao_id is not null 
 						and a.doituong_kh='KHDN' and nhom_tiepthi in (1, 3)		---xet du an doi voi TTKD
 						and loaitb_id != 149 									----VCC tren CCBS khong co nhap dc QLDA
 						and  to_number(regexp_replace (a.ma_duan_banhang, '\D', '')) = b.ma_yeucau (+)
 --						and a.thang_luong in (70, 71)
---			and thang_luong = 86 and  not exists (select * from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202406 and ma_tb = a.ma_tb and nguon like 'ct_%')
+--			and thang_luong = 86 and  not exists (select * from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202407 and ma_tb = a.ma_tb and nguon like 'ct_%')
 --			and ma_duan_banhang = '152853'
 		
 				; 
@@ -582,27 +566,18 @@ delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202408 and ma_duan_banha
 											  where c.ptm_id = a.ptm_id
 										) 
 --			select *  from ttkd_bsc.ct_bsc_ptm_kiemtraduan a
-			where thang = 202408 
+			where thang = 202409 
 --						and ma_duan_banhang = '227188'
 --			and ma_duan_banhang = '152853'
 			
-			;
---
-
-			update ttkd_bsc.ct_bsc_ptm a 
-				   set kiemtra_duan = '' 
---		select ma_tb, kiemtra_duan, doituong_kh from ttkd_bsc.ct_bsc_ptm a 
-			    where thang_ptm>=202404 and doituong_kh='KHDN' and kiemtra_duan is not null
-							and loaihd_id<>31 and dichvuvt_id <> 2--thuebao_id is not null 
-			 
 			    ;
     
 			update ttkd_bsc.ct_bsc_ptm a 
 				   set kiemtra_duan = (select nvl(kt_nghiemthu, 0) || kiemtra_duan from ttkd_bsc.ct_bsc_ptm_kiemtraduan 
-																							where thang = 202408 and ptm_id=a.id)
+																							where thang = 202409 and ptm_id=a.id)
 																
 --		 select thang_luong, thang_ptm, kiemtra_duan, thang_tldg_dt, thang_tlkpi, nguon, ma_duan_banhang, ma_gd,  ma_tb, mst from ttkd_bsc.ct_bsc_ptm a 
-			    where exists(select 1 from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang = 202408 and ptm_id=a.id)
+			    where exists(select 1 from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang = 202409 and ptm_id=a.id)
 --and ma_duan_banhang = '152853'
 --						and ma_tb = 'hcm_colo_00009265'
 
@@ -610,32 +585,24 @@ delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202408 and ma_duan_banha
 
 		commit;
 		rollback;
-
-
-/* 
-select * from ct_bsc_ptm a
-    where a.thang_ptm=202403 and loaitb_id not in (20,21,210) 
-        and duan_id is not null and kiemtra_duan is not null;
-*/   
-
           
 -- KH hien huu - KH moi:   
 			---dot 2  khong xoa
 			update ttkd_bsc.ct_bsc_ptm set khhh_khm='' 		
 	--   select khhh_khm from ttkd_bsc.ct_bsc_ptm
-			    where thang_ptm = 202407 and khhh_khm is not null
-			    and ma_tb = '84917720053'
+			    where thang_ptm = 202409 and khhh_khm is not null
+--			    and ma_tb = '84917720053'
 			    ;
 		update ttkd_bsc.ct_bsc_ptm a 
 			    set khhh_khm = 'KHHH'
 --		   select khhh_khm, doituong_kh, nguon, tenkieu_ld from ttkd_bsc.ct_bsc_ptm
-			    where thang_ptm = 202408 --- thang n
+			    where thang_ptm = 202409 --- thang n
 								and khhh_khm is null 
 							   and nguon in ('thaydoitocdo','tailap') 
 				   ;
 			update ttkd_bsc.ct_bsc_ptm set khhh_khm='KHM' 
 --		   select khhh_khm, dichvuvt_id, doituong_kh from ttkd_bsc.ct_bsc_ptm
-			    where thang_ptm = 202408 --- thang n
+			    where thang_ptm = 202409 --- thang n
 							and khhh_khm is null 			--loai tru da gan roi, khong gan lai
 							and (nguon='web Digishop' 
 										 or (doituong_kh='KHCN'
@@ -651,7 +618,7 @@ select * from ct_bsc_ptm a
 			update ttkd_bsc.ct_bsc_ptm a 
 				   set khhh_khm = 'KHHH'
 --		  select khhh_khm, loaitb_id, ma_duan_banhang, mst from ttkd_bsc.ct_bsc_ptm a
-			    where a.thang_ptm = 202408 --- thang n
+			    where a.thang_ptm = 202409 --- thang n
 					and doituong_kh='KHDN' and mst is not null --thang n
 					  and exists (select mst_chuan from ttkd_bct.db_thuebao_ttkd
 												   where ma_dt_kh='dn' and cvnv is null and tb_dacbiet is null 
@@ -665,14 +632,14 @@ select * from ct_bsc_ptm a
 					update ttkd_bsc.ct_bsc_ptm a 
 					   set khhh_khm =  'KHHH'
 --					      select khhh_khm, doituong_kh, dich_vu, ten_tb, mst, so_gt from ttkd_bsc.ct_bsc_ptm a
-				    where a.thang_ptm = 202408 and doituong_kh='KHDN'
+				    where a.thang_ptm = 202409 and doituong_kh='KHDN'
 						  and nvl(khhh_khm, 'KHM') = 'KHM' and nvl(loaitb_id, 21) !=21
 				---hoac 1
 --						and   exists (select 1 from ttkd_bct.db_thuebao_ttkd
 --															   where ma_dt_kh='dn' and cvnv is null and tb_dacbiet is null                                                                         
 --																  and trangthaitb_id not in (7,8,9) and to_number(to_char(ngay_sd,'yyyymm')) < a.thang_ptm		--thang n
-----																  and lower(so_gt) = '0'||lower(a.so_gt)
---																and	 lower(so_gt) = lower(a.so_gt)
+--																  and lower(so_gt) = '0'||lower(a.so_gt)
+----																and	 lower(so_gt) = lower(a.so_gt)
 --												  )
 			---hoac 2
 						and  exists (select 1 from ttkd_bct.db_thuebao_ttkd
@@ -685,14 +652,14 @@ select * from ct_bsc_ptm a
 					update ttkd_bsc.ct_bsc_ptm a 
 					   set khhh_khm =  'KHM'
 --					      select khhh_khm, doituong_kh, ma_tb, ten_tb, mst, nguon, ghi_chu, tenkieu_ld from ttkd_bsc.ct_bsc_ptm a
-				    where thang_ptm = 202408 	--thang n
+				    where thang_ptm = 202409 	--thang n
 									and doituong_kh = 'KHDN' --and mst is not null
 								  and khhh_khm is null and nvl(loaitb_id, 21) !=21    
 								  	
 					;
 				update ttkd_bsc.ct_bsc_ptm set khhh_khm='KHM' 
 --		   select khhh_khm, thang_ptm, dichvuvt_id, doituong_kh, ten_tb, loaitb_id, nguon from ttkd_bsc.ct_bsc_ptm
-			    where thang_ptm = 202408 --- thang n
+			    where thang_ptm = 202409 --- thang n
 							and khhh_khm is null 			--loai tru da gan roi, khong gan lai
 							and (nguon='dt_ptm_vnp' 
 										 and doituong_kh='KHCN'
@@ -701,7 +668,7 @@ select * from ct_bsc_ptm a
 				   ; 
 					
 					select khhh_khm, doituong_kh, ma_tb, nguon, ghi_chu, tenkieu_ld, dichvuvt_id from ttkd_bsc.ct_bsc_ptm a
-				    where thang_ptm = 202408		--thang n
+				    where thang_ptm = 202409		--thang n
 --									and doituong_kh = 'KHDN' and mst is not null
 								  and khhh_khm is null and nvl(loaitb_id, 21) !=21 
 								  ;
@@ -713,7 +680,7 @@ select * from ct_bsc_ptm a
 			update ttkd_bsc.ct_bsc_ptm a 
 						set diaban =null
 	---	select diaban from ttkd_bsc.ct_bsc_ptm a
-			    where thang_ptm = 202407 and (loaitb_id<>21 or ma_kh='GTGT rieng') and diaban is not null
+			    where thang_ptm = 202408 and (loaitb_id<>21 or ma_kh='GTGT rieng') and diaban is not null
 			    
 			    ;
           
@@ -732,12 +699,12 @@ select * from ct_bsc_ptm a
 											  when doituong_kh = 'KHDN' and kiemtra_duan is not null then 'Ngoai CT ban hang'
 											  else null end)
 --							select thang_luong, thang_ptm, thuebao_id, ma_tb, dichvuvt_id, loaitb_id, dich_vu, mst, diaban, nhom_tiepthi, ma_vtcv, doituong_kh, kiemtra_duan, ma_duan_banhang, manv_ptm, nguon, thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a
-				    where (a.thang_ptm = 202408 --- thang n
+				    where (a.thang_ptm = 202409 --- thang n
 								or a.thang_luong in (4, 44, 70, 71, 86, 87))			---flag 4, 44 file 6 kiem tra duan sau khi da update QLDA va ctr ngoai tinh bsung
 						and (loaitb_id<>21 or ma_kh='GTGT rieng')
 				
-					   and nvl(thang_tldg_dt, 999999) >= 202408 --and nvl(thang_tlkpi_phong, 999999) >= 202407  --lay cac tbao chua chi dektra duan
---					   and  exists (select * from ttkd_bsc.nhanvien where thang = 202407 and donvi = 'VTTP' and a.manv_ptm = ma_nv)
+					   and nvl(thang_tldg_dt, 999999) >= 202409 --and nvl(thang_tlkpi_phong, 999999) >= 202408  --lay cac tbao chua chi dektra duan
+--					   and  exists (select * from ttkd_bsc.nhanvien where thang = 202408 and donvi = 'VTTP' and a.manv_ptm = ma_nv)
 				
 			
 					   ;
@@ -747,18 +714,18 @@ rollback;
 -- Xet mien HS goc doi voi hop dong chuyen doi, nang cap, va lap moi cdbr/tsl co tra truoc      
 			update ttkd_bsc.ct_bsc_ptm set mien_hsgoc='' 
 --		select * from ttkd_bsc.ct_bsc_ptm
-			    where thang_ptm = 202406 and dichvuvt_id not in (2,13,14,15,16) and loaitb_id not in (21,172) and mien_hsgoc is not null
+			    where thang_ptm = 202409 and dichvuvt_id not in (2,13,14,15,16) and loaitb_id not in (21,172) and mien_hsgoc is not null
 			    ;
                                
 			update ttkd_bsc.ct_bsc_ptm a 
 				   set mien_hsgoc = 1 
 --		 select * from ttkd_bsc.ct_bsc_ptm
-			    where thang_ptm = 202408 --- thang n
+			    where thang_ptm = 202409 --- thang n
 							and mien_hsgoc is null 
 						   and ( (dichvuvt_id not in (2,13,14,15,16) and (loaihd_id is null or chuquan_id in (266, 264))  ---Newlife, VTH1 hoac hok co hop dong --> mien hso goc
 										)
 											or ( dichvuvt_id=4 and sothang_dc>=6)                                   -- Fiber, MyTV dong truoc truoc >=6 thang  
-											or ( thang_ptm = 202408 and loaitb_id in (15,17) and thuebao_cha_id is not null)       -- isdn, thue bao luong (so con)
+											or ( thang_ptm = 202409 and loaitb_id in (15,17) and thuebao_cha_id is not null)       -- isdn, thue bao luong (so con)
 											or ID_447 is not null  -- hop dong tren ID 447 khong kiem tra hso goc
 								)
 									
@@ -770,7 +737,7 @@ rollback;
 		---tao bang TEMP bat buoc
 		drop table ttkd_bsc.x_temp purge;
 		---thang n
-		create table ttkd_bsc.x_temp as select * from ttkd_bct.ptm_codinh_202408
+		create table ttkd_bsc.x_temp as select * from ttkd_bct.ptm_codinh_202409
 		;
 		
 		update ttkd_bsc.ct_bsc_ptm a 
@@ -828,7 +795,7 @@ rollback;
 --										when loaitb_id = 20 and VNP_MOI = 'MNP' then 1.5	---thue bao MNP
 --										when loaitb_id = 20 and kieuld_id = 2 then (select heso_dichvu from ttkd_bsc.dm_loaihinh_hsqd b where a.loaitb_id=b.loaitb_id) --Hoa mang moi
 --										when loaitb_id = 20 and kieuld_id = 27 ---khong ap dung tu thang 9/2024
---													and exists (select 1 from ttkdhcm_ktnv.input_goira where kichban_id = 54 and kycuoc in ('202406', '202407') and a.ma_tb = ma_tb)
+--													and exists (select 1 from ttkdhcm_ktnv.input_goira where kichban_id = 54 and kycuoc in ('202407', '202408') and a.ma_tb = ma_tb)
 --													then 0.8		---Card to Post trong tap giao n-1, n
 --										when loaitb_id = 20 and kieuld_id = 27 then 0.4		---Card to Post ap dung tu thang 9/2024
 									---VNPT eKyc khong co hop dong tra truoc (tra 1 lan) tinh heso_dv = 1
@@ -838,7 +805,7 @@ rollback;
 						  , heso_dichvu_1 = case when loaitb_id = 131 then 0.004 end  
 --				     select thang_luong, thang_ptm, thang_tldg_dt, heso_dichvu_1, heso_dichvu, nguon, dich_vu, loaitb_id, loaihd_id, ma_tb, datcoc_csd, sothang_dc from ttkd_bsc.ct_bsc_ptm a
 				    where 
-						(thang_ptm = 202408 --- thang n
+						(thang_ptm = 202409 --- thang n
 								or thang_luong in (2))			---flag 2 update Dthu_goi = datcoc_csd file 6
 							and loaitb_id  not in (20, 21)
 							and nguon not like '%ct_ptm_ngoaictr_imp%' and id_447 is null --and heso_dichvu is null
@@ -852,27 +819,20 @@ rollback;
 update ct_bsc_ptm a  
     set  heso_dichvu = (case when dthu_goi >=1000000000 then 0.05 else 0.08 end)
            ,heso_dichvu_1=0.004
-    where thang_ptm=202404 and loaitb_id=131 and ...;
-*/
-                  
-/*    
-select ma_tb, dich_vu, tenkieu_ld, dichvuvt_id, loaitb_id , doituong_id, tocdo_id, ghi_chu,dthu_ps , dthu_goi, loaihd_id, kieuld_id from ct_bsc_ptm 
-    where thang_ptm=202404 and (loaitb_id not in (21,210) or ma_kh='GTGT rieng') and heso_dichvu is null;           
 */
   
                                 
 -- He so khu vuc dac thu: danh muc quan ly thay doi from PDH.
-			delete ttkd_bsc.dm_duan_dacthu where thang=202404
+--			delete ttkd_bsc.dm_duan_dacthu where thang=202409
 			;
-			select * from ttkd_bsc.dm_duan_dacthu where thang=202408
+			select * from ttkd_bsc.dm_duan_dacthu where thang=202409
 			;
-			desc ttkd_bsc.dm_duan_dacthu;
 			
 			insert into ttkd_bsc.dm_duan_dacthu 
-					    select 202408 thang, ma_da, ten_duan, heso_kvdacthu, toanha_id, ghichu
+					    select 202409 thang, ma_da, ten_duan, heso_kvdacthu, toanha_id, ghichu
 					    from ttkd_bsc.dm_duan_dacthu a
-					    where not exists (select 1 from ttkd_bsc.dm_duan_dacthu where thang = 202408 and ma_da=a.ma_da)    
-							  and thang = 202407
+					    where not exists (select 1 from ttkd_bsc.dm_duan_dacthu where thang = 202409 and ma_da=a.ma_da)    
+							  and thang = 202408
 							  ;
             
 			update ttkd_bsc.ct_bsc_ptm a 
@@ -881,7 +841,7 @@ select ma_tb, dich_vu, tenkieu_ld, dichvuvt_id, loaitb_id , doituong_id, tocdo_i
 																	then (select heso_kvdacthu from ttkd_bsc.dm_duan_dacthu where thang = a.thang_ptm and ma_da=a.ma_da)
 															else 1 end
 --				select thang_luong, thang_ptm, nguon, heso_kvdacthu, ma_da, ma_tb from ttkd_bsc.ct_bsc_ptm a
-			    where a.thang_ptm = 202408 --- thang n
+			    where a.thang_ptm = 202409 --- thang n
 --							   and heso_kvdacthu is null
 		--	and ma_tb = '84845556997'
 		
@@ -892,7 +852,7 @@ select ma_tb, dich_vu, tenkieu_ld, dichvuvt_id, loaitb_id , doituong_id, tocdo_i
 		update ttkd_bsc.ct_bsc_ptm a 
 				set heso_tratruoc=null 
 	---	select nguon, heso_tratruoc from ttkd_bsc.ct_bsc_ptm a
-		    where thang_ptm = 202406 and loaitb_id!=20 and nguon not like 'ct_ptm_ngoaictr%'  --loai tru cac file tu excel A Nghia
+		    where thang_ptm = 202409 and loaitb_id!=20 and nguon not like 'ct_ptm_ngoaictr%'  --loai tru cac file tu excel A Nghia
 			   and exists (select 1 from ttkd_bsc.dm_loaihinh_hsqd where kieutinh_bsc_ptm='thang' and loaitb_id=a.loaitb_id)
 			   ;
  
@@ -911,10 +871,10 @@ select ma_tb, dich_vu, tenkieu_ld, dichvuvt_id, loaitb_id , doituong_id, tocdo_i
 												   else 1 end)
 --				select thang_luong, thang_ptm, ma_tb, thang_tldg_dt, sothang_dc, heso_tratruoc, dich_vu, dichvuvt_id, loaitb_id from ttkd_bsc.ct_bsc_ptm a
 			    where 
-							(thang_ptm = 202408 --- thang n
+							(thang_ptm = 202409 --- thang n
 								or thang_luong in (2))			---flag 2 update Dthu_goi = datcoc_csd file 6
 							and loaitb_id not in (20, 21) 	---VNPts anh Tuyen da tinh
-							and nvl(thang_tldg_dt, 999999) >= 202408
+							and nvl(thang_tldg_dt, 999999) >= 202409
 --							thang_luong = 455
 							
 				   ;
@@ -931,19 +891,19 @@ rollback;
 					--- 0% AM, va PS tinh binh thuong nhu thue bao khong qua DAILY PTM
 			update ttkd_bsc.ct_bsc_ptm a 
 			    set heso_daily = ''
-			    where thang_ptm = 202406 and heso_daily is not null
+			    where thang_ptm = 202409 and heso_daily is not null
 			    ;
    
-    select *  from ttkd_bsc.dm_daily_khdn where thang = 202408;
+    select *  from ttkd_bsc.dm_daily_khdn where thang = 202409;
     
 			update ttkd_bsc.ct_bsc_ptm a 
 			    set heso_daily = 
-											case when exists (select 1  from ttkd_bsc.dm_daily_khdn where thang = 202408 and thang_kyhd < a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly hien huu
+											case when exists (select 1  from ttkd_bsc.dm_daily_khdn where thang = 202409 and thang_kyhd < a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly hien huu
 																then 0
-													when exists (select 1  from ttkd_bsc.dm_daily_khdn where thang = 202408 and  thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
+													when exists (select 1  from ttkd_bsc.dm_daily_khdn where thang = 202409 and  thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
 																	and ma_vtcv in ('VNP-HNHCM_KHDN_3.1')		---AM QLDL ho tro
 																then 0
-													when exists (select 1  from ttkd_bsc.dm_daily_khdn where thang = 202408 and  thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
+													when exists (select 1  from ttkd_bsc.dm_daily_khdn where thang = 202409 and  thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
 																	and ma_vtcv not in ('VNP-HNHCM_KHDN_3.1')		---AM thuong ho tro
 																then case when loaitb_id not in (149) then 0.05 else 0 end---ngoai tru dvu VCC (VNPts), xem xet khi co to trinh LD TTKD
 												
@@ -952,14 +912,14 @@ rollback;
 										
 --						, thang_luong = 25
 --		 select thang_luong, thang_ptm, manv_ptm, ma_vtcv, ma_nguoigt, heso_daily, thang_tldg_dt, thang_tlkpi_phong, ma_tiepthi, loaitb_id from ttkd_bsc.ct_bsc_ptm a
-			    where (thang_ptm = 202408 --and manv_ptm is not null-- 
+			    where (thang_ptm = 202409 --and manv_ptm is not null-- 
 								or thang_luong in (4)		---file 6 update ma_vtcv
 								)
 							   and (upper(ma_tiepthi)like'GTGT_%' or upper(ma_tiepthi)like'DAILY_%' or upper(ma_tiepthi)like'DL_%'
 												or upper(ma_nguoigt)like'GTGT_%' or upper(ma_nguoigt)like'DAILY_%' or upper(ma_nguoigt)like'DL_%'
 									 )
 							  -- and ma_vtcv  not in ('VNP-HNHCM_KHDN_3.1')
-							   and nvl(thang_tlkpi_phong, 999999) >= 202408
+							   and nvl(thang_tlkpi_phong, 999999) >= 202409
 							   
 			
 				   ;
@@ -983,7 +943,7 @@ rollback;
 		-- Gia han GTGT/CNTT xet QLDA
 			update ttkd_bsc.ct_bsc_ptm 
 					set heso_quydinh_nvptm = null
-			    where thang_ptm = 202406 and (loaitb_id<>21 or ma_kh='GTGT rieng') 
+			    where thang_ptm = 202409 and (loaitb_id<>21 or ma_kh='GTGT rieng') 
 			    ;
                                 
 
@@ -997,10 +957,10 @@ rollback;
 				
 --				  select nguon, thang_luong, thang_ptm, ma_kh, ma_tb, heso_quydinh_nvptm, heso_quydinh_nvhotro, heso_hotro_nvhotro, manv_hotro, manv_ptm, heso_quydinh_dai, manv_tt_dai, diaban, chuquan_id, nhom_tiepthi, thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a    
 				    where 
-								(thang_ptm = 202408 --- thang n
+								(thang_ptm = 202409 --- thang n
 										or thang_luong in (4, 87))			---flag 4 file so 6 sau khi update QLDA
 					and (loaitb_id<>21 or ma_kh='GTGT rieng') --and heso_quydinh_nvhotro is null
-					and nvl(thang_tldg_dt, 999999) >= 202408 
+					and nvl(thang_tldg_dt, 999999) >= 202409 
 --				    and a.ma_duan_banhang = '152853'
 --				    and thang_luong in ( 86)
 --				and ma_duan_banhang in ('185813', '185810', '265802') and ma_gd in ('00901934', '00898044', '00897956')	
@@ -1013,7 +973,7 @@ rollback;
 -- he so vtcv: cac vtcv duoc tinh = 1, ngoai tru ca th dac biet duyet qua Mail se dieu chinh lai heso (vi du duyet chi phi TTKD tu mail Chu Minh KHKT)
 				update ttkd_bsc.ct_bsc_ptm 
 					   set heso_vtcv_nvptm='', heso_vtcv_dai='', heso_vtcv_nvhotro=''
-				    where thang_ptm=202405 and (loaitb_id<>21 or ma_kh='GTGT rieng')
+				    where thang_ptm=202409 and (loaitb_id<>21 or ma_kh='GTGT rieng')
 				    ;
              
  
@@ -1025,10 +985,10 @@ rollback;
 							 ,heso_vtcv_dai = 1
 --												case when chiphi_ttkd > 0 and thang_xn_chiphi_ttkd is not null then 0.5 else 1 end	---mail Chu Minh KHKT duyet chi phi TTKD (neu co)
 --				    select thang_luong, thang_ptm, chiphi_ttkd, thang_xn_chiphi_ttkd, heso_vtcv_nvptm, heso_vtcv_nvhotro, heso_vtcv_dai, manv_hotro, manv_tt_dai, thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a 
-				    where (thang_ptm = 202408		--- thang n
+				    where (thang_ptm = 202409		--- thang n
 									or thang_luong in (44, 87))		---flag 87 file Update anh Nghia
 					and (loaitb_id<>21 or ma_kh='GTGT rieng') 
-					and nvl(thang_tldg_dt, 999999) >= 202408
+					and nvl(thang_tldg_dt, 999999) >= 202409
 --					and thang_luong in (71)
 
 				    ;
@@ -1039,37 +999,9 @@ rollback;
     -- cdbr+gtgt
 			update ttkd_bsc.ct_bsc_ptm a set phanloai_kh = null
 	---  select phanloai_kh from ttkd_bsc.ct_bsc_ptm a 
-			    where  thang_ptm = 202408 and phanloai_kh is not null-- and thang_luong = 86
+			    where  thang_ptm = 202409 and phanloai_kh is not null-- and thang_luong = 86
 			    ; 
-         
-           
--- Khong co file giao:   dot 1               
-			update ttkd_bsc.ct_bsc_ptm a
-			    set phanloai_kh = case when ma_kh='GTGT rieng' 
-																		then
-																				  (select (select ma_plkh 
-																								from css_hcm.phanloai_kh where phanloaikh_id=b.plkh_id) 
-																					 from ttkd_bct.db_thuebao_ttkd b where to_number(regexp_replace(b.mst, '\D', '')) = to_number(regexp_replace(a.mst, '\D', ''))  and rownum=1
-																					 )  
-														when ma_kh<>'GTGT rieng' and loaitb_id not in (20, 21, 149)  
-																			  then (select distinct (select ma_plkh from css_hcm.phanloai_kh where phanloaikh_id=b.plkh_id ) 
-																					    from ttkd_bct.db_thuebao_ttkd b where b.thuebao_id = a.thuebao_id)
-														when loaitb_id = 271 then 'DC2'
-														when loaitb_id in (20,149) 
-																		  then (select (select ma_plkh from css_hcm.phanloai_kh where phanloaikh_id=b.plkh_id) 
-																				    from ttkd_bct.db_thuebao_ttkd b 
-																				    where loaitb_id=20 and b.ma_tb=a.ma_tb and to_char(ngay_sd,'dd/mm/yyyy')=to_char(a.ngay_bbbg,'dd/mm/yyyy'))
-										 end
---			 select thang_luong, thang_ptm, phanloai_kh, chuquan_id ,ma_kh, ma_tb, nguon, thang_tldg_dt, thuebao_id from ttkd_bsc.ct_bsc_ptm a 
-			    where thang_ptm = 202408 --- thang n
-					and loaitb_id<>21 and phanloai_kh is null  --and a.ma_tb = '84853136618'
-					and nvl(thang_tldg_dt, 999999) >= 202408
-					
-			    ;
-                             commit;   
-                                    rollback;
-                                    
--- Da co file giao:   dot 2
+
 			drop table hocnq_ttkd.temp_plkh purge
 			;
 			select * from hocnq_ttkd.temp_plkh
@@ -1082,7 +1014,7 @@ rollback;
 						, ptm as (select a.khachhang_id, b.khachhang_id khachhang_id_plkh, row_number() over (partition by a.khachhang_id order by b.khachhang_id desc) rnk
 											 from ttkd_bsc.ct_bsc_ptm a
 															join ttkd_bct.db_thuebao_ttkd b on b.khachhang_id_goc = a.khachhang_id-- and a.khachhang_id = 15572
-											 where thang_ptm = 202408
+											 where thang_ptm = 202409
 										)
 			    select a.*, plkh.ma_plkh phanloai_kh
 				   from  ptm a
@@ -1108,9 +1040,9 @@ rollback;
 												end)
 --												, ma_kh = 'GTGT rieng'
 --				     select thang_luong, thang_ptm, loaitb_id, dich_vu, ma_tb, ngay_bbbg, nguon, thuebao_id, ma_kh, ma_duan_banhang, chuquan_id, mst, khhh_khm, phanloai_kh, doituong_kh, khachhang_id from ttkd_bsc.ct_bsc_ptm a
-				    where thang_ptm = 202408
+				    where thang_ptm = 202409
 								and chuquan_id in (145,264,266) and loaitb_id<>21 and phanloai_kh is null
-								and nvl(thang_tldg_dt, 999999) >= 202408
+								and nvl(thang_tldg_dt, 999999) >= 202409
 						
 				    ;
 			
@@ -1124,7 +1056,7 @@ rollback;
 																	else 1 end
 --								, thang_luong = 24
 --				 select thang_luong, mst, heso_khachhang, heso_kvdacthu, doituong_kh, khhh_khm, phanloai_kh, nguon, thuebao_id, ma_duan_banhang, khachhang_id, thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a
-				    where a.thang_ptm = 202408 and nvl(thang_tldg_dt, 999999) >= a.thang_ptm
+				    where a.thang_ptm = 202409 and nvl(thang_tldg_dt, 999999) >= a.thang_ptm
 							and (loaitb_id<>21 or ma_kh='GTGT rieng') --and heso_khachhang is null
 							
 							
@@ -1133,21 +1065,14 @@ rollback;
 --				select * from ttkd_bct.db_thuebao_ttkd where ma_tb = '84845911095';
 --				select * from css_hcm.phanloai_kh;
           commit;
-		rollback;
-/*
-select heso_khachhang , count(*)
-    from ct_bsc_ptm
-    where thang_ptm=202404 and (loaitb_id<>21 or ma_kh='GTGT rieng') 
-    group by heso_khachhang;   
-*/
- 
+		rollback; 
         
 -- He so thue bao ngan han: 
 			update ttkd_bsc.ct_bsc_ptm a 
 					set heso_tbnganhan = case when thoihan_id=1 and dichvuvt_id in (1,10,11,4,7,8,9) then 0.3
 																else 1 end
 --			 	select heso_tbnganhan from ttkd_bsc.ct_bsc_ptm a
-			    where a.thang_ptm = 202408 --- thang n
+			    where a.thang_ptm = 202409 --- thang n
 --							and thoihan_id=1 and dichvuvt_id in (1,10,11,4,7,8,9)
 --							and thang_luong = 86
 --							and heso_tbnganhan is null
@@ -1162,7 +1087,7 @@ select heso_khachhang , count(*)
 																		   when loaitb_id=35 then 0.4       -- VNPT iOffice-phi tich hop nhap o tien dnhm
 																   else 0.1 end)
 --				     select tien_dnhm, tien_sodep, heso_dichvu_dnhm, loaitb_id from ttkd_bsc.ct_bsc_ptm a
-				    where thang_ptm = 202408 --- thang n
+				    where thang_ptm = 202409 --- thang n
 								and (loaitb_id<>21 or ma_kh='GTGT rieng')
 								
 				    ;
@@ -1171,19 +1096,19 @@ select heso_khachhang , count(*)
 -- he so ho tro:
 				drop table hocnq_ttkd.temp_hesohotro purge;
 				create table hocnq_ttkd.temp_hesohotro as 
-						select hdtb_id from ttkd_bct.ptm_codinh_202408
+						select hdtb_id from ttkd_bct.ptm_codinh_202409
 										where nguoi_cn_goc in ('myvnpt','dhtt.mytv','ws_smes') 
 																							   ;
 				update ttkd_bsc.ct_bsc_ptm a
 				    set heso_hotro_nvptm  = case 
 																	when a.loaitb_id = 20 and exists (select sdt_datmua, ma_gioithieu, tennv_gioithieu 
 																																from ttkd_bsc.digishop 
-																																where lower(trangthai_shop) like 'th_nh c_ng' and sdt_datmua = a.ma_tb and thang >= 202407) ---thang n- 1
+																																where lower(trangthai_shop) like 'th_nh c_ng' and sdt_datmua = a.ma_tb and thang >= 202408) ---thang n- 1
 																				then 0.5				---50% neu VNPts ban qua DIGISHOP
 																	when a.dichvuvt_id not in (2, 14, 15, 16) 
 																											and exists (select ma_dhsx, ma_gioithieu, tennv_gioithieu 
 																																from ttkd_bsc.digishop 
-																																where lower(trangthai_shop) like 'th_nh c_ng' and ma_dhsx = a.ma_gd_gt and thang >= 202407) ---thang n- 1
+																																where lower(trangthai_shop) like 'th_nh c_ng' and ma_dhsx = a.ma_gd_gt and thang >= 202408) ---thang n- 1
 																				then 0.5			---50% neu dvu BR, CD ban qua DIGISHOP
 --																	when manv_hotro is not null and tyle_am is null then 0.5			ap dung toi uu, dang nghien cuu--50% cho cong doan nguoi xu ly, case hok khong PS
 																	   when exists (select 1 from hocnq_ttkd.temp_hesohotro
@@ -1198,12 +1123,12 @@ select heso_khachhang , count(*)
 						,heso_hotro_nvhotro = case 
 																		when a.loaitb_id = 20 and exists (select sdt_datmua, ma_gioithieu, tennv_gioithieu 
 																																from ttkd_bsc.digishop 
-																																where lower(trangthai_shop) like 'th_nh c_ng' and sdt_datmua = a.ma_tb and thang >= 202407) ---thang n- 1
+																																where lower(trangthai_shop) like 'th_nh c_ng' and sdt_datmua = a.ma_tb and thang >= 202408) ---thang n- 1
 																					then 0.5				---50% neu VNPts ban qua DIGISHOP
 																		when a.dichvuvt_id not in (2, 14, 15, 16) 
 																												and exists (select ma_dhsx, ma_gioithieu, tennv_gioithieu 
 																																	from ttkd_bsc.digishop 
-																																	where lower(trangthai_shop) like 'th_nh c_ng' and ma_dhsx = a.ma_gd_gt and thang >= 202407) ---thang n- 1
+																																	where lower(trangthai_shop) like 'th_nh c_ng' and ma_dhsx = a.ma_gd_gt and thang >= 202408) ---thang n- 1
 																					then 0.5			---50% neu dvu BR, CD ban qua DIGISHOP
 --																		when manv_hotro is not null then 0.5  		--50% cho cong doan nguoi gioi thieu, case hok khong PS
 																		when exists (select 1 from hocnq_ttkd.temp_hesohotro
@@ -1213,16 +1138,16 @@ select heso_khachhang , count(*)
 																		when manv_ptm='VNP017772' and loaitb_id=288 
 																				 and (hdtb_id, thuebao_id) in (select hdtb_id, thuebao_id from ttkd_bsc.ptm_xuly_50_BHOL where thang = a.thang_ptm)
 																							then 0.5   -- SmartCA tinh cho Huong BHOL 50%
-																		when thang_luong = 71 then 0.8		--ap dung chi duy nhat 1 thang 202407 theo vanban_id, sau thang 7 bo 
+																		when thang_luong = 71 then 0.8		--ap dung chi duy nhat 1 thang 202408 theo vanban_id, sau thang 7 bo 
 																		else 0 end
-						,heso_hotro_dai         = 0--case when thang_luong = 71 and vanban_id is not null then 0.2 else 0 end		--ap dung chi duy nhat 1 thang 202407 theo vanban_id, sau thang 7 bo  else 0 end
+						,heso_hotro_dai         = 0--case when thang_luong = 71 and vanban_id is not null then 0.2 else 0 end		--ap dung chi duy nhat 1 thang 202408 theo vanban_id, sau thang 7 bo  else 0 end
 						--, thang_luong = 11
 						
 --		select thang_luong, thang_ptm, ma_tb, dich_vu, manv_hotro, tyle_hotro, tyle_am,  heso_hotro_nvptm, heso_hotro_nvhotro, heso_hotro_dai, ma_duan_banhang from ttkd_bsc.ct_bsc_ptm a    
-				where (thang_ptm = 202408 --- thang n
+				where (thang_ptm = 202409 --- thang n
 								or thang_luong in (4, 44, 87))			---flag 4 file so 6 sau khi update ma QLDA, so 5 update DIGISHOP, file Update anh Nghia
 					 and (loaitb_id<>21 or ma_kh='GTGT rieng') 
-					 and nvl(thang_tldg_dt, 999999) >= 202408
+					 and nvl(thang_tldg_dt, 999999) >= 202409
 --					 and thang_luong = 71
 			
 				    ; 
@@ -1238,7 +1163,7 @@ select heso_khachhang , count(*)
 																							 ) then 0.85
 																			else 1 end
 	---		select thang_luong, ma_gd, ma_tb, heso_diaban_tinhkhac, dichvuvt_id, kieuld_id, tinh_id, thuebao_id from ttkd_bsc.ct_bsc_ptm a
-			    where thang_ptm = 202408 --- thang n
+			    where thang_ptm = 202409 --- thang n
 				--	and dichvuvt_id in (13,14,15,16) and tinh_id  in (8, 36)
 --					and	 ma_tb = 'hcm_hddt_00017855'
 --			and thang_luong = 86
@@ -1251,13 +1176,12 @@ select heso_khachhang , count(*)
 		update ttkd_bsc.ct_bsc_ptm a 
 				set  thang_luong = '3', heso_hoso = 0.8
 --		     select thang_luong, ma_tb, tenkieu_ld, ngay_bbbg, ngay_luuhs_ttkd, ngay_luuhs_ttvt, nop_du, mien_hsgoc, bs_luukho , heso_hoso, thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a
-		    where ((thang_ptm = 202405 and (to_number(to_char(ngay_luuhs_ttkd,'yyyymmdd')) > 20240713 or to_number(to_char(ngay_luuhs_ttvt,'yyyymmdd')) > 20240713))
-							or (thang_ptm = 202406 and (to_number(to_char(ngay_luuhs_ttkd,'yyyymmdd')) > 20240813 or to_number(to_char(ngay_luuhs_ttvt,'yyyymmdd')) > 20240813))
---							or (thang_ptm = 202404 and (to_number(to_char(ngay_luuhs_ttkd,'yyyymmdd'))>20240613 or to_number(to_char(ngay_luuhs_ttvt,'yyyymmdd'))>20240613))
+		    where ((thang_ptm = 202406 and (to_number(to_char(ngay_luuhs_ttkd,'yyyymmdd')) > 20240813 or to_number(to_char(ngay_luuhs_ttvt,'yyyymmdd')) > 20240813))
+							or (thang_ptm = 202407 and (to_number(to_char(ngay_luuhs_ttkd,'yyyymmdd')) > 20240913 or to_number(to_char(ngay_luuhs_ttvt,'yyyymmdd')) > 20240913))
 						)
 					  and (loaitb_id not in (21) or ma_kh='GTGT rieng') and nvl(heso_hoso, 1) = 1
-					  and mien_hsgoc is null and nop_du = 1 --and substr(bs_luukho,1,6)= '202408' --and heso_hoso is null		---thang n+1
-					  and nvl(thang_tldg_dt, 999999) >= 202408  
+					  and mien_hsgoc is null and nop_du = 1 --and substr(bs_luukho,1,6)= '202409' --and heso_hoso is null		---thang n+1
+					  and nvl(thang_tldg_dt, 999999) >= 202409  
 --					  and thang_luong<>'3'
 			  ;
            rollback;
@@ -1267,7 +1191,7 @@ select heso_khachhang , count(*)
         
 /*-- Kiem tra:
 select dich_vu, ma_tb, heso_diaban_tinhkhac, diachi_ld, tinh_id, ttvt_id from ttkd_bsc.ct_bsc_ptm
-    where thang_ptm=202405 and (loaitb_id not in (20,21,149) or ma_kh='GTGT rieng' ) 
+    where thang_ptm=202406 and (loaitb_id not in (20,21,149) or ma_kh='GTGT rieng' ) 
         and heso_diaban_tinhkhac is not null;             
 */
  
@@ -1275,10 +1199,10 @@ select dich_vu, ma_tb, heso_diaban_tinhkhac, diachi_ld, tinh_id, ttvt_id from tt
 -- Kiem tra thue bao tinh doanh thu nhieu lan trong thang:
 select ma_gd, ma_tb, nguon, loaihd_id, dthu_goi, kieuld_id,lydo_khongtinh_luong, thang_tldg_dt, lydo_khongtinh_dongia
     from ttkd_bsc.ct_bsc_ptm
-    where thang_ptm = 202408 and loaitb_id<>21 and
+    where thang_ptm = 202409 and loaitb_id<>21 and
                 (ma_gd, ma_tb, loaitb_id) in 
                           (select ma_gd, ma_tb, loaitb_id from ttkd_bsc.ct_bsc_ptm 
-                            where thang_ptm = 202408 and loaitb_id!=20 group by ma_gd, ma_tb, loaitb_id having count(*)>1
+                            where thang_ptm = 202409 and loaitb_id!=20 group by ma_gd, ma_tb, loaitb_id having count(*)>1
 					   )
 				;
                             
@@ -1286,7 +1210,7 @@ select ma_gd, ma_tb, nguon, loaihd_id, dthu_goi, kieuld_id,lydo_khongtinh_luong,
 update ttkd_bsc.ct_bsc_ptm a 
 		set lydo_khongtinh_luong=lydo_khongtinh_luong||'-Tinh luong theo hs tai lap'
 --		    select * from ttkd_bsc.ct_bsc_ptm a
-		    where thang_ptm = 202408 and nguon like 'thaydoitocdo%' and lydo_khongtinh_luong not like '%Tinh luong theo hs tai lap%'
+		    where thang_ptm = 202409 and nguon like 'thaydoitocdo%' and lydo_khongtinh_luong not like '%Tinh luong theo hs tai lap%'
 			   and exists (select 1 from ttkd_bsc.ct_bsc_ptm
 							   where thang_ptm = a.thang_ptm and thuebao_id=a.thuebao_id and nguon like 'tailap%')
 							   ;
@@ -1300,7 +1224,7 @@ update ttkd_bsc.ct_bsc_ptm a
 			update ttkd_bsc.ct_bsc_ptm a 
 						set dongia = 800, heso_hoso = 1
 --			    select nguon, dongia, dichvuvt_id, thang_ptm, thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a
-			    where thang_ptm = 202408 --- thang n
+			    where thang_ptm = 202409 --- thang n
 					and (loaitb_id<>21 or ma_kh = 'GTGT rieng' ) 
 --					and thang_luong = 86
 
@@ -1325,7 +1249,7 @@ update ttkd_bsc.ct_bsc_ptm a
 																								,0) end                                                                    
 					,doanhthu_dongia_nvhotro = case when heso_daily =  0.05 then round(dthu_goi * nvl(tyle_huongdt,1)* heso_daily * heso_hotro_nvhotro, 0)
 																			when heso_daily =  0 and exists (select 1  from ttkd_bsc.dm_daily_khdn 
-																																		where thang = 202408 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
+																																		where thang = 202409 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
 																								then 0
 																			else round(dthu_goi*nvl(tyle_huongdt,1)*heso_dichvu * nvl(heso_tratruoc,1)
 																								* heso_quydinh_nvhotro * heso_vtcv_nvhotro * nvl(heso_kvdacthu,1)
@@ -1334,7 +1258,7 @@ update ttkd_bsc.ct_bsc_ptm a
 																						,0) end
 					,doanhthu_dongia_dai          = case when heso_daily =  0.05 then round(dthu_goi * nvl(tyle_huongdt,1)* heso_daily * heso_hotro_dai, 0)
 																			when heso_daily =  0 and exists (select 1  from ttkd_bsc.dm_daily_khdn 
-																																	where thang = 202408 and  thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
+																																	where thang = 202409 and  thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
 																								then 0
 																			else round(dthu_goi*nvl(tyle_huongdt,1)*heso_dichvu * nvl(heso_tratruoc,1)
 																																*heso_quydinh_dai * heso_vtcv_dai * nvl(heso_kvdacthu,1)
@@ -1342,12 +1266,12 @@ update ttkd_bsc.ct_bsc_ptm a
 																																*nvl(heso_hoso,1)*nvl(heso_diaban_tinhkhac,1)
 																								, 0) end
 --		    select heso_quydinh_nvhotro, nguon, sothang_dc, thang_luong, thang_ptm, ma_gd, ma_tb, dichvuvt_id, manv_hotro, heso_daily, dthu_goi, doanhthu_dongia_nvptm, doanhthu_dongia_nvhotro, doanhthu_dongia_dai, ma_kh, loaitb_id, thang_tldg_dt, lydo_khongtinh_luong from ttkd_bsc.ct_bsc_ptm a
-			    where (thang_ptm = 202408 --- thang n
+			    where (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4, 44, 87)
 								)			---flag 4 file so 6 sau khi update ma QLDA, file 1 ngan han, file 2 update tra truoc, file 3 hoso tre
 							and (loaitb_id not in (21,131) or ma_kh='GTGT rieng')  --and dthu_goi >0
-							and nvl(thang_tldg_dt, 999999)>=202408 
-							and not (loaitb_id = 358 and thang_ptm = 202408) --- voice Brandname chua dc xet  tinh thang n 
+							and nvl(thang_tldg_dt, 999999)>=202409 
+							and not (loaitb_id = 358 and thang_ptm = 202409) --- voice Brandname chua dc xet  tinh thang n 
 --							and ma_duan_banhang in ('185813', '185810', '265802') and ma_gd in ('00901934', '00898044', '00897956')
 --			   and ma_tb = '84916803831'
 --			  and heso_daily is not null
@@ -1387,10 +1311,10 @@ update ttkd_bsc.ct_bsc_ptm a
 																					   *nvl(heso_tbnganhan,1)*nvl(heso_diaban_tinhkhac,1)  ) * 0.20/0.15 ,0)  -- F_ORM
 									end)   
 	---	    select doanhthu_dongia_nvptm, goi_id from ttkd_bsc.ct_bsc_ptm a
-				    where (thang_ptm = 202408 --- thang n
+				    where (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4))			---flag 4 file so 5 import dung thu chuyen dung that
 					and goi_id in (15596,15599,15600,15601,15602,15603,15604,15605) 
-					and nvl(thang_tldg_dt, 999999) >= 202408
+					and nvl(thang_tldg_dt, 999999) >= 202409
 					
 				    ;
                       
@@ -1403,12 +1327,12 @@ update ttkd_bsc.ct_bsc_ptm a
 																			else round(nvl(doanhthu_dongia_nvhotro,0)*dongia/1000 ,0) end
 						,luong_dongia_dai         = 0--round(nvl(doanhthu_dongia_dai,0)*dongia/1000 ,0)
 --		 select thang_luong, thang_ptm, ma_tb, doanhthu_dongia_nvptm, luong_dongia_nvptm, luong_dongia_nvhotro, luong_dongia_dai, thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a 
-				    where  (thang_ptm = 202408 --- thang n
+				    where  (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4, 44, 87)
 								)			----flag 4 file so 6 sau khi update ma QLDA, file 1 ngan han, file 2 update tra truoc, file 3 hoso tre
 							and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') --and dthu_goi >0
-							and nvl(thang_tldg_dt, 999999) >= 202408
-							and not (loaitb_id = 358 and thang_ptm = 202408) --- voice Brandname chua dc xet tinh thang n 
+							and nvl(thang_tldg_dt, 999999) >= 202409
+							and not (loaitb_id = 358 and thang_ptm = 202409) --- voice Brandname chua dc xet tinh thang n 
 						
 				    ;
                             
@@ -1427,7 +1351,7 @@ update ttkd_bsc.ct_bsc_ptm a
 					,doanhthu_dongia_nvhotro = 
 																	case when heso_daily =  0.05 then round((nvl(dthu_goi,0) + nvl(dthu_goi_ngoaimang,0)) * nvl(tyle_huongdt,1)* heso_daily * heso_hotro_nvhotro, 0)
 																			when heso_daily =  0 and exists (select 1  from ttkd_bsc.dm_daily_khdn 
-																																		where thang = 202408 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
+																																		where thang = 202409 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
 																								then 0
 																			else round( ( (nvl(dthu_goi,0) * heso_dichvu) + (nvl(dthu_goi_ngoaimang,0)*heso_dichvu_1) )
 																								* nvl(tyle_huongdt,1) * nvl(heso_tratruoc,1)
@@ -1437,7 +1361,7 @@ update ttkd_bsc.ct_bsc_ptm a
 																						,0) end
 					,doanhthu_dongia_dai = null
 ---	   select thang_ptm, heso_daily, heso_tratruoc, heso_quydinh_nvptm, heso_quydinh_nvhotro, heso_vtcv_nvptm, heso_hotro_nvptm, heso_khachhang, dthu_goi, dthu_goi_ngoaimang, doanhthu_dongia_nvptm  from ttkd_bsc.ct_bsc_ptm a
-			    where (thang_ptm = 202407 --- thang n -1
+			    where (thang_ptm = 202408 --- thang n -1
 								or thang_luong in (1, 2, 3, 4))			---flag 4 file so 5 import dung thu chuyen dung that
 					and loaitb_id=131
 						
@@ -1449,7 +1373,7 @@ update ttkd_bsc.ct_bsc_ptm a
 					 , luong_dongia_nvhotro = case when heso_daily =  0.05 then doanhthu_dongia_nvhotro
 																	else nvl(doanhthu_dongia_nvhotro,0)*dongia/1000 end
 					, luong_dongia_dai = 0
-			    where (thang_ptm = 202407 --- thang n-1
+			    where (thang_ptm = 202408 --- thang n-1
 								or thang_luong in (1, 2, 3, 4))			---flag 4 file so 5 import dung thu chuyen dung that
 					and loaitb_id=131 
 			    ;
@@ -1466,13 +1390,13 @@ commit;
 																									 * nvl(heso_diaban_tinhkhac,1)
 																								,0) end
 --		  select thang_luong, ma_tb, luong_dongia_nvptm, doanhthu_dongia_dnhm, tien_dnhm, tien_sodep, heso_daily, nguon, thang_tldg_dnhm from ttkd_bsc.ct_bsc_ptm a
-			    where (thang_ptm = 202408 --- thang n
+			    where (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4, 87)
 								)			---flag 4 file so 5 import dung thu chuyen dung that
 					
 							   and (loaitb_id not in (20,21) or ma_kh='GTGT rieng' or (loaitb_id=20 and goi_luongtinh is null)) 
 							   and (tien_dnhm>0 or tien_sodep>0) 
-							   and nvl(thang_tldg_dnhm, 999999) >= 202408
+							   and nvl(thang_tldg_dnhm, 999999) >= 202409
 							   and exists (select 1 from ttkd_bsc.dm_loaihinh_hsqd 
 												  where kieutinh_bsc_ptm='thang' and loaitb_id=a.loaitb_id) 
 						 --or loaitb_id=292)
@@ -1486,11 +1410,11 @@ commit;
 																							else round(nvl(doanhthu_dongia_dnhm,0) * dongia / 1000 ,0) end
 --		  select thang_luong, ma_tb, luong_dongia_nvptm, doanhthu_dongia_dnhm, LUONG_DONGIA_DNHM_NVPTM, nguon, thang_tldg_dnhm from ttkd_bsc.ct_bsc_ptm a
 				    where doanhthu_dongia_dnhm is not null           
-							   and (thang_ptm = 202408 --- thang n
+							   and (thang_ptm = 202409 --- thang n
 												or thang_luong in (1, 2, 3, 4, 87)
 												)			---flag 4 file so 5 import dung thu chuyen dung that
 								and (loaitb_id not in (20,21) or ma_kh='GTGT rieng' or (loaitb_id=20 and goi_luongtinh is null)) 
-								and nvl(thang_tldg_dnhm, 999999) >= 202408
+								and nvl(thang_tldg_dnhm, 999999) >= 202409
 								
 				;
 
@@ -1514,7 +1438,7 @@ rollback;
 																	case when thang_luong = 86 and loaitb_id in (153, 40) and kieuld_id in (550, 13177, 13266) then 0 ----khong ting KPI khi gia han Int Truc tiep va Smart cloud
 																			when heso_daily =  0.05 then doanhthu_dongia_dai
 																			when heso_daily =  0 and exists (select 1  from ttkd_bsc.dm_daily_khdn 
-																																		where thang = 202408 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
+																																		where thang = 202409 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
 																								then 0
 																			else round(dthu_goi*nvl(tyle_huongdt,1)*heso_dichvu * nvl(heso_tratruoc,1)
 																								* heso_vtcv_dai
@@ -1524,7 +1448,7 @@ rollback;
 						 , doanhthu_kpi_nvhotro = case when thang_luong = 86 and loaitb_id in (153, 40) and kieuld_id in (550, 13177, 13266) then 0 ----khong ting KPI khi gia han Int Truc tiep va Smart cloud
 																			when heso_daily =  0.05 then doanhthu_dongia_nvhotro
 																			when heso_daily =  0 and exists (select 1  from ttkd_bsc.dm_daily_khdn 
-																																		where thang = 202408 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
+																																		where thang = 202409 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
 																								then 0
 																			else round(dthu_goi*nvl(tyle_huongdt,1)*heso_dichvu * nvl(heso_tratruoc,1)
 																								* heso_vtcv_nvhotro
@@ -1540,11 +1464,11 @@ rollback;
 																										,0) end
 						
 --		 select heso_quydinh_nvptm, heso_quydinh_nvhotro, heso_quydinh_dai, thang_luong, thang_ptm, doanhthu_dongia_nvptm, doanhthu_dongia_nvhotro, doanhthu_kpi_nvptm, doanhthu_kpi_nvdai, doanhthu_kpi_nvhotro, doanhthu_kpi_dnhm, thang_tlkpi from ttkd_bsc.ct_bsc_ptm a
-				    where (thang_ptm = 202408 --- thang n
+				    where (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4, 87)
 								)			---flag 4 file so 5 import dung thu chuyen dung that
 									and dich_vu not like 'Thi_t b_ gi_i ph_p%' and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') 
-									and nvl(thang_tlkpi, 999999) >= 202408							  
+									and nvl(thang_tlkpi, 999999) >= 202409							  
 						     	
 				    ;
 
@@ -1562,7 +1486,7 @@ rollback;
 							   ,doanhthu_kpi_nvhotro = case when heso_daily =  0.05 
 																									then round(dthu_goi_goc * nvl(tyle_huongdt,1) * heso_daily * heso_hotro_nvhotro ,0)
 																				   when heso_daily =  0 and exists (select 1  from ttkd_bsc.dm_daily_khdn 
-																																		where thang = 202408 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
+																																		where thang = 202409 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
 																								then 0
 																				   else round(dthu_goi_goc * nvl(tyle_huongdt,1)* heso_dichvu * nvl(heso_tratruoc,1)
 																										* heso_vtcv_nvhotro
@@ -1570,7 +1494,7 @@ rollback;
 																										* nvl(heso_diaban_tinhkhac,1), 0)
 																					end         
 --				select heso_quydinh_nvptm, heso_quydinh_nvhotro, heso_quydinh_dai, thang_luong, ma_duan_banhang, nguon, dthu_goi_goc, dthu_goi, doanhthu_kpi_nvptm, doanhthu_kpi_nvhotro, heso_khachhang from 	ttkd_bsc.ct_bsc_ptm a
-					    where (thang_ptm = 202408 --- thang n
+					    where (thang_ptm = 202409 --- thang n
 											or thang_luong in (1, 2, 3, 4, 44, 87))			---flag 4 file so 5 import dung thu chuyen dung that
 									 and dich_vu like 'Thi_t b_ gi_i ph_p%'  
 									
@@ -1588,7 +1512,7 @@ rollback;
 																								,0) end
 					  , doanhthu_kpi_nvhotro = case when heso_daily =  0.05 then doanhthu_dongia_nvhotro
 																			when heso_daily =  0 and exists (select 1  from ttkd_bsc.dm_daily_khdn 
-																																		where thang = 202408 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
+																																		where thang = 202409 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
 																								then 0
 																			else round( ( (nvl(dthu_goi,0) * heso_dichvu) + (nvl(dthu_goi_ngoaimang,0)*heso_dichvu_1) )
 																								* nvl(tyle_huongdt,1) * nvl(heso_tratruoc,1)
@@ -1597,7 +1521,7 @@ rollback;
 																								* nvl(heso_diaban_tinhkhac,1)
 																						,0) end
 --			    select heso_quydinh_nvptm, heso_quydinh_nvhotro, heso_quydinh_dai, doanhthu_dongia_nvptm, doanhthu_kpi_nvptm, doanhthu_dongia_nvhotro, doanhthu_kpi_nvhotro from ttkd_bsc.ct_bsc_ptm
-			    where (thang_ptm = 202407 --- thang n-1
+			    where (thang_ptm = 202408 --- thang n-1
 								or thang_luong in (1, 2, 3, 4))			---flag 4 file so 5 import dung thu chuyen dung that
 							 and loaitb_id = 131 
 							 
@@ -1620,7 +1544,7 @@ rollback;
 																							   * nvl(heso_diaban_tinhkhac,1) ,0)
 																		end)
 --		   select heso_quydinh_nvptm, heso_quydinh_nvhotro, heso_quydinh_dai, thang_luong, heso_khachhang, heso_kvdacthu, doanhthu_kpi_phong, ma_tb, thang_tlkpi_phong from ttkd_bsc.ct_bsc_ptm a
-				    where (thang_ptm = 202408 --- thang n
+				    where (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4, 87)
 								)			---flag 4 file so 5 import dung thu chuyen dung that
 								and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') 
@@ -1639,7 +1563,7 @@ rollback;
 																    * nvl(heso_tbnganhan,1)
 																    * nvl(heso_diaban_tinhkhac,1) ,0)
 --				     select dthu_goi, dthu_goi_ngoaimang, doanhthu_kpi_nvptm, doanhthu_kpi_phong from ttkd_bsc.ct_bsc_ptm
-				    where (thang_ptm = 202407 --- thang n-1
+				    where (thang_ptm = 202408 --- thang n-1
 											or thang_luong in (1, 2, 3, 4, 87))			---flag 4 file so 5 import dung thu chuyen dung that
 								and loaitb_id=131
 				    ;
@@ -1654,7 +1578,7 @@ rollback;
 																					* nvl(heso_diaban_tinhkhac,1) ,0)
 																	end
 	---	select thang_luong, doanhthu_kpi_dnhm_phong, heso_dichvu_dnhm from ttkd_bsc.ct_bsc_ptm a
-		    where (thang_ptm = 202408 --- thang n
+		    where (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4, 87))			---flag 4 file so 5 import dung thu chuyen dung that
 					and (loaitb_id not in (20,21) or ma_kh='GTGT rieng' or (loaitb_id=20 and goi_luongtinh is null)) 
 					   and (tien_dnhm>0 or tien_sodep>0)
@@ -1674,7 +1598,7 @@ rollback;
 																			then 0
 																	else doanhthu_kpi_phong end
 	---	select thang_luong, MA_NGUOIGT, doanhthu_kpi_to, thang_tlkpi_to from ttkd_bsc.ct_bsc_ptm a
-				    where (thang_ptm = 202408 --- thang n
+				    where (thang_ptm = 202409 --- thang n
 									or thang_luong in (1, 2, 3, 4, 87))			---flag 4 file so 5 import dung thu chuyen dung that
 								and (loaitb_id!=21 or ma_kh='GTGT rieng')
 							
@@ -1690,7 +1614,7 @@ rollback;
 							, DOANHTHU_DONGIA_DAI = 0		--nvdai khong DONGIA
 							, LUONG_DONGIA_DAI = 0					--nvdai khong DONGIA
 --		select * from ttkd_bsc.ct_bsc_ptm a 
-		where  vanban_id = 764 and thang_ptm = 202408 ---only 3 thang (T7, T8, T9) xoa
+		where  vanban_id = 764 and thang_ptm = 202409 ---only 3 thang (T7, T8, T9) xoa
 		;
 -- ======
 
@@ -1702,7 +1626,7 @@ select thang_ptm, chuquan_id, lydo_khongtinh_luong,nguon,dich_vu, dichvuvt_id,lo
             goi_id, datcoc_csd, dthu_goi_goc,dthu_goi,dthu_ps,dthu_ps_n1,heso_dichvu, heso_tratruoc,heso_quydinh_nvptm,heso_vtcv_nvptm,heso_hotro_nvptm  ,
             doanhthu_dongia_nvptm, luong_dongia_nvptm, trangthai_tt_id
 from ttkd_bsc.ct_bsc_ptm a
-where thang_ptm = 202407
+where thang_ptm = 202408
             and loaitb_id not in (21,210) and ma_kh<>'GTGT rieng' 
             and lydo_khongtinh_luong is null and manv_ptm is not null and dthu_ps is not null
             and doanhthu_dongia_nvptm is null
@@ -1711,7 +1635,7 @@ where thang_ptm = 202407
 -- nv ho tro chua duoc tinh doanhthu_kpi_nvhotro:
 select thang_luong, thang_ptm,dich_vu, dichvuvt_id, loaitb_id, tien_dnhm, tocdo_id, goi_id, dthu_ps, thuebao_id,ma_tb,dthu_goi,doanhthu_kpi_nvhotro , chuquan_id, heso_hotro_nvhotro
     from ttkd_bsc.ct_bsc_ptm
-    where thang_ptm=202407 and (loaitb_id<>21 or ma_kh='GTGT rieng') 
+    where thang_ptm=202408 and (loaitb_id<>21 or ma_kh='GTGT rieng') 
     and manv_hotro is not null and dthu_ps is not null and doanhthu_kpi_nvhotro is null
     ;
 
@@ -1719,7 +1643,7 @@ select thang_luong, thang_ptm,dich_vu, dichvuvt_id, loaitb_id, tien_dnhm, tocdo_
 select dichvuvt_id, loaitb_id, ma_tb, tien_dnhm, tien_sodep, (nvl(tien_dnhm,0)+nvl(tien_sodep,0)),heso_dichvu_dnhm, heso_quydinh_nvptm, nvl(heso_kvdacthu,1), heso_vtcv_nvptm, heso_daily,
             doanhthu_dongia_dnhm,  luong_dongia_dnhm_nvptm, doanhthu_kpi_dnhm, ghi_chu
 from ttkd_bsc.ct_bsc_ptm a
-    where thang_ptm=202407 and (loaitb_id!=21 or ma_kh<>'GTGT rieng')
+    where thang_ptm=202408 and (loaitb_id!=21 or ma_kh<>'GTGT rieng')
                                   and (tien_dnhm>0 or tien_sodep>0)
                                   and exists (select 1 from ttkd_bsc.dm_loaihinh_hsqd where kieutinh_bsc_ptm='thang' and loaitb_id=a.loaitb_id );
              
@@ -1728,15 +1652,15 @@ from ttkd_bsc.ct_bsc_ptm a
 select ma_tb, dthu_ps, dthu_ps_n1, dthu_goi, dthu_goi_ngoaimang, heso_dichvu, heso_dichvu_1,
             doanhthu_dongia_nvptm, doanhthu_kpi_nvptm, luong_dongia_nvptm, doanhthu_kpi_nvhotro, thang_tlkpi_hotro
     from ttkd_bsc.ct_bsc_ptm
-    where thang_ptm = 202405 and loaitb_id=131;
+    where thang_ptm = 202406 and loaitb_id=131;
 
 -- TB ngan han:
-select thang_ptm, ma_pb,manv_ptm,(select ten_nv from ttkd_bsc.nhanvien_202407 where manv_hrm=a.manv_ptm) ten_nv,
+select thang_ptm, ma_pb,manv_ptm,(select ten_nv from ttkd_bsc.nhanvien_202408 where manv_hrm=a.manv_ptm) ten_nv,
             ma_tb, ten_tb,dich_vu, ngay_bbbg,ngay_cat, trangthaitb_id,songay_sd, heso_tbnganhan,tien_dnhm,tien_tt, ngay_tt, soseri, dthu_goi, dthu_ps,
             doanhthu_dongia_nvptm, luong_dongia_nvptm,  doanhthu_kpi_nvptm, 
             luong_dongia_dnhm_nvptm, thang_tldg_dnhm
     from ttkd_bsc.ct_bsc_ptm a
-    where thang_ptm = 202407 and thoihan_id=1
+    where thang_ptm = 202408 and thoihan_id=1
             and dthu_goi<>dthu_ps;
    
 

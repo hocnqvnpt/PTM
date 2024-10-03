@@ -1360,7 +1360,11 @@ create table ptm_codinh_202409 as
 				    where loaitb_id = 288 and ma_tiepthi is null 
 					   and pbh_nhan_id=2941 and nhanvien_id=1077 and datcoc_csd>0
 					   ; 
-			
+				
+				update ttkd_bct.ptm_codinh_202409 a 
+				    set manv_ptm = ma_tiepthi
+				    where chuquan_id in (145,266,264) and manv_ptm is null
+				;
 				update ttkd_bct.ptm_codinh_202409 a 
 				    set (tennv_ptm, ma_to, ten_to, ma_pb, ten_pb, ten_vtcv, ma_vtcv, loai_ld, nhom_tiepthi)
 						= (select b.ten_nv, b.ma_to, b.ten_to, b.ma_pb, b.ten_pb, b.ten_vtcv, b.ma_vtcv, b.loai_ld, b.nhomld_id
@@ -1369,7 +1373,7 @@ create table ptm_codinh_202409 as
 											--and b.ma_pb=pb.ma_pb 
 											and b.ma_nv = a.manv_ptm
 							  ) 
-				    where chuquan_id in (145,266,264) 
+				    where chuquan_id in (145,266,264) and tennv_ptm is null
 
 ;
 			
