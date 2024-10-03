@@ -3,8 +3,8 @@
 rollback;
 commit;
 select *  from ttkd_bsc.dm_daily_khdn 
---    update ttkd_bsc.dm_daily_khdn  set MANV_QLDAILY = 'VNP029157'
-where thang=202408 and ma_daily in ('GTGT00201');,'GTGT00054','GTGT00050','GTGT00116','GTGT00136','GTGT00144')
+--    update ttkd_bsc.dm_daily_khdn  set TEN_DAILY = 'CHI NHÁNH H? CHÍ MINH - CÔNG TY C? PH?N GI?I PHÁP CÔNG NGH? S? CALLSTACK'--MANV_QLDAILY = 'VNP029157'
+where thang=202409 and ma_daily in ('GTGT00205');,'GTGT00054','GTGT00050','GTGT00116','GTGT00136','GTGT00144')
 ;
    and ma_nguoigt in ('GTGT00012','GTGT00054','GTGT00050','GTGT00116','GTGT00136','GTGT00144');
 alter table ttkd_bsc.dm_daily_khdn add MANV_QLDAILY       VARCHAR2(20)  ;

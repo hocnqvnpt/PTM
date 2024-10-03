@@ -1340,7 +1340,7 @@ create table ptm_codinh_202409 as
                     alter table ttkd_bct.ptm_codinh_202409
                         add (manv_ptm varchar2(20), tennv_ptm varchar2(100)
 							, ma_pb varchar2(20), ten_pb varchar2(100), ma_to varchar2(20), ten_to varchar2(100)
-							, ma_vtcv varchar2(20), loainv_id number, ten_loainv varchar2(100), loai_ld varchar2(100)
+							, ten_vtcv varchar2(100), ma_vtcv varchar2(20), loainv_id number, ten_loainv varchar2(100), loai_ld varchar2(100)
 							, manv_hotro varchar2(20), tyle_hotro number(5,2), tyle_am number(5,2),nhom_tiepthi number )
                     ;
 				-- NV TTKD:
@@ -1355,19 +1355,15 @@ create table ptm_codinh_202409 as
 				 select * from ttkd_bsc.ptm_xuly_50_BHOL 
 				 ;
 				update ttkd_bct.ptm_codinh_202409 a 
-				    set ma_tiepthi =(select ma_nv from admin_hcm.nhanvien_onebss where nhanvien_id=a.nhanvien_id)  --manv_ptm='VNP017772'
---				     select ma_tiepthi from ttkd_bct.ptm_codinh_202409 a
+				    set manv_ptm =(select ma_nv from admin_hcm.nhanvien_onebss where nhanvien_id=a.nhanvien_id)  --manv_ptm='VNP017772'
+--				     select ma_tiepthi, manv_ptm from ttkd_bct.ptm_codinh_202409 a
 				    where loaitb_id = 288 and ma_tiepthi is null 
 					   and pbh_nhan_id=2941 and nhanvien_id=1077 and datcoc_csd>0
 					   ; 
-				
+			
 				update ttkd_bct.ptm_codinh_202409 a 
-				    set manv_ptm = a.ma_tiepthi
-				    where chuquan_id in (145,266,264) 
-				    ;
-				update ttkd_bct.ptm_codinh_202409 a 
-				    set (tennv_ptm, ma_to, ten_to, ma_pb, ten_pb, ma_vtcv, loai_ld, nhom_tiepthi)
-						= (select b.ten_nv, b.ma_to, b.ten_to, b.ma_pb, b.ten_pb, b.ma_vtcv, b.loai_ld, b.nhomld_id
+				    set (tennv_ptm, ma_to, ten_to, ma_pb, ten_pb, ten_vtcv, ma_vtcv, loai_ld, nhom_tiepthi)
+						= (select b.ten_nv, b.ma_to, b.ten_to, b.ma_pb, b.ten_pb, b.ten_vtcv, b.ma_vtcv, b.loai_ld, b.nhomld_id
 							  from ttkd_bsc.nhanvien b
 							  where b.thang = to_number(to_char(trunc(sysdate, 'month') - 1, 'yyyymm')) --thang n
 											--and b.ma_pb=pb.ma_pb 
@@ -1441,7 +1437,7 @@ create table ptm_codinh_202409 as
 																						)
 					;
 						   
-						   select * from admin_Hcm.donvi where donvi_id in (2948, 284316,2943,11352,2942,2947,2944,2945,284317,2946, 2948,11563,11564, 283427, 11298);
+						   select donvi_id, ten_dv from admin_Hcm.donvi where donvi_id in (2948, 284316,2943,11352,2942,2947,2944,2945,284317,2946, 2948,11563,11564, 283427, 11298);
 										   
 					
 					update ttkd_bct.ptm_codinh_202409 a
@@ -1449,7 +1445,7 @@ create table ptm_codinh_202409 as
 							   ma_pb = (select ma_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id)
 							  , ten_pb = (select ten_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id)
 --					     select ma_tiepthi, ma_gd, ma_nguoigt, (select ma_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id)ma_dv, ma_pb, ten_pb, pbh_nhan_id from ttkd_bct.ptm_codinh_202409 a
-					    where chuquan_id in (145,266,264) and ma_pb is null and pbh_nhan_id in (2948,11563,11564)
+					    where chuquan_id in (145,266,264) and ma_pb is null --and pbh_nhan_id in (2948,11563,11564)
 						    and (ma_tiepthi is null or ma_nguoigt like 'GTGT%' or ma_nguoigt like '%DL_%')
 					;
 					commit;
@@ -1469,13 +1465,11 @@ create table ptm_codinh_202409 as
 				    set ma_pb=null,ten_pb=null,ma_to=null, ten_to=null, manv_ptm=null, ma_vtcv=null,loainv_id=null,ten_loainv=null,loai_ld=null
 --				      select ma_gd, (select ten_dv from admin_Hcm.donvi where donvi_id = 11298) ten_dv, pbh_nhan_id, pbh_nhan_goc_id, ten_tb, ma_pb, manv_ptm from ttkd_bct.ptm_codinh_202409 a
 				    where chuquan_id in (145,266) and ( (ma_pb='VNP0700700' and pbh_nhan_id<>283530) or upper(ten_tb) like '%ERP TEST%')
-				    ;
-				    select manv_hotro, ma_duan_banhang, tyle_hotro, tyle_am, hdtb_id, thuebao_id from ttkd_bct.ptm_codinh_202409 a where ma_duan_banhang is not null and manv_hotro is not null 
 			;
 				-- TTVT ptm nhung ko co ma_tiepthi hoac ma_tiepthi sai/nghi viec: 
 				update ttkd_bct.ptm_codinh_202409 a
 				    set ma_pb = (select ma_dv from admin_hcm.donvi where donvi_id = a.donvi_tt_id)
---				     select ma_tiepthi, ma_pb, pbh_nhan_id, donvi_tt_id, donviql_tt_id, (select ma_dv from admin_hcm.donvi where donvi_id = a.donvi_tt_id) ma_pb from ttkd_bct.ptm_codinh_202409 a
+--				     select ma_tiepthi, ma_pb, pbh_nhan_id, donvi_tt_id, donviql_tt_id, (select ma_dv from admin_hcm.donvi where donvi_id = a.donvi_tt_id) ma_pb_new from ttkd_bct.ptm_codinh_202409 a
 				    where ma_pb is null and chuquan_id in (145,266)
 					   and (pbh_nhan_id in (283451,283452,283453,283454,283455,283466,283467,283468,283469)
 							 or donvi_tt_id in (283451,283452,283453,283454,283455,283466,283467,283468,283469)
@@ -1501,26 +1495,10 @@ create table ptm_codinh_202409 as
 						;
 						commit;
 						rollback;
--- manv_hotro:  chua chay
-				/*
-				-- lay thong tin ty le ho tro:
-				select * from ttkdhcm_ktnv.amas_booking_presale: th�ng tin book presale
-					  -li�n ket bang amas_yeucau qua field ma_yeucau
-					  -manv_presale v� manv_book l� m� nguois d�ng;
-					  
-				select a.ma_yeucau, c.manv_presale_hrm, c.tyle, c.tyle/100
-				    from ttkdhcm_ktnv.amas_yeucau a, ttkdhcm_ktnv.amas_yeucau_dichvu b, ttkdhcm_ktnv.amas_booking_presale c
-				    where a.ma_yeucau=b.ma_yeucau and b.id_ycdv=c.id_ycdv  and c.tyle>0 and PS_TRUONG=1 and xacnhan=1
-					   and a.ma_yeucau in (197634, 197730);
-				197634
-				197730
-				*/
+
 
 				update ttkd_bct.ptm_codinh_202409 a set manv_hotro='', tyle_hotro='', tyle_am='' where ma_duan_banhang is not null
 				;	
----Test ma_da = 207988 --> book nhiu lan
----Test ma_da --> book 2 PS tro len (1 PS truong)
----Test ma_da --> book 1 PS lam nhieu cong doan
 
 				--select * from ttkdhcm_ktnv.amas_booking_presale where ma_yeucau = 228705;
 					MERGE into ttkd_bct.ptm_codinh_202409 a
@@ -1530,8 +1508,8 @@ create table ptm_codinh_202409 as
 																	from ttkdhcm_ktnv.amas_yeucau_dichvu
 																	where MA_HIENTRANG <> 14
 																	)
-													, t as	 (select c.manv_presale_hrm, c.tyle/100 tyle_hotro, decode(tyle_am,0,1,c.tyle_am/100) tyle_am, d.loaitb_id_obss, b.ma_yeucau, b.ma_dichvu, c.tyle_nhom, b.id_ycdv
-																		, NGAYHEN, NGAYCAPNHAT, NGAYNHANTIN_PS, NGAYXACNHAN, c.ps_truong
+													, t as	 (select c.manv_presale_hrm, c.tyle/100 tyle_hotro, decode(c.tyle_am,0,1,c.tyle_am/100) tyle_am, d.loaitb_id_obss, b.ma_yeucau, b.ma_dichvu, c.tyle_nhom, b.id_ycdv
+																		, c.NGAYHEN, c.NGAYCAPNHAT, c.NGAYNHANTIN_PS, c.NGAYXACNHAN, c.ps_truong
 																 from yc_dv b, ttkdhcm_ktnv.amas_booking_presale c, ttkdhcm_ktnv.amas_loaihinh_tb d
 																					where b.ma_yeucau=c.ma_yeucau and b.id_ycdv=c.id_ycdv and b.ma_dichvu = d.loaitb_id
 																								and c.tyle>0 and c.ps_truong=1 and c.xacnhan=1  
@@ -1542,7 +1520,7 @@ create table ptm_codinh_202409 as
 																, decode(sum(ps_truong), 1, sum(tyle_hotro), max(tyle_hotro)) tyle_hotro
 																, decode(sum(ps_truong), 1, sum(TYLE_NHOM), max(TYLE_NHOM)) TYLE_NHOM
 															from t
---															where ma_yeucau  in (162833)
+--															where ma_yeucau  in (213513)
 															group by MANV_PRESALE_HRM, LOAITB_ID_OBSS, MA_YEUCAU, TYLE_AM, MA_DICHVU
 														
 										) b
@@ -1562,7 +1540,7 @@ create table ptm_codinh_202409 as
 														  and b.ma_yeucau = to_number(regexp_replace (a.ma_duan_banhang, '\D', ''))
 														  and d.loaitb_id_obss = a.loaitb_id 
 												)
---							and ma_duan_banhang    in ('259121', '245880', '162833')
+--							and ma_duan_banhang  not  in ('213513')
 
 					;
 	
@@ -1671,9 +1649,9 @@ create table ptm_codinh_202409 as
 								;
 												 
 												    
-				create index tailap_202409_ttid on tailap_202409 (thanhtoan_id);
-				create index tailap_202409_tbid on tailap_202409 (thuebao_id);
-				create index tailap_202409_hdtbid on tailap_202409 (hdtb_id)
+--				create index ttkd_bct.tailap_202409_ttid on ttkd_bct.tailap_202409 (thanhtoan_id);
+--				create index ttkd_bct.tailap_202409_tbid on ttkd_bct.tailap_202409 (thuebao_id);
+--				create index ttkd_bct.tailap_202409_hdtbid on ttkd_bct.tailap_202409 (hdtb_id)
 				;
 				
 			-----	
