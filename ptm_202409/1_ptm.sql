@@ -1520,7 +1520,7 @@ create table ptm_codinh_202409 as
 																, decode(sum(ps_truong), 1, sum(tyle_hotro), max(tyle_hotro)) tyle_hotro
 																, decode(sum(ps_truong), 1, sum(TYLE_NHOM), max(TYLE_NHOM)) TYLE_NHOM
 															from t
---															where ma_yeucau  in (213513)
+															where ma_yeucau  in (213513)
 															group by MANV_PRESALE_HRM, LOAITB_ID_OBSS, MA_YEUCAU, TYLE_AM, MA_DICHVU
 														
 										) b

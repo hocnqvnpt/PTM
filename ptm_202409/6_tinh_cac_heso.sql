@@ -42,7 +42,7 @@ create table ttkd_bsc.ct_bsc_ptm_202406_l2 as
 								where manv_ptm is null
 											and exists (select 1 from css_hcm.hd_khachhang where ctv_id is not null and hdkh_id = a.hdkh_id
 																		and exists (select 1 from ttkd_bsc.nhanvien where ctv_id = nhanvien_id))
-											and thang_ptm >= 202407
+											and thang_ptm >= 202408
 											and thang_tldg_dt is null			--- chua tinh luong
 							;
 							
@@ -54,15 +54,15 @@ create table ttkd_bsc.ct_bsc_ptm_202406_l2 as
 													(select ma_nv, ten_nv, ma_to, ten_to, ma_pb, ten_pb, ma_vtcv, loai_ld, nhomld_id
 																, thang, row_number() over (partition by ma_nv order by thang desc) rnk
 													  from ttkd_bsc.nhanvien 
-													  where thang >= 202405
+													  where thang >= 202406
 																	
 													  ) 
 											where ma_nv = a.manv_ptm and thang = a.thang_ptm
 											) 
 --			select * from ttkd_bsc.ct_bsc_ptm a
-							    where  a.thang_ptm >= 202405 --and thang_luong = 4 
+							    where  a.thang_ptm >= 202406 --and thang_luong = 4 
 											and tennv_ptm is null and ma_vtcv is null 
-											and nvl(thang_tldg_dt, 999999) >= 202408 and nvl(loaitb_id, 0) not in (21)
+											and nvl(thang_tldg_dt, 999999) >= 202409 and nvl(loaitb_id, 0) not in (21)
 											and exists (select 1	from ttkd_bsc.nhanvien
 																		where ma_nv = a.manv_ptm and thang = a.thang_ptm)
 						;

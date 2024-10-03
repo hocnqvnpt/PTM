@@ -1,15 +1,14 @@
+rename  ct_bsc_ptm_202408 to  ct_bsc_ptm_202408_lan1;
 
 create table ttkd_bsc.ct_bsc_ptm_202408 as
-	select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202308
+	select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202309
 	;
 update ttkd_bsc.ct_bsc_ptm set thang_luong = thang_ptm
-    where thang_luong<>thang_ptm and thang_ptm < 202408
+    where thang_luong<>thang_ptm and thang_ptm < 202409
     ;
-    commit;
-    rollback;
-    select tyle_hotro_nv from ttkd_bsc.ct_bsc_ptm where thang_luong = 4; and loaitb_id = 21; and ma_duan_banhang = '162709';
+    
 
--- ptm co dinh + gtgt trong thang: 
+-- ptm co dinh + gtgt trong thang N: 
     
 insert into ttkd_bsc.ct_bsc_ptm 
                     (thang_luong, thang_ptm,ma_gd,ma_gd_gt,ma_kh,ma_tb,dich_vu, tenkieu_ld,ten_tb,diachi_ld,so_gt,mst,mst_tt,
@@ -28,7 +27,7 @@ insert into ttkd_bsc.ct_bsc_ptm
                     sl_mailing, nguon, sdt_lh, email_lh, so_nha, ap_id, khu_id, pho_id, phuong_id, quan_id, tinh_id,
                     nhanvien_nhan_id, chuquan_id, heso_hotro_nvptm, heso_hotro_nvhotro, nhom_tiepthi, ungdung_id)
 			
-        select  202408 thang_ins, 202408 thang_ptm, ma_gd, ma_gd_gt,ma_kh,ma_tb,dich_vu, ten_kieuld,ten_tb,diachi_ld,so_gt,mst,mst_tt,
+        select  202409 thang_ins, 202409 thang_ptm, ma_gd, ma_gd_gt,ma_kh,ma_tb,dich_vu, ten_kieuld,ten_tb,diachi_ld,so_gt,mst,mst_tt,
                     tien_dnhm,tien_sodep,thang_bddc,thang_ktdc,sothang_dc, datcoc_csd,ma_duan,ma_duan_banhang, --chu_nhom,vnp_moi,
                     ngay_bbbg, thoihan_id, tg_thue_tu, tg_thue_den, '' songay_sd,
                     pbh_nhan_id,pbh_nhan_goc_id,kieuhd_id,kieutn_id,kieuld_id,loaihd_id,dichvuvt_id,loaitb_id,
@@ -42,17 +41,17 @@ insert into ttkd_bsc.ct_bsc_ptm
 				,ma_pb,ten_pb,ma_to,ten_to,ma_vtcv,loainv_id,ten_loainv,loai_ld,manv_hotro,tyle_hotro,tyle_am,
                     dthu_ps,dthu_goi_goc,dthu_goi,dthu_goi_ngoaimang,sl_mailing, 'ptm_codinh',
                     '' sdt_lh, '' email_lh,sonha, ap_id, khu_id, pho_id, phuong_id, quan_id, tinh_id, nhanvien_id, chuquan_id, tyle_am, tyle_hotro, nhom_tiepthi, ungdung_id
-        from ttkd_bct.ptm_codinh_202408 a
+        from ttkd_bct.ptm_codinh_202409 a
         where 
-			 not (doituong_id = 190 and datcoc_csd is null)
---			 doituong_id <> 190
-			 and kieuld_id not in (96,13089) -- tai lap
-                and loaihd_id != 2    -- ccq
-			 and dichvuvt_id <> 2 --- khong import dvu VNP tren Onebss
-                and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where thang_ptm > = 202403 and hdtb_id=a.hdtb_id)
+					 not (doituong_id = 190 and datcoc_csd is null)
+		--			 doituong_id <> 190
+					 and kieuld_id not in (96,13089) -- tai lap
+					 and loaihd_id != 2    -- ccq
+					 and dichvuvt_id <> 2 --- khong import dvu VNP tren Onebss
+					 and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where thang_ptm > = 202405 and hdtb_id=a.hdtb_id)
 			 ;
-select * from css_hcm.chuquan where chuquan_id in (145, 264, 266);
-
+commit
+    ;
 -- thue bao cdbr dung thu da chuyen sang dung that:  KIEMTRA SUBQURRY lai trong T6
 	select * from ttkd_bsc.ct_bsc_ptm  where thang_luong = 4
 	;
@@ -70,7 +69,7 @@ insert into ttkd_bsc.ct_bsc_ptm
 			    )
 	
       ---thang n-3
-	  select  49 thang_luong, 202408 thang_ptm, ma_gd,ma_kh,ma_tb,dich_vu,ten_kieuld,ten_tb,diachi_ld,so_gt,mst,mst_tt,
+	  select  49 thang_luong, 202409 thang_ptm, ma_gd,ma_kh,ma_tb,dich_vu,ten_kieuld,ten_tb,diachi_ld,so_gt,mst,mst_tt,
 									   tien_dnhm,tien_sodep,thang_bddc,thang_ktdc,sothang_dc, datcoc_csd,ma_duan,ma_duan_banhang, 
 									   (select ngay_sd from css_hcm.db_thuebao where thuebao_id=a.thuebao_id) ngay_bbbg,
 									   (select ngay_bg from ttkdhcm_ktnv.v_bangiao_hoso_new where ma_gd=a.ma_gd and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id) ngay_luuhs_ttkd,
@@ -85,7 +84,7 @@ insert into ttkd_bsc.ct_bsc_ptm
 									   , dthu_ps, dthu_goi_goc,dthu_goi,dthu_goi_ngoaimang,sl_mailing, 
 									   (select nop_du from ttkdhcm_ktnv.v_bangiao_hoso_new where ma_gd=a.ma_gd and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id) nop_du, 
 									   'ptm_codinh', '' sdt_lh, '' email_lh, ap_id, khu_id, pho_id, phuong_id, quan_id, tinh_id, nhanvien_id, chuquan_id, tyle_am heso_hotro_nvptm, tyle_hotro heso_hotro_nvhotro
-					    from ttkd_bct.ptm_codinh_202405 a
+					    from ttkd_bct.ptm_codinh_202406 a
 					    where doituong_id=190 and chuquan_id=145
 						   and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where hdtb_id=a.hdtb_id)
 						   and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where kieuld_id=13189 and thuebao_id=a.thuebao_id)
@@ -93,7 +92,7 @@ insert into ttkd_bsc.ct_bsc_ptm
 									  
 					    union all
 					    ----thang n-2
-					    select  49 thang_ins, 202408 thang_ptm, ma_gd,ma_kh,ma_tb,dich_vu,ten_kieuld,ten_tb,diachi_ld,so_gt,mst,mst_tt,
+					    select  49 thang_ins, 202409 thang_ptm, ma_gd,ma_kh,ma_tb,dich_vu,ten_kieuld,ten_tb,diachi_ld,so_gt,mst,mst_tt,
 									   tien_dnhm,tien_sodep,thang_bddc,thang_ktdc,sothang_dc, datcoc_csd,ma_duan,ma_duan_banhang, 
 									   (select ngay_sd from css_hcm.db_thuebao where thuebao_id=a.thuebao_id) ngay_bbbg,
 									   (select ngay_bg from ttkdhcm_ktnv.v_bangiao_hoso_new where ma_gd=a.ma_gd and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id) ngay_luuhs_ttkd
@@ -109,7 +108,7 @@ insert into ttkd_bsc.ct_bsc_ptm
 									   , dthu_ps,dthu_goi_goc,dthu_goi,dthu_goi_ngoaimang,sl_mailing, 
 									   (select nop_du from ttkdhcm_ktnv.v_bangiao_hoso_new where ma_gd=a.ma_gd and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id) nop_du, 
 									   'ptm_codinh', '' sdt_lh, '' email_lh, ap_id, khu_id, pho_id, phuong_id, quan_id, tinh_id, nhanvien_id, chuquan_id, tyle_am, tyle_hotro
-					    from ttkd_bct.ptm_codinh_202406 a
+					    from ttkd_bct.ptm_codinh_202407 a
 					    where doituong_id=190 and chuquan_id=145
 						   and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where hdtb_id=a.hdtb_id)
 						   and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where kieuld_id=13189 and thuebao_id=a.thuebao_id)
@@ -117,7 +116,7 @@ insert into ttkd_bsc.ct_bsc_ptm
 								   
 					    union 
 					    ---thang n-1
-					    select  49 thang_ins, 202408 thang_ptm, ma_gd,ma_kh,ma_tb,dich_vu, ten_kieuld,ten_tb,diachi_ld,so_gt,mst,mst_tt,
+					    select  49 thang_ins, 202409 thang_ptm, ma_gd,ma_kh,ma_tb,dich_vu, ten_kieuld,ten_tb,diachi_ld,so_gt,mst,mst_tt,
 								   tien_dnhm,tien_sodep,thang_bddc,thang_ktdc,sothang_dc, datcoc_csd,ma_duan,ma_duan_banhang, 
 								   (select ngay_sd from css_hcm.db_thuebao where thuebao_id=a.thuebao_id) ngay_bbbg,
 								   (select ngay_bg from ttkdhcm_ktnv.v_bangiao_hoso_new where ma_gd=a.ma_gd and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id) ngay_luuhs_ttkd
@@ -134,7 +133,7 @@ insert into ttkd_bsc.ct_bsc_ptm
 								   , dthu_ps,dthu_goi_goc,dthu_goi,dthu_goi_ngoaimang,sl_mailing, 
 								   (select nop_du from ttkdhcm_ktnv.v_bangiao_hoso_new where ma_gd=a.ma_gd and ma_tb=a.ma_tb and loaitb_id=a.loaitb_id) nop_du, 
 								   'ptm_codinh', '' sdt_lh, '' email_lh, ap_id, khu_id, pho_id, phuong_id, quan_id, tinh_id, nhanvien_id, chuquan_id, tyle_am, tyle_hotro
-					    from ttkd_bct.ptm_codinh_202407 a
+					    from ttkd_bct.ptm_codinh_202408 a
 					    where doituong_id=190 and chuquan_id=145
 						   and  not exists(select 1 from ttkd_bsc.ct_bsc_ptm where hdtb_id=a.hdtb_id)
 						   and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where kieuld_id=13189 and thuebao_id=a.thuebao_id)
@@ -163,7 +162,7 @@ insert into ttkd_bsc.ct_bsc_ptm
 											select max(hdtb_id) hdtb_id, thuebao_id, min(thang_bddc) thang_bddc, min(thang_ktdc) thang_ktdc
 																, min(huong_dc) huong_dc, sum(datcoc_csd) datcoc_csd, sum(tien_td) tien_td
                                                         from datcoc_goc 
-											 where datcoc_csd > 0 and thang_bddc >= 202405 --and thuebao_id = 12211057
+											 where datcoc_csd > 0 and thang_bddc >= 202406 --and thuebao_id = 12211057
                                                         group by  thuebao_id
 						) b
 	   ON (a.thuebao_id = b.thuebao_id)
@@ -175,16 +174,16 @@ insert into ttkd_bsc.ct_bsc_ptm
 								, a.thang_luong = 4 		----flag de tinh heso
 		WHERE thang_luong = 49 --and ma_gd = 'HCM-LD/01663089'
 		;
-                     
+             commit;        
 
 -- thay doi toc do trong thang: a Tuyen da import
-				select 'ct_bsc_ptm', count(*) from ttkd_bsc.ct_bsc_ptm where thang_ptm = 202408 and nguon='thaydoitocdo'
+				select 'ct_bsc_ptm', count(*) from ttkd_bsc.ct_bsc_ptm where thang_ptm = 202409 and nguon='thaydoitocdo'
 				union all
-				select 'thaydoitocdo', count(*) from ttkd_bct.thaydoitocdo_202408;
+				select 'thaydoitocdo', count(*) from ttkd_bct.thaydoitocdo_202409;
 				    
 				--delete from ct_bsc_ptm 
 				--    where thang_ptm='202404' and nguon='thaydoitocdo_202404';
-				commit;
+				
 						
 					---thang n
 				insert into ttkd_bsc.ct_bsc_ptm 
@@ -210,7 +209,7 @@ insert into ttkd_bsc.ct_bsc_ptm
 
 -- tai lap theo vb 458/TTr-NS-DH 06/11/2020 tu ky 11/2020:
 			select count(*) from ttkd_bsc.ct_bsc_ptm  
-					where thang_ptm = '202408' and nguon='tailap'
+					where thang_ptm = '202409' and nguon='tailap'
 					;
 		---thang n
 			insert into ttkd_bsc.ct_bsc_ptm 
@@ -226,7 +225,7 @@ insert into ttkd_bsc.ct_bsc_ptm
 							,dthu_ps, dthu_goi_goc,dthu_goi, tinh_id , nguon, nhanvien_nhan_id,chuquan_id, tocdo_id)
 			
 				   select  
-							202408 thang_ins, 202408 thang_ptm, ma_gd,ma_kh,ma_tb,dich_vu,ten_kieuld tenkieu_ld,ten_tb,diachi_ld
+							202409 thang_ins, 202409 thang_ptm, ma_gd,ma_kh,ma_tb,dich_vu,ten_kieuld tenkieu_ld,ten_tb,diachi_ld
 							, so_gt,mst,mst_tt,tien_dnhm,tien_sodep,thang_bddc,thang_ktdc,sothang_dc, ma_duan,ma_duan_banhang
 							, ngay_bbbg, thoihan_id, tg_thue_tu, tg_thue_den
 							, pbh_nhan_id, pbh_nhan_goc_id,kieuhd_id,kieutn_id,kieuld_id,loaihd_id,dichvuvt_id,loaitb_id
@@ -239,10 +238,10 @@ insert into ttkd_bsc.ct_bsc_ptm
 							,dthu_ps,dthu_goi_goc,dthu_goi, tinh_id , 'tailap', a.nhanvien_id
 							,chuquan_id, tocdo_id
 				   
-				   from ttkd_bct.tailap_202408 a
+				   from ttkd_bct.tailap_202409 a
 								--	left join ttkd_bsc.nhanvien nv on nv.ma_nv = a.manv_ptm and thang = 202405
 				   where a.duoctinh_ptm = 1 and a.manv_ptm is not null
-							and not exists (select 1 from ttkd_bsc.ct_bsc_ptm where thang_ptm = 202408 and loaihd_id=7 and hdtb_id=a.hdtb_id)
+							and not exists (select 1 from ttkd_bsc.ct_bsc_ptm where thang_ptm = 202409 and loaihd_id=7 and hdtb_id=a.hdtb_id)
 				;
 
 
@@ -252,7 +251,7 @@ commit;
 -- Digishop (MyTV Mobile) ----anh Tuyen import
 delete from ttkd_bsc.ct_bsc_ptm 
 --	 select * from ttkd_bsc.ct_bsc_ptm
-	where thang_ptm=202408 and dich_vu='MyTV MOBILE'
+	where thang_ptm=202409 and dich_vu='MyTV MOBILE'
 ;      
 ---select * from digishop;
 			insert into ttkd_bsc.ct_bsc_ptm a
@@ -283,7 +282,7 @@ delete from ttkd_bsc.ct_bsc_ptm
 						 from ttkd_bsc.nhanvien b 
 						 where b.thang = a.thang_ptm and b.manv_hrm = a.ma_tiepthi) 
 --		select manv_ptm,tennv_ptm, ma_to,ten_to,ma_pb,ten_pb,ma_vtcv, loainv_id, ten_loainv, loai_ld, nhom_tiepthi from ttkd_bsc.ct_bsc_ptm a 
-			    where thang_ptm=202408 and loaitb_id = 271
+			    where thang_ptm=202409 and loaitb_id = 271
 								
 			;
 commit;
@@ -307,7 +306,7 @@ commit;
 																	where sdt_datmua is not null and ma_gioithieu is not null and lower(trangthai_shop) like 'th_nh c_ng'
 																				and thang >= 202407
 																	)
-									and nvl(thang_tldg_dt, 999999) >= 202408
+									and nvl(thang_tldg_dt, 999999) >= 202409
 --									and ma_tb = '84911180458'
 					;
 					rollback;
@@ -330,7 +329,7 @@ commit;
 																						where ma_gioithieu is not null and ma_dhsx is not null and lower(trangthai_shop) like 'th_nh c_ng'
 																										and thang >= 202407
 																					)
-														and nvl(thang_tldg_dt, 999999) >= 202408
+														and nvl(thang_tldg_dt, 999999) >= 202409
 --														and ma_gd_gt in ('HCM-GT/00157123',
 --'HCM-GT/00158527',
 --'HCM-GT/00158908',
