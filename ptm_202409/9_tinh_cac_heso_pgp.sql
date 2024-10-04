@@ -33,7 +33,7 @@ select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_duan = '251801';
 delete from ttkd_bsc.ct_bsc_ptm_pgp where ma_gd = 'HCM-LD/01939638';
         
 insert into ttkd_bsc.ct_bsc_ptm_pgp a
-							  (ptm_id, thang_ptm, nguon, ma_duan, ma_gd, ma_tb, dich_vu, dichvuvt_id, loaitb_id, tenkieu_ld, kieuld_id, khachhang_id, thanhtoan_id, thuebao_id
+							  (ptm_id, thang_ptm, nguon, ma_gd, ma_kh, ma_tb, dich_vu, dichvuvt_id, loaitb_id, tenkieu_ld, kieuld_id, khachhang_id, thanhtoan_id, thuebao_id
 							   ,hdkh_id, hdtb_id, loaihd_id, ten_tb,diachi_ld, so_gt, mst, mst_tt, ma_duan_banhang, ngay_bbbg
 							   ,trangthaitb_id, trangthaitb_id_n1, trangthaitb_id_n2, trangthaitb_id_n3, nocuoc_ptm, nocuoc_n1, nocuoc_n2, nocuoc_n3
 							   ,ma_tiepthi, ma_nguoigt, nguoi_gt,manv_ptm, tennv_ptm, ma_to, manv_hotro, tyle_hotro, tyle_hotro_nv
@@ -63,7 +63,7 @@ with
 						)
 --		select*
 --		from ta where ma_yeucau in ('307206')
-select id, thang_ptm, nguon, ma_duan_banhang ma_duan, ma_gd, ma_tb, dich_vu, dichvuvt_id, loaitb_id, tenkieu_ld, kieuld_id 
+select id, thang_ptm, nguon, ma_gd, ma_kh, ma_tb, dich_vu, dichvuvt_id, loaitb_id, tenkieu_ld, kieuld_id 
 				   ,khachhang_id, thanhtoan_id, thuebao_id, hdkh_id, hdtb_id, loaihd_id, ten_tb,diachi_ld, so_gt, mst, mst_tt, ma_duan_banhang, ngay_bbbg
 				   ,trangthaitb_id, trangthaitb_id_n1, trangthaitb_id_n2, trangthaitb_id_n3, nocuoc_ptm, nocuoc_n1, nocuoc_n2, nocuoc_n3
 				   ,ma_tiepthi, ma_nguoigt, nguoi_gt,manv_ptm, tennv_ptm, ma_to
@@ -115,7 +115,7 @@ rollback;
 			;
 		----insert thuebao tinh bsung
 		insert into ttkd_bsc.ct_bsc_ptm_pgp a
-							  (ptm_id, thang_ptm, nguon, ma_duan, ma_gd, ma_tb, dich_vu, dichvuvt_id, loaitb_id, tenkieu_ld, kieuld_id, khachhang_id, thanhtoan_id, thuebao_id
+							  (ptm_id, thang_ptm, nguon, ma_gd, ma_kh, ma_tb, dich_vu, dichvuvt_id, loaitb_id, tenkieu_ld, kieuld_id, khachhang_id, thanhtoan_id, thuebao_id
 							   ,hdkh_id, hdtb_id, loaihd_id, ten_tb,diachi_ld, so_gt, mst, mst_tt, ma_duan_banhang, ngay_bbbg
 							   ,trangthaitb_id, trangthaitb_id_n1, trangthaitb_id_n2, trangthaitb_id_n3, nocuoc_ptm, nocuoc_n1, nocuoc_n2, nocuoc_n3
 							   ,ma_tiepthi, ma_nguoigt, nguoi_gt,manv_ptm, tennv_ptm, ma_to, manv_hotro, tyle_hotro, tyle_hotro_nv
@@ -147,7 +147,7 @@ rollback;
 --											select * from ta where ma_yeucau in ('236617', '183656', '207081')
 											
 					select --a.loaitb_id
-									id, thang_ptm, nguon, ma_duan_banhang ma_duan, ma_gd, ma_tb, dich_vu, dichvuvt_id, a.loaitb_id, tenkieu_ld, kieuld_id 
+									id, thang_ptm, nguon, ma_gd, ma_kh, ma_tb, dich_vu, dichvuvt_id, a.loaitb_id, tenkieu_ld, kieuld_id 
 									   ,khachhang_id, thanhtoan_id, thuebao_id, hdkh_id, hdtb_id, loaihd_id, ten_tb,diachi_ld, so_gt, mst, mst_tt, ma_duan_banhang, ngay_bbbg
 									   ,trangthaitb_id, trangthaitb_id_n1, trangthaitb_id_n2, trangthaitb_id_n3, nocuoc_ptm, nocuoc_n1, nocuoc_n2, nocuoc_n3
 									   ,ma_tiepthi, ma_nguoigt, nguoi_gt,manv_ptm, tennv_ptm, ma_to
@@ -168,8 +168,6 @@ rollback;
 										  and exists(select 1 from ttkd_bsc.nhanvien where thang = 202408 and (ma_pb='VNP0702600' ) and ma_nv=a.manv_hotro)
 										  and not exists (select ptm_id from ttkd_bsc.ct_bsc_ptm_pgp where ptm_id is not null and ptm_id = a.id)
 --										  and ma_duan_banhang in ('236617')
-						
-					
 			;		  
 		---end code moi
 		;

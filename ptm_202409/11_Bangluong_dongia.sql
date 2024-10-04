@@ -1,6 +1,6 @@
 create table ttkd_bsc.tonghop_dtdongia_ptm_202404_l1 as select * from ttkd_bsc.tonghop_dtdongia_ptm_202404;
 create table ttkd_bsc.bangluong_dongia_202404_l5 as select * from ttkd_bsc.bangluong_dongia_202404; 
-create table ttkd_bsc.bangluong_dongia_202408_dot3 as select * from ttkd_bsc.bangluong_dongia_202408; 
+create table ttkd_bsc.bangluong_dongia_202409_dot1 as select * from ttkd_bsc.bangluong_dongia_202409; 
 rename bangluong_dongia_202405 to bangluong_dongia_202405_new;
 rename bangluong_dongia_202406_l4 to bangluong_dongia_202406;
 select * from ttkd_bsc.bangluong_dongia_202404_l4_bs_202405_2nv;
@@ -806,33 +806,37 @@ delete from ttkd_bsc.bangluong_dongia_202409  where ghichu = 'khongtontai';
 
 
 ---Anh Nghia tren 100tr/thang
-select manv_ptm, sum(dg_goi) tong_dongia
+select manv_ptm, 'AM' vitri, sum(dg_goi) tong_dongia
 from (
 		select manv_ptm, luong_dongia_nvptm dg_goi from ttkd_bsc.ct_bsc_ptm where thang_ptm = 202409 and  manv_ptm is not null
 		union all
-		select manv_ptm, luong_dongia_dnhm_nvptm dg_dnhm from ttkd_bsc.ct_bsc_ptm where thang_ptm = 202409 and manv_ptm is not null
+		select manv_ptm, luong_dongia_dnhm_nvptm dg_dnhm from ttkd_bsc.ct_bsc_ptm where thang_ptm = 202409 and manv_ptm is not null	
 )
 group by manv_ptm
-having sum(dg_goi)>50000000
+having sum(dg_goi) > 50000000
+union all
+		select manv_hotro, 'PS' vitri, sum(luong_dongia_nvhotro) tong_dongia from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202406 and MANV_HOTRO is not null
+		group by manv_hotro
+		having sum(luong_dongia_nvhotro) > 14000000
 ;
 -- chi tiet gui anh Nghia:
 			select id, thang_ptm,ma_gd, tenkieu_ld,ma_tb,dich_vu,loaitb_id, ten_tb,diachi_ld--,sdt_lh, email_lh
-				,sothang_dc,ma_da,
-				   to_char(ngay_bbbg,'dd/mm/yyyy') ngay_bbbg, to_char(ngay_luuhs_ttkd,'dd/mm/yyyy') ngay_luuhs_ttkd, to_char(ngay_luuhs_ttvt,'dd/mm/yyyy') ngay_luuhs_ttvt,
-				   to_char(ngay_scan,'dd/mm/yyyy') ngay_scan, goi_cuoc
-				  ,ma_nguoigt,nguoi_gt,manv_tt_dai,ma_to_dai,manv_hotro,tyle_hotro
-				  , manv_ptm ma_nv,ten_pb,ma_to,ten_to,ma_pb, ghi_chu,lydo_khongtinh_luong
-				   ,tien_dnhm,tien_sodep,ngay_tt,tien_tt, trangthai_tt_id
-				   dthu_ps_truoc,dthu_ps,dthu_ps_n1,dthu_goi_goc,dthu_goi,dthu_goi_ngoaimang,chiphi_ttkd,
-				   doituong_kh,khhh_khm,diaban,phanloai_kh,heso_khachhang,heso_dichvu,heso_dichvu_1,heso_tratruoc,heso_khuyenkhich,
-				   heso_tbnganhan,heso_kvdacthu,heso_vtcv_nvptm,
-				   heso_vtcv_dai,heso_vtcv_nvhotro,heso_hotro_nvptm,heso_hotro_dai,heso_hotro_nvhotro,
-				   heso_quydinh_nvptm,heso_quydinh_dai,heso_quydinh_nvhotro,heso_diaban_tinhkhac,tyle_huongdt, heso_hoso, heso_daily
-				   doanhthu_dongia_nvptm,doanhthu_dongia_dai,doanhthu_dongia_nvhotro,
-				   heso_dichvu_dnhm,doanhthu_dongia_dnhm,doanhthu_kpi_nvptm,
-				   thang_tldg_dnhm,thang_tldg_dt,thang_tlkpi,thang_tlkpi_to,lydo_khongtinh_dongia,
-				   luong_dongia_dnhm_nvptm,luong_dongia_nvptm,luong_dongia_dai,luong_dongia_nvhotro, thang_tldg_dt_nvhotro,
-				   doanhthu_kpi_dnhm, thang_tlkpi_dnhm
+					, sothang_dc, ma_da
+					, to_char(ngay_bbbg,'dd/mm/yyyy') ngay_bbbg, to_char(ngay_luuhs_ttkd,'dd/mm/yyyy') ngay_luuhs_ttkd, to_char(ngay_luuhs_ttvt,'dd/mm/yyyy') ngay_luuhs_ttvt
+					, to_char(ngay_scan,'dd/mm/yyyy') ngay_scan, goi_cuoc
+					, ma_nguoigt,nguoi_gt,manv_tt_dai,ma_to_dai,manv_hotro,tyle_hotro
+					, manv_ptm ma_nv,ten_pb,ma_to,ten_to,ma_pb, ghi_chu,lydo_khongtinh_luong
+					, tien_dnhm,tien_sodep,ngay_tt,tien_tt, trangthai_tt_id
+					, dthu_ps_truoc,dthu_ps,dthu_ps_n1,dthu_goi_goc,dthu_goi,dthu_goi_ngoaimang,chiphi_ttkd
+					, doituong_kh, khhh_khm, diaban, phanloai_kh, heso_khachhang, heso_dichvu, heso_dichvu_1, heso_tratruoc,heso_khuyenkhich
+				    , heso_tbnganhan,heso_kvdacthu,heso_vtcv_nvptm
+				   , heso_vtcv_dai,heso_vtcv_nvhotro,heso_hotro_nvptm,heso_hotro_dai,heso_hotro_nvhotro
+				   , heso_quydinh_nvptm, heso_quydinh_dai, heso_quydinh_nvhotro,heso_diaban_tinhkhac,tyle_huongdt, heso_hoso, heso_daily
+				   , doanhthu_dongia_nvptm, doanhthu_dongia_dai, doanhthu_dongia_nvhotro
+				   , heso_dichvu_dnhm,doanhthu_dongia_dnhm,doanhthu_kpi_nvptm
+				   , thang_tldg_dnhm, thang_tldg_dt, thang_tlkpi, thang_tlkpi_to, lydo_khongtinh_dongia
+				   , luong_dongia_dnhm_nvptm,luong_dongia_nvptm,luong_dongia_dai,luong_dongia_nvhotro, thang_tldg_dt_nvhotro
+				   , doanhthu_kpi_dnhm, thang_tlkpi_dnhm
  from ttkd_bsc.ct_bsc_ptm 
 where( (thang_ptm>=202406 and (thang_tldg_dt=202409 or thang_tldg_dt is null)) or (thang_ptm<202406 and thang_tldg_dt=202409)
 			    )
@@ -844,8 +848,24 @@ where( (thang_ptm>=202406 and (thang_tldg_dt=202409 or thang_tldg_dt is null)) o
 'VNP031192',
 'VNP030418',
 'VNP029923')
-order by thang_tldg_dt 
-			    ; 
+			    ;
+			    ---Phong PGP
+			select PTM_ID, THANG_PTM, NGUON, MA_DUAN_BANHANG, MA_GD, MA_TB, MA_KH, DICH_VU, DICHVUVT_ID, LOAITB_ID, TENKIEU_LD, KIEULD_ID, THUEBAO_ID, HDTB_ID, LOAIHD_ID
+						, TEN_TB, DIACHI_LD, SO_GT, MST, MST_TT, NGAY_BBBG, TRANGTHAITB_ID, TRANGTHAITB_ID_N1, TRANGTHAITB_ID_N2, TRANGTHAITB_ID_N3
+						, NOCUOC_PTM, NOCUOC_N1, NOCUOC_N2, NOCUOC_N3, MA_TIEPTHI, MA_NGUOIGT, NGUOI_GT
+						, MANV_PTM, TENNV_PTM, MANV_HOTRO, nv.ten_nv tennv_hotro, nv.ten_pb tenpb_hotro, TYLE_HOTRO, TYLE_HOTRO_NV
+						, GHI_CHU, LYDO_KHONGTINH_LUONG, DOITUONG_KH, KHHH_KHM, DIABAN, PHANLOAI_KH, DTHU_GOI_NGOAIMANG, DTHU_PS, DTHU_GOI
+						, HESO_KHACHHANG, HESO_DICHVU, HESO_DICHVU_1, HESO_TRATRUOC, HESO_KHUYENKHICH, HESO_TBNGANHAN, HESO_KVDACTHU, HESO_VTCV_NVPTM
+						, TYLE_HUONGDT, HESO_VTCV_NVHOTRO, HESO_HOTRO_NVPTM, HESO_HOTRO_NVHOTRO, HESO_QUYDINH_NVHOTRO, HESO_DIABAN_TINHKHAC, HESO_DAILY
+						, DONGIA, DOANHTHU_KPI_NVPTM, DOANHTHU_KPI_NVHOTRO, DOANHTHU_DONGIA_NVHOTRO, LUONG_DONGIA_NVHOTRO, THANG_TLDG_DT_NVHOTRO, THANG_TLKPI_HOTRO
+						, LYDO_KHONGTINH_DONGIA
+			from ttkd_bsc.ct_bsc_ptm_pgp a
+							left join ttkd_bsc.nhanvien nv on nv.ma_nv = a.MANV_HOTRO and a.thang_ptm = nv.thang
+			where thang_ptm = 202406
+								and MANV_HOTRO in ('VNP028491',
+'VNP017927',
+'VNP001686')
+				;
 
 			
 			select * from ttkd_bsc.ct_bsc_ptm_pgp 
