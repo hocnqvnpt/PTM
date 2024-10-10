@@ -3,8 +3,8 @@
 rollback;
 commit;
 select *  from ttkd_bsc.dm_daily_khdn 
---    update ttkd_bsc.dm_daily_khdn  set TEN_DAILY = 'CHI NHÁNH H? CHÍ MINH - CÔNG TY C? PH?N GI?I PHÁP CÔNG NGH? S? CALLSTACK'--MANV_QLDAILY = 'VNP029157'
-where thang=202409 and ma_daily in ('dl_cnt');,'GTGT00054','GTGT00050','GTGT00116','GTGT00136','GTGT00144')
+--    update ttkd_bsc.dm_daily_khdn  set TEN_DAILY = 'CHI NHï¿½NH H? CHï¿½ MINH - Cï¿½NG TY C? PH?N GI?I PHï¿½P Cï¿½NG NGH? S? CALLSTACK'--MANV_QLDAILY = 'VNP029157'
+where thang=202409 and ma_daily in ('GTGT00207');,'GTGT00054','GTGT00050','GTGT00116','GTGT00136','GTGT00144')
 ;
    and ma_nguoigt in ('GTGT00012','GTGT00054','GTGT00050','GTGT00116','GTGT00136','GTGT00144');
 alter table ttkd_bsc.dm_daily_khdn add MANV_QLDAILY       VARCHAR2(20)  ;
@@ -28,7 +28,7 @@ desc ttkd_bsc.dm_daily_khdn;
 		---update maTo, PB, VTCV
 		update ttkd_bsc.dm_daily_khdn a
 			set (ma_to, ma_pb, ma_vtcv, ten_vtcv)= (select ma_to, ma_pb, ma_vtcv, ten_vtcv from ttkd_bsc.nhanvien where ma_nv = a.MANV_QLDAILY and thang = a.thang)
-			where a.thang=202408;
+			where a.thang=202409;
 	commit;
 	;
 delete from ttkd_bsc.dm_daily_khdn where thang=202404  --thang n
@@ -59,7 +59,7 @@ delete from ttkd_bsc.dm_daily_khdn where thang=202404  --thang n
 									 ,(case when substr(ma_tiepthi,1,3) in ('VNP','CTV') then ma_tiepthi
 											  when substr(ma_nguoigt,1,3) in ('VNP','CTV') then ma_nguoigt end) ma_nv                            
 						  from ttkd_bsc.ct_bsc_ptm a
-						  where thang_ptm =202405		--thang n
+						  where thang_ptm =202409		--thang n
 										 and (((ma_tiepthi like 'GT%' or ma_tiepthi like 'DL%') and ma_tiepthi not in (select ma_daily from ttkd_bsc.dm_daily_khdn))
 												 or ((ma_nguoigt like 'GT%' or ma_nguoigt like 'DL%') and ma_nguoigt not in (select ma_daily from ttkd_bsc.dm_daily_khdn))
 												 or ((nguoi_gt like 'GT%' or nguoi_gt like 'DL%') and nguoi_gt not in (select ma_daily from ttkd_bsc.dm_daily_khdn)))
@@ -101,7 +101,7 @@ delete from ttkd_bsc.dm_daily_khdn where thang=202404  --thang n
 													 ,a.ma_tiepthi ma_nv
 													 ,case when loaitb_id not in (20,149) then a.ma_nguoigt else a.nguoi_gt end ma_daily  
 						  from ttkd_bsc.ct_bsc_ptm a
-						  where a.thang_ptm = 202405 ---THANG N
+						  where a.thang_ptm = 202409 ---THANG N
 							 and (ma_tiepthi in (select ma_daily from ttkd_bsc.dm_daily_khdn where thang = a.thang_ptm )
 								    or ma_nguoigt in (select ma_daily from ttkd_bsc.dm_daily_khdn where thang = a.thang_ptm) 
 								    or nguoi_gt in (select ma_daily from ttkd_bsc.dm_daily_khdn where thang = a.thang_ptm) 
