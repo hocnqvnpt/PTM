@@ -1,3 +1,6 @@
+Diều kiện ngoài chuong trình:
+-- tính BSC: Hệ sinh thái giáo dục (Edu), CA, HDDT, thu 1 lần, các th khác thì không tính
+-- gia hạn Internet trực tiếp khong xét QLDA
 ---Import fiel trong chuong trinh, ngoai chuong trinh                  
 
              
@@ -77,13 +80,13 @@
 				where thang = 202407 --and dichvuvt_id in (14, 15, 16)
 --							ma_tb = 'hcm_vbn_00001181'
 --							and DICHVU_VT = 'ID Check'
---							and thuebao_id = 12574448 --chu upda, dang kiem tra vi sao tien hok c� trong ctr
+--							and thuebao_id = 12574448 --chu upda, dang kiem tra vi sao tien hok c� trong ctr
 --							and thuebao_id in (12208645) 
 							and ma_gd = '00898213'
 --							and ma_tb = 'hcm_smart_cloud_00009523'
 --							and ma_duan_banhang = '237001'
 --							and doituong_kh is null
---							and manv_hotro = 'VNP017373; D?ch v? ch?a c� tr�n oneBSS'--is not null
+--							and manv_hotro = 'VNP017373; D?ch v? ch?a c� tr�n oneBSS'--is not null
 				;		
 			304788
 308026
