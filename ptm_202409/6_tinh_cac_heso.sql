@@ -1,7 +1,9 @@
 --thang_luong in (86, 87, 70) --> file chuong trinh ngoai A Nghia --> thang_ptm = 202406 --> se chay
+								
 --thang_luong = 5 --> ktra dthu ps thay doi toc do file 2
 --thang_luong = 4 --> dung thu chuyen dung that file 5, file 6 update thong tin duan de tinh heso & thay doi cac heso, file 5 update DIGISHOP, file 6 update MANV_PTM, VTCV
---thang_luong = 3 --> he so goc nop tre file 6d
+
+--thang_luong = 3 --> he so goc nop tre file 6d, file 6d tinh phan chia dthu, tinh lai dthu
 --thang_luong = 2 --> bo sung tra truoc file 6
 --thang_luong = 1 --> cap nhat tbao ngan han file 6
 
@@ -96,8 +98,8 @@ create table ttkd_bsc.ct_bsc_ptm_202406_l2 as
 			create table hocnq_ttkd.temp_tt as
 --			insert into hocnq_ttkd.temp_tt
 					select * from ttkd_hcm.temp_tt@dataguard a 
---								where trunc(ngay_tt) = '10/09/2024' 
---											and not exists (select 1 from hocnq_ttkd.temp_tt where hdtb_id =  a.hdtb_id)
+								where trunc(ngay_tt) = '10/10/2024' 
+											and not exists (select 1 from hocnq_ttkd.temp_tt where hdtb_id =  a.hdtb_id)
 											;
 								where ma_gd in (
 '00906613', 'HCM-LD/01826296', 'HCM-LD/01922724', 'HCM-LD/01924795', 'HCM-LD/01946848', 'HCM-LD/01938255', 'HCM-LD/01947517', 'HCM-LD/01948772')
@@ -443,8 +445,12 @@ rollback;
 								and nvl(thang_tldg_dt, 999999) >= 202409
 								and nvl(thang_tldg_dt_nvhotro, 999999) >= 202409			--- chua tinh luong
 								and thang_luong not in (70, 71, 86, 87)			---loai tru cac ma_duan ct_ptm_ngoaictr_imp_insert
---								and MA_DUAN_BANHANG is null
+--								and ma_gd = '00967744'
 --								and ma_tb = 'ravi217'
+;
+
+
+
 				;
 				MERGE into ttkd_bsc.ct_bsc_ptm a
 							using (with 
@@ -486,21 +492,21 @@ rollback;
 																	  and d.loaitb_id_obss = a.loaitb_id 
 															)
 											
---									and ma_duan_banhang in ('251801')
+									and ma_duan_banhang in ('276527')
 --										and thang_luong = 86
 								;
 			-----END bo sung thong tin QLDA
-
+commit;
 -- QLDA: xoa , chay lai
 delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202409; and ma_duan_banhang = '152853';ma_duan_banhang = '202655'; and ma_tb = 'hcm_ca_00103739';and ma_tb = 'hcm_colo_00009265';
 		;
-		select * from ttkd_bsc.ct_bsc_ptm_kiemtraduan a where thang = 202409; and ma_duan_banhang = '319602';227188; and ma_duan_banhang = '227812'; and ma_tb = 'hcm_ca_00103739'; and ma_gd = 'HCM-TD/00690780';hcm_hddt_inbot_00001044
+		select * from ttkd_bsc.ct_bsc_ptm_kiemtraduan a where thang = 202409 and ma_duan_banhang = '276527';227188; and ma_duan_banhang = '227812'; and ma_tb = 'hcm_ca_00103739'; and ma_gd = 'HCM-TD/00690780';hcm_hddt_inbot_00001044
 
 			insert into ttkd_bsc.ct_bsc_ptm_kiemtraduan
 								(thang, ptm_id, thang_ptm, ma_gd, ma_tb, dich_vu, ma_duan_banhang, mst, mst_tt
 								, dichvuvt_id, loaitb_id, duan_id, duan_daduyet, duan_mst, kt_loaitb_id, kt_mst, kt_nghiemthu
 								)
-						
+					
 			    select to_char(trunc(sysdate, 'month') - 1, 'yyyymm') thang, a.id, a.thang_ptm, a.ma_gd, a.ma_tb, a.dich_vu, a.ma_duan_banhang, a.mst, a.mst_tt, a.dichvuvt_id, a.loaitb_id, b.ma_yeucau, b.daduyet, b.masothue
 						 , (case when exists (select c.ma_yeucau, LOAITB_ID_OBSS from ttkdhcm_ktnv.amas_yeucau_dichvu c, ttkdhcm_ktnv.amas_loaihinh_tb d
 																  where c.ma_dichvu=d.loaitb_id 
@@ -638,8 +644,8 @@ delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202409; and ma_duan_banh
 --						and   exists (select 1 from ttkd_bct.db_thuebao_ttkd
 --															   where ma_dt_kh='dn' and cvnv is null and tb_dacbiet is null                                                                         
 --																  and trangthaitb_id not in (7,8,9) and to_number(to_char(ngay_sd,'yyyymm')) < a.thang_ptm		--thang n
---																  and lower(so_gt) = '0'||lower(a.so_gt)
-----																and	 lower(so_gt) = lower(a.so_gt)
+----																  and lower(so_gt) = '0'||lower(a.so_gt)
+--																and	 lower(so_gt) = lower(a.so_gt)
 --												  )
 			---hoac 2
 						and  exists (select 1 from ttkd_bct.db_thuebao_ttkd
@@ -677,6 +683,7 @@ delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202409; and ma_duan_banh
                     
 -- Dia ban:        vi tri ban hang truc tiep moi xet trong/ngoai dia ban
 			---VTTP, PotMasCo, BHOL khong xet trong/ngoai chuong trinh
+			--- GIA HAN INTERNET truc tiep khong xet khong xet trong/ngoai chuong trinh
 			update ttkd_bsc.ct_bsc_ptm a 
 						set diaban =null
 	---	select diaban from ttkd_bsc.ct_bsc_ptm a
@@ -689,6 +696,7 @@ delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202409; and ma_duan_banh
 											when nhom_tiepthi in (2, 11) or manv_ptm like 'POT%' then 'Khong xet trong/ngoai CT ban hang'			---TTVT, Potmasco
 											when ma_pb = 'VNP0703000' then 'Khong xet trong/ngoai CT ban hang'
 											when loaitb_id in (21, 20, 149) then 'Khong xet trong/ngoai CT ban hang'				----VNPTS, VCC tren CCBS khong co nhap dc QLDA
+											when loaitb_id in (134) and nguon = 'ct_ptm_ngoaictr_imp_insert' then 'Khong xet trong/ngoai CT ban hang'				----Gia han INT khong xet QLDA, chua co Quy dinh
 											  when ma_vtcv not in ('VNP-HNHCM_BHKV_6','VNP-HNHCM_BHKV_6.1',
 																		    'VNP-HNHCM_BHKV_17','VNP-HNHCM_BHKV_42','VNP-HNHCM_KHDN_3','VNP-HNHCM_KHDN_3.1',
 																		    'VNP-HNHCM_KHDN_4','VNP-HNHCM_BHKV_41',
@@ -751,7 +759,7 @@ rollback;
 													  then 1.1
 										  
 --                                              when loaitb_id = 271 and nvl(sothang_dc, 0) < 1 then 0                         -- MyTV OTT: <6t : 0.2 ; tu 6t-> duoi 12t: 0.3 ; tu 12t tro len: 0.4
-									when loaitb_id = 35 and ma_tb = 'hcm_ioff_00000115' then 0.3 			--vb 1407- DN3, eo	660772 ??n hêt thang 6/2025
+									when loaitb_id = 35 and ma_tb = 'hcm_ioff_00000115' then 0.3 			--vb 1407- DN3, eo	660772 ??n hï¿½t thang 6/2025
                                             when loaitb_id=200 then    -- Ecabinet
 													   case when sothang_dc<3 or sothang_dc is null then 0.1
 															  when sothang_dc>=3 and sothang_dc<6 then 0.2
@@ -775,9 +783,9 @@ rollback;
                                                 when loaitb_id in (11,58,61,210) and kieuld_id=96 then 0.3      -- tai lap
                                                 when loaitb_id=153 and loaihd_id=41 then 
 														case when sothang_dc>=6 then 0.3 else 0 end                     -- Gia han VNPT SmartCloud theo VB 167/TTr-NS-DH 23/05/2022: chi ghi nhan khi gia han goi 6 thang tro len
-                                                when loaitb_id=296 then                                                                -- VNPT Home-Clinic: theo thang : 1, theo gói 6t,12t: 0.3 , VB 328/TTKD HCM-DH 31/12/2021
+                                                when loaitb_id=296 then                                                                -- VNPT Home-Clinic: theo thang : 1, theo gï¿½i 6t,12t: 0.3 , VB 328/TTKD HCM-DH 31/12/2021
 															case when sothang_dc>=6 then 0.3 else 1 end
-                                                when loaitb_id in (317, 287, 285, 279, 136) then                                         -- VNPT AntiDDoS: theo thang =1, theo thuê dich vu 72 gio = 0.3, eoffice 718660 
+                                                when loaitb_id in (317, 287, 285, 279, 136) then                                         -- VNPT AntiDDoS: theo thang =1, theo thuï¿½ dich vu 72 gio = 0.3, eoffice 718660 
                                                                                                                                                                     -- VNPT IOC (Trung tam Dieu hanh thong minh), VNPT eDIG (Phan mem He thong quan ly Ho so)
 																																    -- VNPT HIS
 														  case when nvl(datcoc_csd, 0) > 0 
@@ -883,7 +891,7 @@ commit;
 rollback;
    
 -- He so dai ly :  VB 353/TTr-DH-NS - 12/2023:    AM ban hang thong qua Dai ly tinh 5%; nguoc lai AM QLDL ban hang thong qua DAI LY 0%
-			---88/TTr-?H-NS-KTKH ngày ngày 12/9/2022 
+			---88/TTr-?H-NS-KTKH ngï¿½y ngï¿½y 12/9/2022 
 			--- Neu trong thang xuat hien Ma Dai ly moi so voi tap chot Dai ly thang truoc
 					--- neu Dai ly nay do AM thuong (khac AM QLDL)  ho tro --> 5% * Dthu goi * heso_hotro_nvptm, va PreSale = 5% * Dthu goi * heso_hotro_nvhotro
 					--- Neu AM QLDL hotro -> 0% DThu goi, va PreSale = 0% dthu goi
@@ -1138,9 +1146,9 @@ rollback;
 																		when manv_ptm='VNP017772' and loaitb_id=288 
 																				 and (hdtb_id, thuebao_id) in (select hdtb_id, thuebao_id from ttkd_bsc.ptm_xuly_50_BHOL where thang = a.thang_ptm)
 																							then 0.5   -- SmartCA tinh cho Huong BHOL 50%
-																		when thang_luong = 71 then 0.8		--ap dung chi duy nhat 1 thang 202408 theo vanban_id, sau thang 7 bo 
+																		when thang_luong = 71 and vanban_id = 764  then 0.8		--ap dung chi duy nhat 1 thang 202408 theo vanban_id, sau thang 7 bo 
 																		else 0 end
-						,heso_hotro_dai         = 0--case when thang_luong = 71 and vanban_id is not null then 0.2 else 0 end		--ap dung chi duy nhat 1 thang 202408 theo vanban_id, sau thang 7 bo  else 0 end
+						,heso_hotro_dai         = case when thang_luong = 71 and vanban_id = 764 then 0.2 else 0 end		--ap dung chi duy nhat 1 thang 202408 theo vanban_id, sau thang 7 bo  else 0 end
 						--, thang_luong = 11
 						
 --		select thang_luong, thang_ptm, ma_tb, dich_vu, manv_hotro, tyle_hotro, tyle_am,  heso_hotro_nvptm, heso_hotro_nvhotro, heso_hotro_dai, ma_duan_banhang from ttkd_bsc.ct_bsc_ptm a    
@@ -1223,7 +1231,7 @@ update ttkd_bsc.ct_bsc_ptm a
 								---80% * 800 = 640 vnd theo vb 1485/TTKD HCM -NS 15/08/24 --> VTTP
 			update ttkd_bsc.ct_bsc_ptm a 
 						set dongia = 800, heso_hoso = 1
---			    select nguon, dongia, dichvuvt_id, thang_ptm, thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a
+--			    select nguon, dongia, dichvuvt_id, thang_luong, thang_ptm, thang_tldg_dt, heso_hoso from ttkd_bsc.ct_bsc_ptm a
 			    where thang_ptm = 202409 --- thang n
 					and (loaitb_id<>21 or ma_kh = 'GTGT rieng' ) 
 --					and thang_luong = 86
@@ -1232,7 +1240,7 @@ update ttkd_bsc.ct_bsc_ptm a
            commit;
            
 -- cac dv ngoai tru VNPTT, SMS Brandname, Voice Brandnanme
-			---88/TTr-?H-NS-KTKH ngày ngày 12/9/2022 
+			---88/TTr-?H-NS-KTKH ngï¿½y ngï¿½y 12/9/2022 
 			--- Neu trong thang xuat hien Ma Dai ly moi so voi tap chot Dai ly thang truoc
 					--- neu Dai ly nay do AM thuong (khac AM QLDL)  ho tro --> 5% * Dthu goi * heso_hotro_nvptm, va PS = 5% * Dthu goi * heso_hotro_nvhotro
 					--- Neu AM QLDL hotro -> 0% DThu goi, va PS = 0% dthu goi
@@ -1275,7 +1283,7 @@ update ttkd_bsc.ct_bsc_ptm a
 --							and ma_duan_banhang in ('185813', '185810', '265802') and ma_gd in ('00901934', '00898044', '00897956')
 --			   and ma_tb = '84916803831'
 --			  and heso_daily is not null
-			   
+			 
 			    ;                       
 
             commit;
@@ -1426,8 +1434,7 @@ rollback;
 		-- khong xet dk ghi nhan:
 			-- hoso goc
 				update ttkd_bsc.ct_bsc_ptm a
-				    set  doanhthu_kpi_nvptm = case when thang_luong = 86 and loaitb_id in (153, 40) and kieuld_id in (550, 13177, 13266) then 0 ----khong ting KPI khi gia han Int Truc tiep va Smart cloud
-																			when heso_daily =  0.05 then doanhthu_dongia_nvptm
+				    set  doanhthu_kpi_nvptm = case when heso_daily =  0.05 then doanhthu_dongia_nvptm
 																			when heso_daily =  0 then 0		---AM QLDL, AM va Daily hien huu = 0
 																			else	round(dthu_goi*nvl(tyle_huongdt,1) * heso_dichvu * nvl(heso_tratruoc,1)
 																									* heso_vtcv_nvptm
@@ -1435,7 +1442,7 @@ rollback;
 																									* nvl(heso_diaban_tinhkhac,1)
 																								,0) end
 						 , doanhthu_kpi_nvdai   = 
-																	case when thang_luong = 86 and loaitb_id in (153, 40) and kieuld_id in (550, 13177, 13266) then 0 ----khong ting KPI khi gia han Int Truc tiep va Smart cloud
+																	case 
 																			when heso_daily =  0.05 then doanhthu_dongia_dai
 																			when heso_daily =  0 and exists (select 1  from ttkd_bsc.dm_daily_khdn 
 																																		where thang = 202409 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
@@ -1445,7 +1452,7 @@ rollback;
 																								* heso_hotro_dai * nvl(heso_tbnganhan,1)
 																								* nvl(heso_diaban_tinhkhac,1) 
 																						,0) end
-						 , doanhthu_kpi_nvhotro = case when thang_luong = 86 and loaitb_id in (153, 40) and kieuld_id in (550, 13177, 13266) then 0 ----khong ting KPI khi gia han Int Truc tiep va Smart cloud
+						 , doanhthu_kpi_nvhotro = case 
 																			when heso_daily =  0.05 then doanhthu_dongia_nvhotro
 																			when heso_daily =  0 and exists (select 1  from ttkd_bsc.dm_daily_khdn 
 																																		where thang = 202409 and thang_kyhd = a.thang_ptm and ma_daily = a.ma_nguoigt) ---Dai ly moi
@@ -1455,7 +1462,7 @@ rollback;
 																								* heso_hotro_nvhotro * nvl(heso_tbnganhan,1)
 																								* nvl(heso_diaban_tinhkhac,1) 
 																						,0) end
-						 , doanhthu_kpi_dnhm    = case when thang_luong = 86 and loaitb_id in (153, 40) and kieuld_id in (550, 13177, 13266) then 0 ----khong ting KPI khi gia han Int Truc tiep va Smart cloud
+						 , doanhthu_kpi_dnhm    = case 
 																				when heso_daily =  0.05 and heso_dichvu_dnhm > 0 then doanhthu_dongia_dnhm
 																				when heso_daily =  0 then 0
 																					else round((nvl(tien_dnhm,0)+nvl(tien_sodep,0)) *nvl(tyle_huongdt,1) *heso_dichvu_dnhm
@@ -1548,7 +1555,6 @@ rollback;
 								or thang_luong in (1, 2, 3, 4, 87)
 								)			---flag 4 file so 5 import dung thu chuyen dung that
 								and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') 
-					
 				    ;
                       commit;
 
@@ -1565,7 +1571,7 @@ rollback;
 --				     select dthu_goi, dthu_goi_ngoaimang, doanhthu_kpi_nvptm, doanhthu_kpi_phong from ttkd_bsc.ct_bsc_ptm
 				    where (thang_ptm = 202408 --- thang n-1
 											or thang_luong in (1, 2, 3, 4, 87))			---flag 4 file so 5 import dung thu chuyen dung that
-								and loaitb_id=131
+								and loaitb_id=131 
 				    ;
                             
             commit;
@@ -1601,11 +1607,12 @@ rollback;
 				    where (thang_ptm = 202409 --- thang n
 									or thang_luong in (1, 2, 3, 4, 87))			---flag 4 file so 5 import dung thu chuyen dung that
 								and (loaitb_id!=21 or ma_kh='GTGT rieng')
-							
+--							and thang_luong in (3) and vanban_id = 783670
 				    ;
                 
 		commit;
-		---clear du lieu theo vb vanban_id NSG khong ap dung tu thang 8
+		rollback;
+		---clear du lieu theo vb vanban_id NSG khong ap dung tu thang 10
 			
 		update ttkd_bsc.ct_bsc_ptm a 
 					set doanhthu_kpi_nvptm = 0		--nvptm khong KPI

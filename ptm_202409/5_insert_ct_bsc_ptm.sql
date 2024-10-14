@@ -323,7 +323,7 @@ commit;
 														, thang_luong = 4
 													--	, a.nguoi_gt = b.tennv_gioithieu
 --										select thang_tldg_dt, thang_luong, ngay_bbbg, thang_ptm, ma_gd_gt, ma_tb,  ghi_chu, ungdung_id, nguon, manv_ptm, ma_nguoigt, nguoi_gt, manv_hotro, heso_hotro_nvhotro, luong_dongia_nvptm, luong_dongia_nvhotro from ttkd_bsc.ct_bsc_ptm a
-										WHERE thang_ptm = 202409 and ma_gd_gt is not null --and a.manv_hotro is null
+										WHERE thang_ptm = 202409 and ma_gd_gt is not null and a.manv_hotro is null
 														and ma_gd_gt  in (select ma_dhsx from ttkd_bsc.digishop 
 																						where ma_gioithieu is not null and ma_dhsx is not null and lower(trangthai_shop) like 'th_nh c_ng'
 																										and thang >= 202408

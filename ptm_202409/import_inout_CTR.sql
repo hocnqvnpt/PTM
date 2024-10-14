@@ -140,10 +140,6 @@ Diều kiện ngoài chuong trình:
 --												and a.ma_gd in ('00955351', '00959326', '00959608')
 					;
 					
-					update ttkd_bsc.ct_bsc_ptm set dthu_ps = dthu_goi 
---					   select * from  ttkd_bsc.ct_bsc_ptm 
-					where dthu_ps is not null and nguon like 'ct_ptm_ngoaictr_imp%'  and thang_luong = 70;
---					update ttkd_bsc.ct_bsc_ptm a set trangthaitb_id = (select trangthaitb_id from css_hcm.db_thuebao where thuebao_id = a.thuebao_id) where  nguon = 'ct_ptm_ngoaictr_imp' and thang_luong = 86;
 					commit;
 					rollback;
 					;					
@@ -194,27 +190,12 @@ Diều kiện ngoài chuong trình:
 					;
 					commit;
 					rollback;
-					---check cot de UPDATE
-					select THANG_ptm, TEN_PB, MA_PB, TEN_TO, MA_TO, MANV_PTM, TENNV_PTM
-									, MA_VTCV, LOAI_LD, NHOM_TIEPTHI, TENKIEU_LD, MA_GD, MA_TB, MA_KH, sohopdong SO_HD
-									,  ten_tb TEN_KH,  ngay_bbbg NGAY_YC, GOI_CUOC GOI_CUOC_MOI, DTHU_GOI, HESO_DICHVU
-									, HESO_TRATRUOC, HESO_KHACHHANG, HESO_HOSO, HESO_HOTRO_NVHOTRO
-									, MANV_HOTRO,  ghi_chu DIEN_GIAI, LOAITB_ID, DICHVUVT_ID, DOITUONG_KH, THUEBAO_ID, NGUON, phanloai_kh, MST, DTHU_PS
-									, thang_tldg_dt, chuquan_id
-					from ttkd_bsc.ct_bsc_ptm where nguon like 'ct_ptm_ngoaictr_imp%';insert%'
-						;
-						---loc cac th ngoai chuong trinh
-						select tenkieu_ld, thang_luong, thang_ptm, thang_tldg_dt, thang_tlkpi, thang_tlkpi_to, thang_tlkpi_phong, LYDO_KHONGTINH_DONGIA, LUONG_DONGIA_NVPTM
-						from ttkd_bsc.ct_bsc_ptm where nguon like 'ct_ptm_ngoaictr_imp%'--insert%'
-						;
+				
 						update ttkd_bsc.ct_bsc_ptm a
-										set THANG_TLDG_DT = 202404, THANG_TLKPI = 202404
-													, THANG_TLKPI_TO = 202404, THANG_TLKPI_PHONG = 202404
-													, LYDO_KHONGTINH_DONGIA = null, LUONG_DONGIA_NVPTM = null
-													, thang_luong = 86, chuquan_id = 145
-													, tyle_hotro = HESO_HOTRO_NVHOTRO
+										set THANG_TLKPI_DNHM = 0, THANG_TLKPI_DNHM_TO = 0, THANG_TLKPI_DNHM_PHONG = 0
+												, THANG_TLKPI = 0, THANG_TLKPI_HOTRO = 0, THANG_TLKPI_TO = 0, THANG_TLKPI_PHONG = 0
 												--	dich_vu = (select loaihinh_tb from css_hcm.loaihinh_tb where loaitb_id = a.loaitb_id)
-						where nguon like 'ct_ptm_ngoaictr_imp%' and thang_ptm = 202404 
+						where nguon like 'ct_ptm_ngoaictr_imp%' and ghi_chu = 'Khong tinh BSC' and thang_luong in (86,87)
 						;
 						commit;
 						rollback;
