@@ -127,7 +127,7 @@ commit;
 						 and exists (select 1 from ttkd_bsc.dm_loaihinh_hsqd where kieutinh_bsc_ptm='thang' and loaitb_id=a.loaitb_id )
 						and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
 						and nocuoc_n1 is null
-						
+--						and ma_tb = 'fvn_lamb808'
 		;
 		
 		----tinh cac th khong quet dk ghi nhan hso goc
@@ -152,7 +152,7 @@ commit;
 							) 
 						and nocuoc_n1 is null 
 						and ((loaitb_id not in (20,149) and trangthai_tt_id=1) or loaitb_id in (20,149)) ---VNPts khong xet trang thai TT
---						and ma_tb = 'hcm_ca_00111842'
+--						and ma_tb = 'fvn_lamb808'
 
 			;
 -- Ky (n-2)

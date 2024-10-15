@@ -28,7 +28,7 @@ create index ttkd_bsc.idx_thangptm on ttkd_bsc.ct_bsc_ptm (thang_ptm);
 --		    select thang_luong, thang_ptm, ma_gd, thuebao_id, ma_tb, manv_ptm, loai_ld, ma_pb, lydo_khongtinh_luong, lydo_khongtinh_dongia, luong_dongia_nvptm, dthu_goi, dthu_ps, nocuoc_ptm, ten_pb, trangthaitb_id, loaitb_id, thoihan_id, ngay_luuhs_ttkd, ngay_luuhs_ttvt, nop_du, mien_hsgoc, thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a  
 				 where a.thang_ptm = 202409
 --							and thang_luong = 86
-							and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+							and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 				  and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id) 
 				 -- and lydo_khongtinh_luong is null 
 				 and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%' )
@@ -49,19 +49,21 @@ create index ttkd_bsc.idx_thangptm on ttkd_bsc.ct_bsc_ptm (thang_ptm);
 				  ;
  ---5 
  
-    -- ACT
+    -- ACT  khong chay nua
+	---Log: thang 9 khong có rec chua update ghi nhân dơn gia
 
          --6
 
 		update ttkd_bsc.ct_bsc_ptm a 
-			   set thang_tldg_dt = 202409, thang_tlkpi=202409, thang_tlkpi_to=202409, thang_tlkpi_phong=202409
+			   set thang_tldg_dt = 202409
 				    ,thang_tldg_dnhm = case when tien_dnhm>0 and ngay_tt is not null then 202409 end
-				    ,thang_tlkpi_dnhm = case when tien_dnhm>0 and ngay_tt is not null then 202409 end
-				    , thang_tlkpi_dnhm_to = case when tien_dnhm>0 and ngay_tt is not null then 202409 end
-				    , thang_tlkpi_dnhm_phong = case when tien_dnhm>0 and ngay_tt is not null then 202409 end
+--				    , thang_tlkpi=202409, thang_tlkpi_to=202409, thang_tlkpi_phong=202409
+--				    ,thang_tlkpi_dnhm = case when tien_dnhm>0 and ngay_tt is not null then 202409 end
+--				    , thang_tlkpi_dnhm_to = case when tien_dnhm>0 and ngay_tt is not null then 202409 end
+--				    , thang_tlkpi_dnhm_phong = case when tien_dnhm>0 and ngay_tt is not null then 202409 end
 --		     select  thang_ptm, ma_gd, thuebao_id, ma_tb, manv_ptm, loai_ld, ma_pb, lydo_khongtinh_luong, lydo_khongtinh_dongia, luong_dongia_nvptm
---					, dthu_goi, dthu_ps, nocuoc_ptm, ten_pb, trangthaitb_id, loaitb_id, thoihan_id, ngay_luuhs_ttkd, ngay_luuhs_ttvt, nop_du, mien_hsgoc
---					, thang_xacnhan_khkt, thang_tldg_dt, thang_tlkpi, thang_tlkpi_to, thang_tlkpi_phong, thang_tldg_dnhm, thang_tlkpi_dnhm, thang_tlkpi_dnhm_to, thang_tlkpi_dnhm_phong    from ttkd_bsc.ct_bsc_ptm a
+					, dthu_goi, dthu_ps, nocuoc_ptm, ten_pb, trangthaitb_id, loaitb_id, thoihan_id, ngay_luuhs_ttkd, ngay_luuhs_ttvt, nop_du, mien_hsgoc
+					, thang_xacnhan_khkt, thang_tldg_dt, thang_tlkpi, thang_tlkpi_to, thang_tlkpi_phong, thang_tldg_dnhm, thang_tlkpi_dnhm, thang_tlkpi_dnhm_to, thang_tlkpi_dnhm_phong    from ttkd_bsc.ct_bsc_ptm a
 		    where thang_ptm >= 202406 and chuquan_id=264 --and manv_ptm is not null
 			   and lydo_khongtinh_luong is null and thang_xacnhan_khkt is not null 
 			   and nvl(thang_tldg_dt, 999999)  >= 202409
@@ -79,7 +81,7 @@ create index ttkd_bsc.idx_thangptm on ttkd_bsc.ct_bsc_ptm (thang_ptm);
 					, thang_tldg_dt_dai = a.thang_ptm
 --		    select  thang_luong, ma_tb, manv_ptm, manv_hotro, thang_tldg_dt, thang_tldg_dt_nvhotro, thang_tldg_dt_dai, luong_dongia_nvptm, lydo_khongtinh_luong, lydo_khongtinh_dongia, nguon, ma_gd_gt, tyle_hotro, nop_du, mien_hsgoc, heso_daily  from ttkd_bsc.ct_bsc_ptm a
 		    where thang_ptm = 202409 --and ma_tb = 'hcm_econtract_00000999'
-								and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+								and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 							  and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id) 
 							and ( (thang_tldg_dt is null and lydo_khongtinh_luong like '%Phat trien qua Dai ly%')			---PGP dc tinh khi ban qua dai ly
 										or thang_tldg_dt is not null
@@ -111,7 +113,7 @@ create index ttkd_bsc.idx_thangptm on ttkd_bsc.ct_bsc_ptm (thang_ptm);
 			   set thang_tldg_dnhm = a.thang_ptm
 --		     select chuquan_id, ma_tb, manv_ptm, ten_pb, dich_vu, thang_tldg_dt, thang_tldg_dnhm, tien_dnhm, thang_ptm, trangthai_tt_id from ttkd_bsc.ct_bsc_ptm a
 		    where thang_ptm = 202409
-							and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+							and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 						  and nvl(thang_tldg_dnhm, 999999) >= 202409		 ---thang n
 
 								 and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%' )
@@ -140,7 +142,7 @@ commit;
 			    set thang_tldg_dt = 202409 ---thang n
 --			select ma_tb, dich_vu, lydo_khongtinh_luong, lydo_khongtinh_dongia, manv_ptm, loai_ld, tien_dnhm, luong_dongia_nvptm,  thang_tldg_dnhm,  thang_tldg_dt from ttkd_bsc.ct_bsc_ptm a 
 			 where thang_ptm = 202408 ---thang n-1
-					and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+					and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 
 					and nvl(thang_tldg_dt, 999999) >= 202409
 				   and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
@@ -168,7 +170,7 @@ commit;
 				set thang_tldg_dnhm = 202409 ---thang n
 --			     select lydo_khongtinh_dongia, chuquan_id, ma_tb, manv_ptm, ten_pb, thang_tldg_dt,  thang_tldg_dnhm, tien_dnhm, tien_tt, heso_dichvu_dnhm, thang_ptm, LUONG_DONGIA_DNHM_NVPTM, ngay_tt, soseri, trangthai_tt_id from ttkd_bsc.ct_bsc_ptm a
 			    where thang_ptm = 202408 ---thang n-1
-						and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+						and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 						and nvl(thang_tldg_dnhm, 999999) >= 202409		 ---thang n
 						 and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')
 								)
@@ -194,7 +196,7 @@ commit;
 			    where thang_ptm = 202408		--thang n-1
 							and nvl(thang_tldg_dt_nvhotro, 999999) >= 202409		---thang n
 							
-							and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+							and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 							  and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
 								
 								and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')		---PGP dc tinh khi ban qua dai ly
@@ -222,7 +224,7 @@ commit;
 --			     select thang_luong, ma_tb, ma_pb, loai_ld, thoihan_id, manv_ptm, thang_tldg_dt, thang_tldg_dt_nvhotro, luong_dongia_nvptm, lydo_khongtinh_luong, lydo_khongtinh_dongia from ttkd_bsc.ct_bsc_ptm a
 			    where thang_ptm = 202407 	---thang n-2
 							and nvl(thang_tldg_dt, 999999) >= 202409  ---thang n
-							and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+							and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 						   and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
 						  and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')
 								)
@@ -245,7 +247,7 @@ commit;
 			    set thang_tldg_dnhm = 202409	---thang n
 --			     select chuquan_id, ma_tb, manv_ptm, ten_pb, thang_tldg_dt,  thang_tldg_dnhm, tien_dnhm, tien_tt, thang_ptm, ngay_tt, trangthai_tt_id, lydo_khongtinh_dongia from ttkd_bsc.ct_bsc_ptm a
 			    where thang_ptm = 202407 	---thang n-2
-					and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+					and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 					  and nvl(thang_tldg_dnhm, 999999) >= 202409
 				
 						 and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%' )
@@ -273,7 +275,7 @@ commit;
 --		select ma_tb, thang_luong, thang_ptm, thang_tldg_dt, thang_tldg_dt_nvhotro, luong_dongia_nvptm, luong_dongia_nvhotro, manv_hotro, lydo_khongtinh_dongia from ttkd_bsc.ct_bsc_ptm a
 			    where thang_ptm = 202407 --thang n-2
 					and nvl(thang_tldg_dt_nvhotro, 999999) >= 202409
-					and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+					and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 					and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
 					 and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')		---PGP dc tinh khi ban qua dai ly
 										)
@@ -300,7 +302,7 @@ commit;
 --				   select  chuquan_id, thang_ptm, dich_vu, ma_pb, ma_tb, ma_to, loai_ld, thang_tldg_dt, luong_dongia_nvptm, lydo_khongtinh_dongia from ttkd_bsc.ct_bsc_ptm a 
 				    where thang_ptm = 202406		---thang n-3
 								  and nvl(thang_tldg_dt, 999999) >= 202409
-								  and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+								  and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 								   and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')
 									) 
 								   and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
@@ -323,7 +325,7 @@ commit;
 --				    select chuquan_id, ma_tb, manv_ptm, ten_pb, thang_tldg_dt,  thang_tldg_dnhm, tien_dnhm, tien_tt, luong_dongia_dnhm_nvptm, thang_ptm, trangthai_tt_id, lydo_khongtinh_dongia from ttkd_bsc.ct_bsc_ptm a
 				    where thang_ptm = 202406 		---thang n-3
 							and nvl(thang_tldg_dnhm, 999999) >= 202409
-							and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+							and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 							and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%' )
 								)
 							 and (tien_dnhm>0 or tien_sodep>0)
@@ -344,7 +346,7 @@ commit;
 --			    select thang_ptm, thang_tldg_dt, thang_tldg_dt_nvhotro, lydo_khongtinh_dongia, luong_dongia_nvptm, luong_dongia_nvhotro, manv_hotro from ttkd_bsc.ct_bsc_ptm a
 			    where thang_ptm = 202406 	---thang n-3
 							and nvl(THANG_TLDG_DT_NVHOTRO, 999999) >= 202409
-							and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266)
+							and (loaitb_id<>21 or ma_kh='GTGT rieng') and chuquan_id in (145, 266, 264)
 							 and (lydo_khongtinh_luong is null or (lydo_khongtinh_luong like '%Phat trien qua Dai ly%')		---PGP dc tinh khi ban qua dai ly
 												) 
 							and ( (thang_tldg_dt is null and lydo_khongtinh_luong like '%Phat trien qua Dai ly%')			---PGP dc tinh khi ban qua dai ly
@@ -361,7 +363,7 @@ commit;
             rollback;
  commit; 
 -- GTGT rieng thang n
-		---log: thang 8 khong co rec
+		---log: thang 8, 9 khong co rec
 			update ttkd_bsc.ct_bsc_ptm a 
 				   set  thang_tldg_dt = 202409, thang_tlkpi = 202409, thang_tlkpi_to = 202409, thang_tlkpi_phong = 202409
 						 , thang_tldg_dt_nvhotro = case when manv_hotro is not null and thang_tldg_dt_nvhotro is null then 202409 end
@@ -434,7 +436,7 @@ select thang_ptm, ma_gd, ma_tb, soseri, ngay_tt, tien_tt, tien_dnhm, trangthai_t
   from ttkd_bsc.ct_bsc_ptm a
   where thang_luong in (87);
   
-  ----Kiem tra cac truong hop c� FLAG khong tinh luong
+  ----Kiem tra cac truong hop c� FLAG khong tinh luong
    select thang_luong, thang_ptm, ma_gd, nguon, ma_tb, thuebao_id, hdtb_id, dich_vu, trangthai_tt_id, chuquan_id, manv_ptm, ten_pb
 			, thang_bddc, lydo_khongtinh_luong, lydo_khongtinh_dongia, heso_daily, nop_du, mien_hsgoc, trangthaitb_id, dthu_goi
 			, THANG_TLDG_DT, THANG_TLKPI, THANG_TLKPI_TO, THANG_TLKPI_PHONG
