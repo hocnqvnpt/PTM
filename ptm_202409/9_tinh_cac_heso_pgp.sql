@@ -27,7 +27,7 @@ select * from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202409; and hdtb_id in (
 							and thang_ptm = 202406; 
 select * from ttkd_bsc.ct_bsc_ptm where ma_gd = 'HCM-LD/01939638';
 
-delete from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202409 and ngay_ins = '03/10/2024 21:46:06'; 
+delete from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202409; and ngay_ins = '03/10/2024 21:46:06'; 
 
 select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_duan = '251801';
 delete from ttkd_bsc.ct_bsc_ptm_pgp where ma_gd = 'HCM-LD/01939638';
@@ -99,16 +99,16 @@ rollback;
 		---code moi
 		delete from ttkd_bsc.ct_bsc_ptm_pgp a
 --		select * from ttkd_bsc.ct_bsc_ptm_pgp a
-			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tldg_dt_nvhotro = 202408 and a.ptm_id = id )
+			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tldg_dt_nvhotro = 202409 and a.ptm_id = id )
 						and THANG_TLDG_DT_NVHOTRO is null 
-						and thang_ptm<202408
+						and thang_ptm < 202409
 --						and ma_duan_banhang = '00882474'
 		;
 		delete from ttkd_bsc.ct_bsc_ptm_pgp a
 --		select * from ttkd_bsc.ct_bsc_ptm_pgp a
-			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tlkpi_hotro = 202408 and a.ptm_id = id )
+			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tlkpi_hotro = 202409 and a.ptm_id = id )
 						and THANG_TLKPI_HOTRO is null 
-						and thang_ptm<202408
+						and thang_ptm < 202409
 		;
 		select * from ttkd_bsc.ct_bsc_ptm_pgp a
 			where ptm_id in (select ptm_id from ttkd_bsc.ct_bsc_ptm_pgp group by ptm_id having count(*)>1)
@@ -132,7 +132,7 @@ rollback;
 							where MA_HIENTRANG <> 14
 							)
 			, ta as	 (select c.manv_presale_hrm, c.tyle/100 tyle_hotro, decode(tyle_am,0,1,c.tyle_am/100) tyle_am, d.loaitb_id_obss, b.ma_yeucau, b.ma_dichvu, c.tyle_nhom--, c.id_ycdv, c.tyle_am tyle_am_goc
-								, NGAYHEN, NGAYCAPNHAT, NGAYNHANTIN_PS, NGAYXACNHAN, c.ps_truong
+								, c.NGAYHEN, c.NGAYCAPNHAT, c.NGAYNHANTIN_PS, c.NGAYXACNHAN, c.ps_truong
 						 from yc_dv b, ttkdhcm_ktnv.amas_booking_presale c, ttkdhcm_ktnv.amas_loaihinh_tb d
 											where b.ma_yeucau=c.ma_yeucau and b.id_ycdv=c.id_ycdv and b.ma_dichvu = d.loaitb_id
 													   and c.xacnhan=1  
@@ -164,38 +164,15 @@ rollback;
 									   ,doanhthu_dongia_nvhotro dt_dongia_pgp, luong_dongia_nvhotro lg_dongia_pgp, doanhthu_kpi_nvhotro dt_kpi_gp
 					    from ttkd_bsc.ct_bsc_ptm a
 									left join tt b on to_number(regexp_replace (a.ma_duan_banhang, '\D', ''))  = b.ma_yeucau and a.loaitb_id = b.loaitb_id_obss
-					    where (thang_tldg_dt_nvhotro = 202408 or thang_tlkpi_hotro = 202408)  and manv_hotro is not null and (loaitb_id is null or loaitb_id<>21)			--thang n
-										  and exists(select 1 from ttkd_bsc.nhanvien where thang = 202408 and (ma_pb='VNP0702600' ) and ma_nv=a.manv_hotro)
+					    where (thang_tldg_dt_nvhotro = 202409 or thang_tlkpi_hotro = 202409)  and manv_hotro is not null and (loaitb_id is null or loaitb_id<>21)			--thang n
+										  and exists(select 1 from ttkd_bsc.nhanvien where thang = 202409 and (ma_pb='VNP0702600' ) and ma_nv=a.manv_hotro)
 										  and not exists (select ptm_id from ttkd_bsc.ct_bsc_ptm_pgp where ptm_id is not null and ptm_id = a.id)
 --										  and ma_duan_banhang in ('236617')
 			;		  
 		---end code moi
 		;
 
------tam thoi ngun tu 18/6/24 thay bang code Insert Bo sung
-			update ttkd_bsc.ct_bsc_ptm_pgp a
-			    set (trangthaitb_id, trangthaitb_id_n1, trangthaitb_id_n2, trangthaitb_id_n3, 
-					  nocuoc_ptm, nocuoc_n1, nocuoc_n2, nocuoc_n3,thang_tldg_dt_nvhotro, thang_tlkpi_hotro, lydo_khongtinh_dongia,
-					  doanhthu_kpi_nvhotro, doanhthu_dongia_nvhotro, luong_dongia_nvhotro, dt_dongia_pgp, lg_dongia_pgp, dt_kpi_pgp)
-					= (select trangthaitb_id, trangthaitb_id_n1, trangthaitb_id_n2, trangthaitb_id_n3, 
-							    nocuoc_ptm, nocuoc_n1, nocuoc_n2, nocuoc_n3,thang_tldg_dt_nvhotro, thang_tlkpi_hotro, lydo_khongtinh_dongia,
-							    doanhthu_kpi_nvhotro, doanhthu_dongia_nvhotro, luong_dongia_nvhotro
-							    , doanhthu_dongia_nvhotro dt_dongia_pgp, luong_dongia_nvhotro lg_dongia_pgp, doanhthu_kpi_nvhotro dt_kpi_gp
-					  from ttkd_bsc.ct_bsc_ptm
-					  where id = a.ptm_id)
-				 -- select * from  ttkd_bsc.ct_bsc_ptm_pgp a
-				   where 
---								thang_ptm>=202402			---thang n-3
-----								and (thang_tldg_dt_nvhotro is null or thang_tldg_dt_nvhotro=202405)	---thang n
-----								and a.ma_duan_banhang = '206876'
---								
---								and 
-			ma_gd = 'HCM-LD/01616773'
-								exists (select 1
-													  from ttkd_bsc.ct_bsc_ptm
-													  where thang_luong = 87 and id = a.ptm_id 
-													)
-				   ;
+
             commit;
         
 	update ttkd_bsc.ct_bsc_ptm_pgp a 
@@ -283,7 +260,7 @@ select thang_ptm, ma_gd, ma_tb, loaitb_id, manv_hotro
 			where ptm_id in (
 			select ptm_id from ttkd_bsc.ct_bsc_ptm_pgp where lydo_khongtinh_dongia = '43tb: check lai chuong trinh QLDA, tam khong chi, 43 tbao')
 ;			
-----Kiem tra dich vu khac tren QLDA và ONEBSS
+----Kiem tra dich vu khac tren QLDA vï¿½ ONEBSS
 			select 'QLDA' sys, d.loaitb_id_obss, c.ma_dichvu, d.loaitb_id, d.LOAIHINH_TB
 			from ttkdhcm_ktnv.amas_yeucau_dichvu c, ttkdhcm_ktnv.amas_loaihinh_tb d
 				  where c.ma_yeucau = 238040

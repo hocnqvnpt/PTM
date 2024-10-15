@@ -1389,10 +1389,12 @@ update ttkd_bsc.ct_bsc_ptm a
 commit;
             
 -- don gia dnhm: 
+		---Goi Luong tinh: khong tinh don gia VNPts, chi tinh don gia trong VNPtt
 
 			update ttkd_bsc.ct_bsc_ptm a 
 			    set doanhthu_dongia_dnhm = case when heso_daily =  0.05 and heso_dichvu_dnhm > 0 then round((nvl(tien_dnhm,0)+nvl(tien_sodep,0)) * nvl(tyle_huongdt,1)* heso_daily, 0)
 																		when heso_daily =  0 then 0
+																		when loaitb_id = 20 and goi_luongtinh is not null then 0
 																			else round((nvl(tien_dnhm,0)+nvl(tien_sodep,0)) *nvl(tyle_huongdt,1) *heso_dichvu_dnhm
 																									 * heso_quydinh_nvptm * heso_vtcv_nvptm * nvl(heso_kvdacthu,1)
 																									 * nvl(heso_diaban_tinhkhac,1)
@@ -1402,13 +1404,12 @@ commit;
 								or thang_luong in (1, 2, 3, 4, 87)
 								)			---flag 4 file so 5 import dung thu chuyen dung that
 					
-							   and (loaitb_id not in (20,21) or ma_kh='GTGT rieng' or (loaitb_id=20 and goi_luongtinh is null)) 
+							   and (loaitb_id not in (21) or ma_kh='GTGT rieng') 
 							   and (tien_dnhm>0 or tien_sodep>0) 
 							   and nvl(thang_tldg_dnhm, 999999) >= 202409
 							   and exists (select 1 from ttkd_bsc.dm_loaihinh_hsqd 
 												  where kieutinh_bsc_ptm='thang' and loaitb_id=a.loaitb_id) 
 						 --or loaitb_id=292)
-					
 						 
 						 ;  
 
@@ -1433,6 +1434,8 @@ rollback;
 		-- Dthu KPI: tinh du 100% khong ap dung heso trong/ngoai diaban theo quy d?nh, heso_quydinh_nvptm, heso_quydinh_nvhotro nay(ap dung PTM T8/2024)
 		-- khong xet dk ghi nhan:
 			-- hoso goc
+		---Goi Luong tinh: khong tinh don gia VNPts, chi tinh don gia trong VNPtt
+			
 				update ttkd_bsc.ct_bsc_ptm a
 				    set  doanhthu_kpi_nvptm = case when heso_daily =  0.05 then doanhthu_dongia_nvptm
 																			when heso_daily =  0 then 0		---AM QLDL, AM va Daily hien huu = 0
@@ -1465,6 +1468,7 @@ rollback;
 						 , doanhthu_kpi_dnhm    = case 
 																				when heso_daily =  0.05 and heso_dichvu_dnhm > 0 then doanhthu_dongia_dnhm
 																				when heso_daily =  0 then 0
+																				when loaitb_id = 20 and goi_luongtinh is not null then 0
 																					else round((nvl(tien_dnhm,0)+nvl(tien_sodep,0)) *nvl(tyle_huongdt,1) *heso_dichvu_dnhm
 																											 * heso_vtcv_nvptm
 																											 * nvl(heso_diaban_tinhkhac,1)
@@ -1476,7 +1480,7 @@ rollback;
 								)			---flag 4 file so 5 import dung thu chuyen dung that
 									and dich_vu not like 'Thi_t b_ gi_i ph_p%' and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') 
 									and nvl(thang_tlkpi, 999999) >= 202409							  
-						     	
+						     
 				    ;
 
 
@@ -1537,6 +1541,7 @@ rollback;
             
 -- DTHU KPI PHONG
 		--Khong ap dung heso_quydinh_nvptm, ghi nhan 100%, khong ap dung 5% heso_daily
+		
 				update ttkd_bsc.ct_bsc_ptm a
 					   set doanhthu_kpi_phong = (case when thang_luong = 86 and loaitb_id in (153, 40) and kieuld_id in (550, 13177, 13266) then 0 ----khong ting KPI khi gia han Int Truc tiep va Smart cloud
 																				when dich_vu like 'Thi_t b_ gi_i ph_p%' 
@@ -1577,8 +1582,10 @@ rollback;
             commit;
 -- Kpi dnhm phong:
 			--khong ap dung heso_daily, khong ap dung heso_quydinh_nvptm
+			---Goi Luong tinh: khong tinh don gia VNPts, chi tinh don gia trong VNPtt
 		update ttkd_bsc.ct_bsc_ptm a
 		    set doanhthu_kpi_dnhm_phong = case when thang_luong = 86 and loaitb_id in (153, 40) and kieuld_id in (550, 13177, 13266) then 0 ----khong ting KPI khi gia han Int Truc tiep va Smart cloud
+																			when loaitb_id=20 and goi_luongtinh is not null then 0
 																	else round( (nvl(tien_dnhm,0)+nvl(tien_sodep,0)) *nvl(tyle_huongdt,1) * heso_dichvu_dnhm
 																					* heso_vtcv_nvptm --* heso_hotro_nvptm
 																					* nvl(heso_diaban_tinhkhac,1) ,0)
@@ -1586,7 +1593,7 @@ rollback;
 	---	select thang_luong, doanhthu_kpi_dnhm_phong, heso_dichvu_dnhm from ttkd_bsc.ct_bsc_ptm a
 		    where (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4, 87))			---flag 4 file so 5 import dung thu chuyen dung that
-					and (loaitb_id not in (20,21) or ma_kh='GTGT rieng' or (loaitb_id=20 and goi_luongtinh is null)) 
+					and (loaitb_id not in (21) or ma_kh='GTGT rieng')
 					   and (tien_dnhm>0 or tien_sodep>0)
 					   and exists (select 1 from ttkd_bsc.dm_loaihinh_hsqd where kieutinh_bsc_ptm='thang' and loaitb_id=a.loaitb_id )
 					   
@@ -1600,13 +1607,13 @@ rollback;
 				update ttkd_bsc.ct_bsc_ptm a
 				    set doanhthu_kpi_to =  case when MA_NGUOIGT  in (select MA_DAILY 
 																						from ttkd_bsc.dm_daily_khdn 
-																						where ma_pb = 'VNP0702300' and ma_daily not in ('DL_CNT','GTGT00001') and thang = a.thang_ptm)
+																						where ma_pb = 'VNP0702300' and ma_daily not in ('dl_cnt', 'DL_CNT','GTGT00001') and thang = a.thang_ptm)
 																			then 0
 																	else doanhthu_kpi_phong end
 	---	select thang_luong, MA_NGUOIGT, doanhthu_kpi_to, thang_tlkpi_to from ttkd_bsc.ct_bsc_ptm a
 				    where (thang_ptm = 202409 --- thang n
 									or thang_luong in (1, 2, 3, 4, 87))			---flag 4 file so 5 import dung thu chuyen dung that
-								and (loaitb_id!=21 or ma_kh='GTGT rieng')
+								and (loaitb_id !=21 or ma_kh='GTGT rieng')
 --							and thang_luong in (3) and vanban_id = 783670
 				    ;
                 

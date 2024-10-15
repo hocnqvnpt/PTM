@@ -379,6 +379,7 @@ commit;
         ----CHU Y khong chay nua, chay ly do truoc xem ntn
 -- Tinh bs ho so gia han CA, IVAN,... dthu ps =0 nhung chua den ky dat coc moi: Chay dot 2 check lai
 	---khong chay thang 5/2025, KIEMTRA xem da duoc tinh khong?
+	-- log: thang 9 khong chay nưa
 			update ttkd_bsc.ct_bsc_ptm a 
 				   set thang_tldg_dt = 202409, thang_tlkpi = 202409, thang_tlkpi_to=202409, thang_tlkpi_phong=202409
 						, thang_tldg_dt_nvhotro = 202409, thang_tlkpi_hotro = 202409

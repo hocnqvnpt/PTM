@@ -1,7 +1,7 @@
 update ttkd_bsc.ct_bsc_ptm a set lydo_khongtinh_dongia = null
 --		   select thang_luong, thang_ptm, ma_tb, lydo_khongtinh_dongia, thang_tldg_dt, thang_tldg_dt_nvhotro, thang_tlkpi_phong from ttkd_bsc.ct_bsc_ptm a
 		    where thang_ptm >= 202406 and lydo_khongtinh_dongia is not null---thang n-3
-						and (nvl(thang_tldg_dt, 999999) >= 202409 and nvl(thang_tlkpi_phong, 999999) >= 202409)
+						and nvl(thang_tldg_dt, 999999) >= 202409 --and nvl(thang_tlkpi_phong, 999999) >= 202409)
 					--	and thang_tldg_dt = 202407 or (thang_tlkpi_phong =202407 and heso_daily is not null)
 					-- and ma_tb = 'hutn1077515'
 --					and heso_daily is not null
@@ -123,10 +123,11 @@ rollback;
 
 
 -- Thue bao ngan han chua thanh ly:
+	--log: thang 9 khong chay thì có 2 tbao khong như ly do, theo doi tiep code này tháng sau
 			update ttkd_bsc.ct_bsc_ptm a 
 			    set thang_tldg_dt=null, thang_tlkpi=null, thang_tlkpi_to=null, thang_tlkpi_phong=null
 					,lydo_khongtinh_dongia= lydo_khongtinh_dongia ||';Thue bao ngan han nhung chua thanh ly hop dong'
---				select thang_ptm, ma_tb, thang_tldg_dt, lydo_khongtinh_luong, lydo_khongtinh_dongia, nguon from ttkd_bsc.ct_bsc_ptm a 
+--				select thang_ptm, ma_tb, thang_tldg_dt, trangthaitb_id, lydo_khongtinh_luong, lydo_khongtinh_dongia, nguon from ttkd_bsc.ct_bsc_ptm a 
 			    where thoihan_id=1 and loaitb_id not in (90,146) 
 					  and not exists(select trangthaitb_id from css_hcm.db_thuebao where thuebao_id=a.thuebao_id and trangthaitb_id not in (7,9) )
 					  and ((thang_ptm = 202406 and trangthaitb_id_n3 not in (7,9)) 
@@ -184,7 +185,7 @@ commit;
 --				  ,
 				  lydo_khongtinh_dongia = lydo_khongtinh_dongia||';Trang thai hop dong chua thu tien'
 --		     select thang_luong, thang_ptm, thang_tldg_dt, ma_gd, ma_tb, trangthai_tt_id, lydo_khongtinh_dongia from ttkd_bsc.ct_bsc_ptm a
-		    where thang_ptm >= 202406 and chuquan_id<>264 and thang_tldg_dt is null and loaitb_id not in (20,21,149) 
+		    where thang_ptm >= 202406 and thang_tldg_dt is null and loaitb_id not in (20,21,149) 
 				  and not exists(select 1 from ttkd_bsc.dm_loaihinh_hsqd where loaitru_tinhluong=1 and loaitb_id=a.loaitb_id)
 				  and (trangthai_tt_id is null or trangthai_tt_id=0)
 				  and (lydo_khongtinh_dongia is null or lydo_khongtinh_dongia not like '%hop dong chua thu tien%')
