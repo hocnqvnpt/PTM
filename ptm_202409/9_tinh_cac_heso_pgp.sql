@@ -92,9 +92,8 @@ select id, thang_ptm, nguon, ma_gd, ma_kh, ma_tb, dich_vu, dichvuvt_id, loaitb_i
 --			and ma_tb = 'hcm_tdth_00000296'
 --and ma_gd = 'HCM-LD/01939638'
 		  ;
- commit
- ;             
-rollback;
+		commit ;             
+		rollback;
 -- Cap nhat lai cac hop dong dc tinh bs: chay sau khi chay xet_thangtlkpi
 		---code moi
 		delete from ttkd_bsc.ct_bsc_ptm_pgp a

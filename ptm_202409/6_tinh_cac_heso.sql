@@ -1480,7 +1480,6 @@ rollback;
 								)			---flag 4 file so 5 import dung thu chuyen dung that
 									and dich_vu not like 'Thi_t b_ gi_i ph_p%' and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') 
 									and nvl(thang_tlkpi, 999999) >= 202409							  
-						     
 				    ;
 
 
@@ -1559,7 +1558,8 @@ rollback;
 				    where (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4, 87)
 								)			---flag 4 file so 5 import dung thu chuyen dung that
-								and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') 
+								and (loaitb_id not in (21,131) or ma_kh='GTGT rieng')
+								and nvl(THANG_TLKPI_PHONG, 999999) >= 202409
 				    ;
                       commit;
 

@@ -1,7 +1,7 @@
-select * from ttkd_bsc.v_ct_ptm_kpi_truongline_202407;
-drop view ttkd_bsc.v_ct_ptm_kpi_truongline_202407;
+select * from ttkd_bsc.v_ct_ptm_kpi_truongline_202409;
+drop view ttkd_bsc.v_ct_ptm_kpi_truongline_202409;
 
-CREATE OR REPLACE VIEW ttkd_bsc.v_ct_ptm_kpi_truongline_202407 as
+CREATE OR REPLACE VIEW ttkd_bsc.v_ct_ptm_kpi_truongline_202409 as
 select thang_ptm, ma_nv,ma_to,ma_pb,ma_gd,ma_tb,dich_vu, ngay_sd,dthu_goi,dthu_goi_ngoaimang,tien_dnhm,tien_sodep
        ,heso_dichvu,heso_dichvu_1,heso_dichvu_dnhm,heso_quydinh_nvptm,heso_quydinh_nvhotro, heso_hotro_nvptm, heso_hotro_nvhotro, manv_tt_dai
        ,sum(dthu_kpi)dthu_kpi 
@@ -12,7 +12,7 @@ select thang_ptm, ma_nv,ma_to,ma_pb,ma_gd,ma_tb,dich_vu, ngay_sd,dthu_goi,dthu_g
        , heso_hotro_nvptm, heso_hotro_nvhotro, manv_tt_dai
        ,thang_tlkpi thang_tlkpi_nv,thang_tlkpi_to,doanhthu_kpi_to dthu_kpi
   from ttkd_bsc.ct_bsc_ptm a
- where thang_tlkpi_to= 202407 and (loaitb_id<>21 or ma_kh='GTGT rieng')
+ where thang_tlkpi_to= 202409 and (loaitb_id<>21 or ma_kh='GTGT rieng')
  
  
  union all 
@@ -23,7 +23,7 @@ select thang_ptm, ma_nv,ma_to,ma_pb,ma_gd,ma_tb,dich_vu, ngay_sd,dthu_goi,dthu_g
 					  , heso_hotro_nvptm, heso_hotro_nvhotro, manv_tt_dai
 					  ,thang_tlkpi thang_tlkpi_nv,thang_tlkpi_to, doanhthu_kpi_dnhm * heso_hotro_nvptm as doanhthu_kpi_dnhm
 				  from ttkd_bsc.ct_bsc_ptm a
-				 where thang_tlkpi_dnhm_to=202407
+				 where thang_tlkpi_dnhm_to=202409
 							 and (loaitb_id<>21 or ma_kh='GTGT rieng')
 							 and doanhthu_kpi_dnhm is not null
 		---To  Nvien Cot MANV_HOTRO cho dthu DNHM
@@ -36,7 +36,7 @@ select thang_ptm, ma_nv,ma_to,ma_pb,ma_gd,ma_tb,dich_vu, ngay_sd,dthu_goi,dthu_g
 							, doanhthu_kpi_dnhm * heso_hotro_nvhotro as doanhthu_kpi_dnhm
 					  from ttkd_bsc.ct_bsc_ptm a
 								join ttkd_bsc.nhanvien b on a.thang_tlkpi_dnhm_to = b.thang and a.manv_hotro = b.ma_nv
-					 where thang_tlkpi_dnhm_to=202407 and (loaitb_id<>21 or loaitb_id is null)
+					 where thang_tlkpi_dnhm_to=202409 and (loaitb_id<>21 or loaitb_id is null)
 									and tyle_am is null and tyle_hotro is null
 									and doanhthu_kpi_dnhm >0
  
@@ -48,7 +48,7 @@ select manv_tt_dai, b.ma_to, b.ma_pb,
 				  ,thang_tlkpi thang_tlkpi_nv, thang_tlkpi_to, doanhthu_kpi_nvdai 
   from ttkd_bsc.ct_bsc_ptm a
 			join ttkd_bsc.nhanvien b on a.thang_tlkpi_dnhm_to = b.thang and a.manv_tt_dai = b.ma_nv
- where thang_tlkpi_to=202407
+ where thang_tlkpi_to=202409
                 and (loaitb_id<>21 or ma_kh='GTGT rieng')
                 and manv_tt_dai is not null
 
@@ -60,7 +60,7 @@ select manv_ptm ma_nv,ma_to, ma_pb
        , heso_hotro_nvptm, heso_hotro_nvhotro, manv_tt_dai
        ,thang_tlkpi thang_tlkpi_nv,thang_tlkpi_to,doanhthu_kpi_nvptm dthu_kpi
   from ttkd_bsc.ct_bsc_ptm a
- where thang_tlkpi_to=202407 and loaitb_id=21
+ where thang_tlkpi_to=202409 and loaitb_id=21
  
 )m
 

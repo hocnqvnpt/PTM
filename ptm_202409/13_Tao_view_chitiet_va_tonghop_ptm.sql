@@ -47,7 +47,7 @@ from ttkd_bsc.ct_bsc_ptm a
  from ttkd_bsc.ct_bsc_ptm_pgp a
  where thang_ptm between 202406 and 202409
 			and (nvl(thang_tldg_dt_nvhotro, 999999) >= 202409
-					    or nvl(thang_tlkpi_hotro, 999999) = 202409) 
+					    or nvl(thang_tlkpi_hotro, 999999) >= 202409) 
               and exists (select 1 from ttkd_bsc.nhanvien where thang = 202409 and  ma_pb='VNP0702600' and ma_nv = a.manv_hotro)
 		    ;
               

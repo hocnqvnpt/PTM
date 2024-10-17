@@ -9,7 +9,7 @@ update ttkd_bsc.dinhmuc_dthu_ptm set dt_giao_bsc='' where thang=202409 and dt_gi
 */
 create table ttkd_bsc.bangluong_kpi_202409_dot2 as select * from ttkd_bsc.bangluong_kpi_202409;  
 create table ttkd_bsc.bangluong_kpi_dot2_20240920 as select * from ttkd_bsc.bangluong_kpi where thang = 202409;  
-
+select * from ttkd_bsc.bangluong_kpi_dot2_20240920 where thang = 202409;  
 
 select distinct a.*, b.*, c.ten_vtcv 
 		from ttkd_bsc.blkpi_danhmuc_kpi a, ttkd_bsc.blkpi_danhmuc_kpi_vtcv b, ttkd_bsc.nhanvien c
@@ -21,7 +21,7 @@ select distinct a.*, b.*, c.ten_vtcv
           
 		drop table ttkd_bsc.temp_trasau_canhan purge;
 		desc ttkd_bsc.ghtt_vnpts;
-		;4087.9597826
+		;4817.4409992
 		select sum(dthu_kpi)/1000000
 		from ttkd_bsc.temp_trasau_canhan a
 							join ttkd_bsc.nhanvien nv on nv.thang = 202409 and a.ma_nv = nv.ma_nv
@@ -54,7 +54,6 @@ select distinct a.*, b.*, c.ten_vtcv
 					union all
 						---dich vu ngoai ctr OR dvu khac VNPtt
 						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_ptm, doanhthu_kpi_nvptm dthu_kpi
---									, dthu_goi * heso_dichvu * heso_tratruoc dthu_430
 						from ttkd_bsc.ct_bsc_ptm 
 						where thang_tlkpi = 202409 and (loaitb_id<>21 or ma_kh='GTGT rieng')
 										and doanhthu_kpi_nvptm >0
@@ -99,15 +98,16 @@ select distinct a.*, b.*, c.ten_vtcv
 -- to truong: thieu 0021_ts
 	drop table ttkd_bsc.temp_totruong purge;
 	
-	select sum(dthu_kpi) from ttkd_bsc.temp_totruong where ma_to = 'VNP0701406' and ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200');;
-	select sum(dthu_kpi) dthu_to, 0 dthu_cn from ttkd_bsc.temp_totruong --where ma_to = 'VNP0701680'; 8977.435 8980.935 9071301491.7
+	select sum(dthu_kpi)/1000000 from ttkd_bsc.temp_totruong 
+	where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200');
+	select sum(dthu_kpi) dthu_to, 0 dthu_cn from ttkd_bsc.temp_totruong where ma_to = 'VNP0701406'; 9 670 690 982.4 (10 999 250 012.15 )
 	union all 
 	;
-	select a.ma_nv, nv.ten_nv, sum(dthu_kpi)
+	select a.ma_nv, nv.ten_nv, ten_to, ten_pb, ten_vtcv, sum(dthu_kpi)
 	from ttkd_bsc.temp_trasau_canhan a
 					join ttkd_bsc.nhanvien nv on a.ma_nv = nv.ma_nv and nv.thang = 202409
 			where nv.ma_to = 'VNP0701406'
-	group by a.ma_nv, nv.ten_nv
+	group by a.ma_nv, nv.ten_nv, ten_to, ten_pb, ten_vtcv
 	;
 	create table ttkd_bsc.temp_totruong as
 			select ma_pb, ma_to, loaitb_id, dichvuvt_id, sum(doanhthu_kpi_to) dthu_kpi
@@ -125,6 +125,7 @@ select distinct a.*, b.*, c.ten_vtcv
 					  where thang_tlkpi_to = 202409 and (loaitb_id<>21 or loaitb_id is null)
 									and tyle_am is null and tyle_hotro is null 
 									and doanhthu_kpi_to >0
+									and nvl(vanban_id, 0) != 764  ---only T7, 8,9, thang sau xoa
 				union all
 					---To  Nvien Cot MANV_HOTRO PGP
 					select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_nvhotro
@@ -156,7 +157,7 @@ select distinct a.*, b.*, c.ten_vtcv
 									and tyle_am is null and tyle_hotro is null
 									and doanhthu_kpi_dnhm_phong >0
 									and nvl(vanban_id, 0) != 764 ---only T7,8,9, thang sau xoa
-				
+--				union all ---dthu DNHM PGP không có tinh Tổ trưởng
 				union all
 					select ma_pb, ma_to, ma_tb, 20 loaitb_id, 2 dichvuvt_id, doanhthu_dongia 
 					from ttkd_bsc.ghtt_vnpts		----a Nguyen quan ly
@@ -194,6 +195,7 @@ select distinct a.*, b.*, c.ten_vtcv
 					  where thang_tlkpi_phong = 202409 and (loaitb_id<>21 or loaitb_id is null)
 									and tyle_am is null and tyle_hotro is null 
 									and doanhthu_kpi_phong >0
+									and nvl(vanban_id, 0) != 764 ---only T7,8,9, thang sau xoa
 				union all
 					---To  Nvien Cot MANV_HOTRO PGP
 					select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_phong * heso_hotro_nvhotro as doanhthu_kpi_phong
@@ -224,8 +226,8 @@ select distinct a.*, b.*, c.ten_vtcv
 					 where thang_tlkpi_dnhm_phong = 202409 and (loaitb_id<>21 or loaitb_id is null)
 									and tyle_am is null and tyle_hotro is null
 									and doanhthu_kpi_dnhm_phong >0
-									--and nvl(vanban_id, 0) != 764 ---only T7, thang sau xoa
-				
+									and nvl(vanban_id, 0) != 764 ---only T7, 8, 9, thang sau xoa
+--				union all ---dthu DNHM PGP không có tinh Phó Giam đốc
 				union all
 					select ma_pb, ma_to, ma_tb, 20 loaitb_id, 2 dichvuvt_id, doanhthu_dongia 
 					from ttkd_bsc.ghtt_vnpts		----a Nguyen quan ly
@@ -252,7 +254,8 @@ select distinct a.*, b.*, c.ten_vtcv
 						;
 		select * from ttkd_bsc.temp_021_ldp1 where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200');
 		 select sum(DTHU_KPI) from ttkd_bsc.x_temp_phong where ma_pb not in ('VNP0702300', 'VNP0702400', 'VNP0702500'); 9379.411
-		 select sum(DTHU_KPI) from ttkd_bsc.temp_021_ldp where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200'); 3644.041
+		 select sum(DTHU_KPI)/1000000 from ttkd_bsc.x_temp_phong 
+		 where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200'); 4638825687.2
 		 
 		 drop table  ttkd_bsc.temp_021_ldp1 purge
 		 ;
@@ -357,8 +360,8 @@ select distinct a.*, b.*, c.ten_vtcv
 				;
 		----update DTHU thau 2 NV Phong GP, hang thang lien he Phuoc gui
 		update ttkd_bsc.bangluong_kpi
-			set THUCHIEN = case when ma_nv = 'VNP027259' then THUCHIEN + 20320000/1000000
-												when ma_nv = 'VNP017190' then THUCHIEN + 37109700/1000000
+			set THUCHIEN = case when ma_nv = 'VNP027259' then THUCHIEN + 34480000/1000000
+												when ma_nv = 'VNP017190' then THUCHIEN + 34480000/1000000
 												end
 --		select * from  ttkd_bsc.bangluong_kpi
 		where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_021' and ma_nv in ('VNP027259', 'VNP017190')
@@ -366,12 +369,18 @@ select distinct a.*, b.*, c.ten_vtcv
 		update ttkd_bsc.bangluong_kpi a set GIAO = 
 																					case 
 																							when ma_vtcv in ('VNP-HNHCM_GP_3') then 16		---fix so theo vb ap dung T8
-																							when ma_vtcv in ('VNP-HNHCM_KDOL_4') then 14.5		---fix so theo vb ap dung T8
-																							when ma_vtcv in ('VNP-HNHCM_KDOL_5') then 72.5		---fix so theo vb ap dung T8_ Vinh y/c tren Group Xu ly
-																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') and ma_nv in ('VNP017344', 'VNP017778', 'VNP017163', 'VNP016808')	
+--																							when ma_vtcv in ('VNP-HNHCM_KDOL_4') then 14.5		---fix so theo vb ap dung T8
+--																							when ma_vtcv in ('VNP-HNHCM_KDOL_5') then 72.5		---fix so theo vb ap dung T8_ Vinh y/c tren Group Xu ly
+																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') and ma_nv in ('VNP017163', 'VNP016808')	
 																										then 2.6
-																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 6.5		---fix so theo vb ap dung T6, nhung chua bik vi tri n�o 2.6tr																							
-																							when ma_vtcv in ('VNP-HNHCM_BHKV_53') then 5.6 		---Fix so theo vb ap dung T8
+																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 6.5		---fix so theo vb ap dung T6, nhung chua bik vi tri nao 2.6tr																							
+																							when ma_vtcv in ('VNP-HNHCM_BHKV_53') then 5.6 		---Fix so theo vb ap dung T8 lay theo dinh muc, 430 để đánh giá P1
+																							when ma_vtcv in ('VNP-HNHCM_BHKV_52') then  		---Fix so theo vb ap dung T8 lay theo 430, tối thiểu >= đinh mực nvien thực tế
+																										(select case when nvl(TONG_DTGIAO, 0) < DINHMUC_2 then  round(DINHMUC_2/1000000, 3)
+																														else round(TONG_DTGIAO/1000000, 3) end
+																											from ttkd_bsc.dinhmuc_giao_dthu_ptm 
+																														where thang = a.thang and ma_nv = a.ma_nv 
+																										)
 																								else	(select round(TONG_DTGIAO/1000000, 3) from ttkd_bsc.dinhmuc_giao_dthu_ptm 
 																											where thang = a.thang and ma_nv = a.ma_nv 
 																														--	and trunc(dateinput) = '28/07/2024'
@@ -391,7 +400,7 @@ select distinct a.*, b.*, c.ten_vtcv
 --																									when ma_vtcv in ('VNP-HNHCM_BHKV_22') then 50	--thay doi theo thang GDV
 --																									when ma_vtcv in ('VNP-HNHCM_BHKV_28', 'VNP-HNHCM_BHKV_27') then 60	--thay doi theo thang CHT, CHT kGDV
 --																						 end
---				select GIAO from ttkd_bsc.bangluong_kpi a
+--				select * from ttkd_bsc.bangluong_kpi a
 				where a.ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202409 
 			;
 		update ttkd_bsc.bangluong_kpi a set TYLE_THUCHIEN = case when GIAO = 0 then null
@@ -437,7 +446,8 @@ select distinct a.*, b.*, c.ten_vtcv
 																									end
 				where ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202409 
 			;
-		update ttkd_bsc.bangluong_kpi a set MUCDO_HOANTHANH = case 
+		update ttkd_bsc.bangluong_kpi a set CHITIEU_GIAO = 100
+																		, MUCDO_HOANTHANH = case 
 																														--- case: khong danh gia BSC
 																														when exists (select 1 from ttkd_bsc.nhanvien where thang = a.thang and ma_nv = a.ma_nv and tinh_bsc = 0)
 																																	then 100
@@ -515,6 +525,11 @@ rollback;
 																	else null
 																				 end
 					where ma_vtcv not in ('VNP-HNHCM_BHKV_27') and thang = 202409 
+								and ma_pb not in (
+																'VNP0702300',
+																'VNP0702400',
+																'VNP0702500'
+																) 
 ;
 		---Ap dung vb 292 dv BHDN eO 552546
 		update ttkd_bsc.dinhmuc_giao_dthu_ptm a 
