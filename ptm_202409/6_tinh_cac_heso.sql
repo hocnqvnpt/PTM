@@ -492,7 +492,7 @@ rollback;
 																	  and d.loaitb_id_obss = a.loaitb_id 
 															)
 											
-									and ma_duan_banhang in ('276527')
+--									and ma_duan_banhang in ('276527')
 --										and thang_luong = 86
 								;
 			-----END bo sung thong tin QLDA
@@ -696,7 +696,7 @@ delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202409; and ma_duan_banh
 											when nhom_tiepthi in (2, 11) or manv_ptm like 'POT%' then 'Khong xet trong/ngoai CT ban hang'			---TTVT, Potmasco
 											when ma_pb = 'VNP0703000' then 'Khong xet trong/ngoai CT ban hang'
 											when loaitb_id in (21, 20, 149) then 'Khong xet trong/ngoai CT ban hang'				----VNPTS, VCC tren CCBS khong co nhap dc QLDA
-											when loaitb_id in (134) and nguon = 'ct_ptm_ngoaictr_imp_insert' then 'Khong xet trong/ngoai CT ban hang'				----Gia han INT khong xet QLDA, chua co Quy dinh
+											when loaitb_id in (134) and nguon = 'ct_ptm_ngoaictr_imp_insert' then 'Khong xet trong/ngoai CT ban hang'				----Gia han INT khong xet QLDA, chua co Quy dinh, ap dung doi danh sach a Nghia
 											  when ma_vtcv not in ('VNP-HNHCM_BHKV_6','VNP-HNHCM_BHKV_6.1',
 																		    'VNP-HNHCM_BHKV_17','VNP-HNHCM_BHKV_42','VNP-HNHCM_KHDN_3','VNP-HNHCM_KHDN_3.1',
 																		    'VNP-HNHCM_KHDN_4','VNP-HNHCM_BHKV_41',
@@ -850,6 +850,7 @@ update ct_bsc_ptm a
 															else 1 end
 --				select thang_luong, thang_ptm, nguon, heso_kvdacthu, ma_da, ma_tb from ttkd_bsc.ct_bsc_ptm a
 			    where a.thang_ptm = 202409 --- thang n
+							and loaitb_id not in (21)
 --							   and heso_kvdacthu is null
 		--	and ma_tb = '84845556997'
 		
@@ -949,6 +950,7 @@ rollback;
 		-- Khoi phuc Tly khong xet QLDA
 		-- Lap moi  dvu DHSXKD, nang cap Fiber, MyTV, TSL, Colo xet QLDA
 		-- Gia han GTGT/CNTT xet QLDA
+		-- Gia han Inter trực tiêp, TSL khong xet QLDA, vi chua yêu cầu nhập QLDA
 			update ttkd_bsc.ct_bsc_ptm 
 					set heso_quydinh_nvptm = null
 			    where thang_ptm = 202409 and (loaitb_id<>21 or ma_kh='GTGT rieng') 
@@ -1022,7 +1024,7 @@ rollback;
 						, ptm as (select a.khachhang_id, b.khachhang_id khachhang_id_plkh, row_number() over (partition by a.khachhang_id order by b.khachhang_id desc) rnk
 											 from ttkd_bsc.ct_bsc_ptm a
 															join ttkd_bct.db_thuebao_ttkd b on b.khachhang_id_goc = a.khachhang_id-- and a.khachhang_id = 15572
-											 where thang_ptm = 202409
+											 where thang_ptm = 202409 
 										)
 			    select a.*, plkh.ma_plkh phanloai_kh
 				   from  ptm a
@@ -1389,12 +1391,11 @@ update ttkd_bsc.ct_bsc_ptm a
 commit;
             
 -- don gia dnhm: 
-		---Goi Luong tinh: khong tinh don gia VNPts, chi tinh don gia trong VNPtt
+		---Goi Luong tinh: tinh don gia dnhm VNPts
 
 			update ttkd_bsc.ct_bsc_ptm a 
 			    set doanhthu_dongia_dnhm = case when heso_daily =  0.05 and heso_dichvu_dnhm > 0 then round((nvl(tien_dnhm,0)+nvl(tien_sodep,0)) * nvl(tyle_huongdt,1)* heso_daily, 0)
 																		when heso_daily =  0 then 0
-																		when loaitb_id = 20 and goi_luongtinh is not null then 0
 																			else round((nvl(tien_dnhm,0)+nvl(tien_sodep,0)) *nvl(tyle_huongdt,1) *heso_dichvu_dnhm
 																									 * heso_quydinh_nvptm * heso_vtcv_nvptm * nvl(heso_kvdacthu,1)
 																									 * nvl(heso_diaban_tinhkhac,1)
@@ -1422,7 +1423,7 @@ commit;
 							   and (thang_ptm = 202409 --- thang n
 												or thang_luong in (1, 2, 3, 4, 87)
 												)			---flag 4 file so 5 import dung thu chuyen dung that
-								and (loaitb_id not in (20,21) or ma_kh='GTGT rieng' or (loaitb_id=20 and goi_luongtinh is null)) 
+								and (loaitb_id not in (21) or ma_kh='GTGT rieng' ) 
 								and nvl(thang_tldg_dnhm, 999999) >= 202409
 								
 				;
@@ -1474,12 +1475,13 @@ rollback;
 																											 * nvl(heso_diaban_tinhkhac,1)
 																										,0) end
 						
---		 select heso_quydinh_nvptm, heso_quydinh_nvhotro, heso_quydinh_dai, thang_luong, thang_ptm, doanhthu_dongia_nvptm, doanhthu_dongia_nvhotro, doanhthu_kpi_nvptm, doanhthu_kpi_nvdai, doanhthu_kpi_nvhotro, doanhthu_kpi_dnhm, thang_tlkpi from ttkd_bsc.ct_bsc_ptm a
+--		 select ma_tb, heso_quydinh_nvptm, heso_quydinh_nvhotro, heso_quydinh_dai, thang_luong, thang_ptm, doanhthu_dongia_nvptm, doanhthu_dongia_nvhotro, doanhthu_kpi_nvptm, doanhthu_kpi_nvdai, doanhthu_kpi_nvhotro, doanhthu_kpi_dnhm, thang_tlkpi from ttkd_bsc.ct_bsc_ptm a
 				    where (thang_ptm = 202409 --- thang n
 								or thang_luong in (1, 2, 3, 4, 87)
 								)			---flag 4 file so 5 import dung thu chuyen dung that
 									and dich_vu not like 'Thi_t b_ gi_i ph_p%' and (loaitb_id not in (21,131) or ma_kh='GTGT rieng') 
-									and nvl(thang_tlkpi, 999999) >= 202409							  
+									and nvl(thang_tlkpi, 999999) >= 202409	
+								
 				    ;
 
 
@@ -1559,7 +1561,7 @@ rollback;
 								or thang_luong in (1, 2, 3, 4, 87)
 								)			---flag 4 file so 5 import dung thu chuyen dung that
 								and (loaitb_id not in (21,131) or ma_kh='GTGT rieng')
-								and nvl(THANG_TLKPI_PHONG, 999999) >= 202409
+								and nvl(THANG_TLKPI_PHONG, 999999) >= 202409 
 				    ;
                       commit;
 

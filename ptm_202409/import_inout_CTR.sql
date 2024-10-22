@@ -62,12 +62,12 @@ Diều kiện ngoài chuong trình:
 					update ttkd_bsc.ct_ptm_ngoaictr_imp set
 --										command = 'existed'
 --										command = 'thanhly' 
---										command = 'insert'
-										command = 'update'
+										command = 'insert'
+--										command = 'update'
 --										command = 'khongtinh' 
 --													loaitb_id = 372, dichvuvt_id = 15 
 --												, dthu_goi = round(4645615/1.1, 0)
-												, ma_gd = 'HCM-CQ/13636831'
+--												, ma_gd = 'HCM-CQ/13636831'
 --												ma_tb = 'hcm_vbn_00001181'
 --												doituong_kh = 'KHDN'
 --								,  ghichu = ghichu || '; Goi Pro, khác với Thiết bị giai pháp ID447'
@@ -83,21 +83,21 @@ Diều kiện ngoài chuong trình:
 --							and thuebao_id = 12574448 --chu upda, dang kiem tra vi sao tien hok c� trong ctr
 --							and thuebao_id in (12208645) 
 --							and ma_gd = 'HCM-TT/02990869'
-							and ma_tb = '84942668182'
+							and ma_tb = 'hcm_vbn_00000852'
 --							and ma_duan_banhang = '237001'
 --							and doituong_kh is null
 --							and manv_hotro = 'VNP017373; D?ch v? ch?a c� tr�n oneBSS'--is not null
 				;		
 
 				--ktra ma_gd da tinh tien
-				select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202401 and  ma_tb = 'hcm_vnedu_digilib_00001081';
+				select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202401 and  ma_tb = 'hcm_vbn_00000852';
 				
 				select dthu_goi, luong_dongia_nvptm, thang_tldg_dt, ma_tb, thuebao_id from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202403 and replace(ma_gd, ' ', '') = '00962187';'00928721'; 00927583
 
 
 				select * from ttkd_bsc.ct_ptm_ngoaictr_imp 
 								where thang = 202409 and nvl(dichvuvt_id, 0)  in (7, 13, 14, 15, 16, 0) 
-											;	and command is   null ;and ghichu is not null;= 'update'; and ma_tb= 'hcm_vbn_00001065';
+												and command is   null ;and ghichu is not null;= 'update'; and ma_tb= 'hcm_vbn_00001065';
 
 				select * from ttkd_bsc.ct_bsc_ptm where  thang_luong in ( 86, 87);
 				
@@ -109,7 +109,7 @@ Diều kiện ngoài chuong trình:
 																		, LOAITB_ID, DICHVUVT_ID, DOITUONG_KH, THUEBAO_ID, khachhang_id, nguon, MST
 																		, DTHU_PS, trangthaitb_id, chuquan_id, dongia, dich_vu, nop_du, mien_hsgoc, trangthai_tt_id, hdkh_id, hdtb_id, loaihd_id, kieuld_id
 																		, ma_duan_banhang)
-											
+									
 							select 86, a.THANG, b.ten_pb, b.ma_pb, b.ten_to, b.ma_to, a.MANV_PTM, a.TENNV_PTM, b.ma_vtcv, b.loai_ld, b.NHOMLD_ID NHOM_TIEPTHI
 											, nvl(kld.TEN_KIEULD, TENKIEU_LD) TEN_KIEULD , a.MA_GD, nvl(c.MA_TB, 'khongco'||rownum) ma_tb, nvl(kh.MA_KH, 'GTGT rieng') MA_KH, a.SO_HD
 											, nvl(kh.TEN_KH, a.ten_kh) ten_kh, a.NGAY_YC, a.GOI_CUOC_MOI, a.DTHU_GOI, a.HESO_DICHVU

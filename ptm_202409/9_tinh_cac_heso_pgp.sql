@@ -26,10 +26,12 @@ select * from ttkd_bsc.ct_bsc_ptm_pgp where thang_tldg_dt_nvhotro = 202408; and 
 select * from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202409; and hdtb_id in (26277035, 26276940); or ngay_ins >= '01/09/2024'; and heso_daily = 0.05; and ma_tb in ('hcm_hddt_00013102', 'hcm_hddt_00023066', 'hcm_hddt_00007104')
 							and thang_ptm = 202406; 
 select * from ttkd_bsc.ct_bsc_ptm where ma_gd = 'HCM-LD/01939638';
+select * from ttkd_bsc.ct_bsc_ptm where ma_tb = '84915496620';
+select * from ttkd_bsc.nhanvien where thang = 202409 and ten_nv = 'Lư Kim Sơn';
 
-delete from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202409; and ngay_ins = '03/10/2024 21:46:06'; 
+delete from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202409 ; and ngay_ins = '03/10/2024 21:46:06'; 
 
-select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_duan = '251801';
+select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_duan_banhang = '314760';
 delete from ttkd_bsc.ct_bsc_ptm_pgp where ma_gd = 'HCM-LD/01939638';
         
 insert into ttkd_bsc.ct_bsc_ptm_pgp a

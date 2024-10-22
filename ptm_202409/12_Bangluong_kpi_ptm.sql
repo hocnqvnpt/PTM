@@ -8,7 +8,7 @@ update ttkd_bsc.dinhmuc_dthu_ptm set  thang=202409 where thang is null;
 update ttkd_bsc.dinhmuc_dthu_ptm set dt_giao_bsc='' where thang=202409 and dt_giao_bsc=0;
 */
 create table ttkd_bsc.bangluong_kpi_202409_dot2 as select * from ttkd_bsc.bangluong_kpi_202409;  
-create table ttkd_bsc.bangluong_kpi_dot2_20240920 as select * from ttkd_bsc.bangluong_kpi where thang = 202409;  
+create table ttkd_bsc.bangluong_kpi_20241020_dot2 as select * from ttkd_bsc.bangluong_kpi where thang = 202409;  
 select * from ttkd_bsc.bangluong_kpi_dot2_20240920 where thang = 202409;  
 
 select distinct a.*, b.*, c.ten_vtcv 
@@ -251,11 +251,11 @@ select distinct a.*, b.*, c.ten_vtcv
 --						NHOM_DICHVU  in ('Dichvu') and
 						ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200') 
 						and ma_to  in (select ma_to from ttkd_bsc.nhanvien where thang = 202409)
-						;
+						; 4635206943.2
 		select * from ttkd_bsc.temp_021_ldp1 where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200');
 		 select sum(DTHU_KPI) from ttkd_bsc.x_temp_phong where ma_pb not in ('VNP0702300', 'VNP0702400', 'VNP0702500'); 9379.411
 		 select sum(DTHU_KPI)/1000000 from ttkd_bsc.x_temp_phong 
-		 where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200'); 4638825687.2
+		 where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200'); 4638825687.2 4640.3456872
 		 
 		 drop table  ttkd_bsc.temp_021_ldp1 purge
 		 ;
@@ -369,11 +369,11 @@ select distinct a.*, b.*, c.ten_vtcv
 		update ttkd_bsc.bangluong_kpi a set GIAO = 
 																					case 
 																							when ma_vtcv in ('VNP-HNHCM_GP_3') then 16		---fix so theo vb ap dung T8
---																							when ma_vtcv in ('VNP-HNHCM_KDOL_4') then 14.5		---fix so theo vb ap dung T8
---																							when ma_vtcv in ('VNP-HNHCM_KDOL_5') then 72.5		---fix so theo vb ap dung T8_ Vinh y/c tren Group Xu ly
+																							when ma_vtcv in ('VNP-HNHCM_KDOL_4') then 14.5		---fix so theo vb ap dung T8
+																							when ma_vtcv in ('VNP-HNHCM_KDOL_5') then 72.5		---fix so theo vb ap dung T8_ Vinh y/c tren Group Xu ly tinh tren 5 nvien, Tiên hok co
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') and ma_nv in ('VNP017163', 'VNP016808')	
 																										then 2.6
-																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 6.5		---fix so theo vb ap dung T6, nhung chua bik vi tri nao 2.6tr																							
+																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 5.6		---fix so theo vb ap dung T9, nhung chua bik vi tri nao 2.6tr																							
 																							when ma_vtcv in ('VNP-HNHCM_BHKV_53') then 5.6 		---Fix so theo vb ap dung T8 lay theo dinh muc, 430 để đánh giá P1
 																							when ma_vtcv in ('VNP-HNHCM_BHKV_52') then  		---Fix so theo vb ap dung T8 lay theo 430, tối thiểu >= đinh mực nvien thực tế
 																										(select case when nvl(TONG_DTGIAO, 0) < DINHMUC_2 then  round(DINHMUC_2/1000000, 3)
@@ -472,7 +472,7 @@ select distinct a.*, b.*, c.ten_vtcv
 commit;
 rollback;
 		
-		create table ttkd_bsc.bangluong_kpi_202409_l3 as select * from ttkd_bsc.bangluong_kpi_202409;
+		create table ttkd_bsc.bangluong_kpi_202409_1021_2330 as select * from ttkd_bsc.bangluong_kpi where thang = 202409;
 		select * from  ttkd_bsc.bangluong_kpi where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_021' and ma_nv = 'CTV051559';
 	
 		select sum(HCM_DT_PTMOI_021) from  ttkd_bsc.bangluong_kpi_202409 where HCM_DT_PTMOI_021 is not null and ma_nv = 'CTV028802';

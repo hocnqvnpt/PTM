@@ -1,5 +1,5 @@
-select * from ptm_codinh_202408;  
-drop table ptm_codinh_202408 purge;
+select * from ptm_codinh_202409_bs;  
+drop table ptm_codinh_202409_bs purge;
 drop table ptm_codinh_202409_cd purge;
 drop table ptm_codinh_202409_tsl purge;
 drop table ptm_codinh_202409_cntt purge;
@@ -186,24 +186,7 @@ create table ptm_codinh_202409 as
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
                                         and c.DUAN_ID=d.DUAN_ID(+)
                                         and a.toanha_id=c.toanha_id(+)
-                             
-                               union all
-                             
-                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id,b.ma_tb,b.dichvuvt_id, b.loaitb_id,b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id, 
-                                        f.so_gt, f.mst, e.mst mst_tt, f.loaikh_id, f.so_dt, 
-                                         null daucuoi_id,null tocdo_id,b.mucuoctb_id,null muccuoc_id,null ne_id,null madoicap,null matb_tn,null port_id,null vci_vpi_id,null ma_lt,
-                                         null ma_tb_sub,null cap_id,null vitri,null vitri_2,null ketcuoi_id,null doicap,null doicap_2,
-                                         null loaikenh_id,0 culy,null slid,null password,null seri_md, a.chuquan_id,null tramtb_id,null bras_id,null dslam_id,
-                                        goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                        null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac,
-                                        null TOCDO_ISP,null  TOCDO_NIX,null  TOCDO_PIR_ID,null  cuoc_cir ,null cuoc_pir, null cuoc_bd,
-                                        null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                        trangbi_id, null phanloai_id, null linhvuc_id, null cuoc_tn,null  LOAICAP_ID, null THONGTIN_TC, null sltv_htvc, null loainode_id,
-                                       null thoihan_id, b.tg_thue_tu, b.tg_thue_den, null toanha_id, null ma_duan
-                             from css.v_db_dd a, css.v_db_thuebao b
-                                       ,css.v_db_thanhtoan e, css.v_db_khachhang f
-                             where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                             
+								
                              union all
                              
                              select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id,b.ma_tb,b.dichvuvt_id, b.loaitb_id,b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id, 
@@ -229,7 +212,7 @@ create table ptm_codinh_202409 as
                                                     null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
                                                     null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id                
                                      from css.v_hdtb_adsl a, css.v_hd_thuebao b
-                                     where b.dichvuvt_id not in (7,8,9) and a.hdtb_id=b.hdtb_id 
+                                     where b.dichvuvt_id not in (7,8,9) and a.hdtb_id=b.hdtb_id and b.tthd_id = 6
                                      
                                     union all
                                     select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
@@ -240,7 +223,7 @@ create table ptm_codinh_202409 as
                                                     null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
                                                     null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id                
                                      from css.v_hdtb_cd a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id 
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
                                      
                                     union all
                                     select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
@@ -251,7 +234,7 @@ create table ptm_codinh_202409 as
                                                     null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
                                                     null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, null toanha_id                
                                      from css.v_hdtb_gp a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id 
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
                                      
                                     union all
                                     select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
@@ -262,7 +245,7 @@ create table ptm_codinh_202409 as
                                                     cuoc_cir , cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
                                                     null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id               
                                      from css.v_hdtb_mgwan a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id 
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
                                      
                                       union all
                                     select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
@@ -273,7 +256,7 @@ create table ptm_codinh_202409 as
                                                     null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
                                                     null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id                
                                      from css.v_hdtb_tsl a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id and daucuoi_id = 1
+                                     where a.hdtb_id=b.hdtb_id and daucuoi_id = 1 and b.tthd_id = 6
                                     
                                       union all
                                     select  a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
@@ -284,19 +267,8 @@ create table ptm_codinh_202409 as
                                                     null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
                                                     null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id
                                      from css.v_hdtb_ims a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id 
-                                     
-                                    union all
-                                    select  a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
-                                                    b.kieuld_id, b.tthd_id, b.loaitb_id, b.doituong_id, b.dichvuvt_id, b.donvi_id, b.ngay_ht, b.ngay_tt, b.ngay_ins, b.ngay_kh,
-                                                    b.mucuoc_tb, b.ghichu, b.nguoi_cn, null daucuoi_id,null tocdo_id,null muccuoc_id,
-                                                    null loaikenh_id, a.chuquan_id, goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                                    null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac,
-                                                    null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                                    null phanloai_id, null linhvuc_id, null cuoc_tn, null thoihan_id, b.tg_thue_tu, b.tg_thue_den, null toanha_id
-                                     from css.v_hdtb_dd a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id
-                                     
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
+							  
                                      union all
                                      select  a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
                                                     b.kieuld_id, b.tthd_id, b.loaitb_id, b.doituong_id, b.dichvuvt_id, b.donvi_id, b.ngay_ht, b.ngay_tt, b.ngay_ins, b.ngay_kh,
@@ -306,7 +278,7 @@ create table ptm_codinh_202409 as
                                                     null  cuoc_cir ,null cuoc_pir, null cuoc_bd, sl_mailing, cuoc_dt, ngay_duytri, ngay_duytri_kt,
                                                     phanloai_id, linhvuc_id, cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, null toanha_id
                                      from css.v_hdtb_cntt a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
                                      )
  
   select lhtb.loaihinh_tb dich_vu
@@ -420,7 +392,16 @@ create table ptm_codinh_202409 as
                     )        
 
 			 and to_number(to_char(b.ngay_ht, 'yyyymm')) = to_number(to_char(trunc(sysdate, 'month') - 1, 'yyyymm')) 		--thang n
---                and b.ma_tb = 'LL001075589'
+--and b.ma_tb in ('02743767017'
+--,'02743767018'
+--,'02743767019'
+--,'02743767020'
+--,'02743767010'
+--,'02743767011'
+--,'02743767012'
+--,'02743767013'
+--,'02743767014'
+--,'02743767015')
              ;
                           
              select * from ptm_codinh_202409

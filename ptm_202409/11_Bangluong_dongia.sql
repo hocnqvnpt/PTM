@@ -1,6 +1,6 @@
 
 
-select sum(LUONG_DONGIA_DNHM_VNPTT), sum(LUONG_DONGIA_GOI_VNPTT) from ttkd_bsc.bangluong_dongia_202408_dot2; 283634249	166502863
+select sum(LUONG_DONGIA_DNHM_VNPTT), sum(LUONG_DONGIA_GOI_VNPTT) from ttkd_bsc.bangluong_dongia_202409_dot2; 352473000	445870660
 
 ---lan dau tien chay doan Frame nay, lan sau khong chay doan FRAME nay
 ------BEGIN dot 1---khong chay cho dot 2
@@ -96,7 +96,7 @@ drop table ttkd_bsc.bangluong_dongia_202409;
 			---Ap dung vb 323 dv BHKV, 292 BHDN
 			
 			select thang, ma_nv from ttkd_bsc.bang_heso_dthu group by thang, ma_nv having count(*)>1;
-			select * from ttkd_bsc.bang_heso_dthu where thang = 202409;
+			select sum(heso_dthu) from ttkd_bsc.bang_heso_dthu where thang = 202409; 739.45 745.3
 			
 			delete from ttkd_bsc.bang_heso_dthu where thang = 202409 and donvi = 'TTKD';
 			insert into ttkd_bsc.bang_heso_dthu  
@@ -167,7 +167,7 @@ drop table ttkd_bsc.bangluong_dongia_202409;
 		---Minh Viber nhom luong 14/08, heso vb 323 cua nv KDDTT chi ap dung tren dthu goi, khong ap dung dthu kich hoat, cac vi tri khac bthuong
 --delete from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202409 ;
 
-select sum(TIEN_THULAO) from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202409; and thang_ptm = 202409; ma_nv = 'VNP019958'; thang 9_ 2 671 489 223 -- 6 099 950 199
+select sum(TIEN_THULAO) from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202409; and thang_ptm = 202409; ma_nv = 'VNP019958'; thang 9_ 2 671 489 223 -- 6 099 950 199 -- 6 440 761 646
 --create table ttkd_bsc.tonghop_ct_dongia_ptm as
 insert into ttkd_bsc.tonghop_ct_dongia_ptm
 			with nv as (select thang, donvi, ma_nv, ten_nv, ten_to, ten_pb, ma_to, ma_pb, ma_vtcv, nhomld_id
@@ -323,7 +323,9 @@ insert into ttkd_bsc.tonghop_ct_dongia_ptm
 
 			
 	----all dvu ngoai tru VNPtt
-			select nguon, sum(LUONG_DONGIA) from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202409 and loaitb_id = 21 and donvi = 'TTKD' group by nguon;  ---490779496 --529 594 190 --1038152570
+			select nguon, sum(LUONG_DONGIA) from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202409 and loaitb_id = 21 and donvi = 'TTKD' group by nguon;  
+			---490 779 496 --529 594 190 --1 038 152 570
+			---484160800		--381520000 --865 680 800
 			;
 			update ttkd_bsc.bangluong_dongia_202409
 						set TONG_LUONG_DONGIA = null, luong_dongia_cdbr = null
@@ -415,12 +417,6 @@ insert into ttkd_bsc.tonghop_ct_dongia_ptm
 -- Luong don gia ghtt + Dong luc ghtt : Nhu Y
  create table ttkd_bsc.bangluong_dongia_202409_l1 as select * from  ttkd_bsc.bangluong_dongia_202409;
  
-			drop table ttkd_bsc.temp_ghtt purge;
-			create table ttkd_bsc.temp_ghtt as 
-			select * from ttkd_bsc.tl_giahan_tratruoc where thang = 202409
-			;
-create index ttkd_bsc.temp_ghtt_makpi on ttkd_bsc.temp_ghtt (ma_kpi,loai_tinh,ma_nv);
-
 		---KIEMTRA
 				select 'tong' tong, sum(luong_dongia_ghtt) luong_dongia_ghtt, 0 LUONG_DONGIA_GHTT_bsT4
 								, sum(giamtru_ghtt_cntt) giamtru_ghtt_cntt, sum(tong_luong_dongia), SUM(thuhoi_dongia_ghtt) thuhoi_dongia_ghtt, sum(tong_luong_thuhoi)
@@ -450,7 +446,7 @@ create index ttkd_bsc.temp_ghtt_makpi on ttkd_bsc.temp_ghtt (ma_kpi,loai_tinh,ma
 
     UPDATE ttkd_bsc.bangluong_dongia_202409 SET thuhoi_dongia_ghtt = NULL, luong_dongia_ghtt = NULL, giamtru_ghtt_cntt = NULL
 		; 
-		ROLLBACK;		
+--		ROLLBACK;		
 		   ;
 update ttkd_bsc.bangluong_dongia_202409 a 
     set 
@@ -460,19 +456,19 @@ update ttkd_bsc.bangluong_dongia_202409 a
                                                      and ma_nv = a.ma_nv
                           group by ma_nv having  sum(tien) <> 0) 
 		
-		, giamtru_ghtt_cntt = (select -sum(tien) from ttkd_bsc.tl_giahan_tratruoc 
-												where thang = 202409 and ma_kpi = 'DONGIA' and loai_tinh = 'DONGIATRU_CA' and ma_nv = a.ma_nv
-                                                            group by ma_nv 
-                                                            having  sum(tien)  <> 0) 
+--		, giamtru_ghtt_cntt = (select -sum(tien) from ttkd_bsc.tl_giahan_tratruoc 
+--												where thang = 202409 and ma_kpi = 'DONGIA' and loai_tinh = 'DONGIATRU_CA' and ma_nv = a.ma_nv
+--                                                            group by ma_nv 
+--                                                            having  sum(tien)  <> 0) 
 												
-		, thuhoi_dongia_ghtt = (select sum(tien) 
-												from ttkd_bsc.tl_giahan_tratruoc 
-												where thang = 202409 and ma_kpi = 'DONGIA' and loai_tinh in ('THUHOI_DONGIA_GHTT')
-																										 and ma_nv = a.ma_nv 
-													group by ma_nv having  sum(tien) <> 0) 
+--		, thuhoi_dongia_ghtt = (select sum(tien) 
+--												from ttkd_bsc.tl_giahan_tratruoc 
+--												where thang = 202409 and ma_kpi = 'DONGIA' and loai_tinh in ('THUHOI_DONGIA_GHTT')
+--																										 and ma_nv = a.ma_nv 
+--													group by ma_nv having  sum(tien) <> 0) 
 	
 ;
-SELECT * FROM ttkd_bsc.bangluong_dongia_202409 a ;
+SELECT distinct ten_vtcv, ma_vtcv FROM ttkd_bsc.bangluong_dongia_202409 a where donvi = 'TTKD' and LUONG_DONGIA_GHTT >0 ;
 commit;
 
 
@@ -485,15 +481,13 @@ commit;
 update ttkd_bsc.bangluong_dongia_202409 a set ghtt_vnpts=''
 ;
 		update ttkd_bsc.bangluong_dongia_202409 a
-		    set ghtt_vnpts=(select round(sum(luong_dongia * hs.heso_dthu), 0)  
+		    set ghtt_vnpts=(select round(sum(luong_dongia * nvl(hs.heso_dthu, 1)), 0)  
 										from ttkd_bsc.ghtt_vnpts x
-													join ttkd_bsc.bang_heso_dthu hs on x.ma_nv = hs.ma_nv and x.thang = hs.thang
+													 join ttkd_bsc.bang_heso_dthu hs on x.ma_nv = hs.ma_nv and x.thang = hs.thang
 									 where x.thang = 202409 and thang_giao is not null and x.ma_nv is not null
 										    and x.ma_nv = a.ma_nv)
---		     select ma_nv, ten_vtcv, ten_pb, ghtt_vnpts from ttkd_bsc.bangluong_dongia_202409 a
-		    where exists (select 1 from ttkd_bsc.ghtt_vnpts 
-								  where thang=202409 and thang_giao is not null and ma_nv is not null and ma_nv=a.ma_nv)
-			;
+--		     select ma_nv, ten_vtcv, ten_pb, ghtt_vnpts, ghichu from ttkd_bsc.bangluong_dongia_202409 a
+		    ;
 
 ---Don gia cho NV thuc hien Nghiep vu lap ho so, giai quyet khieu nai: a Khanh, chi Hoi
 			-----BEGIN Bsung tam 1 thang 5
@@ -621,8 +615,8 @@ select sum(tong_thulao_thucchi) from ttkd_bsc.bangluong_dongia_202409;--61177527
 -- THUHOI: 
 			update ttkd_bsc.bangluong_dongia_202409 a
 						 set  
-								 giamtru_hosotainha=''--, giamtru_ghtt_cntt=''
-								, luong_dongia_ptm_thuhoi=''--, thuhoi_dongia_ghtt = null
+								 giamtru_hosotainha='', giamtru_ghtt_cntt=''
+								, luong_dongia_ptm_thuhoi='', thuhoi_dongia_ghtt = null
 								, luong_dongia_khac_thuhoi=''
 								, tong_luong_thuhoi = null
 				;
@@ -633,15 +627,31 @@ select sum(tong_thulao_thucchi) from ttkd_bsc.bangluong_dongia_202409;--61177527
 --- thu hoi PTM		
 				update ttkd_bsc.bangluong_dongia_202409 a  
 				   set luong_dongia_ptm_thuhoi = (select sum(tien_thuhoi) from ttkd_bsc.ct_thuhoi where thang=202409 and ma_nv=a.ma_nv)
-				   where exists(select 1 from ttkd_bsc.ct_thuhoi where thang=202409 and ma_nv=a.ma_nv)
+--				   where exists(select 1 from ttkd_bsc.ct_thuhoi where thang=202409 and ma_nv=a.ma_nv)
 				   ;
 -- giam tru do thu ho so tai nha: 		
 			update ttkd_bsc.bangluong_dongia_202409 a
 				   set giamtru_hosotainha =
 					   (select round(sum(tien_giam) ,0) from ttkd_bsc.ct_giamtru where thang=202409 and ma_nv=a.ma_nv)
 			    --  select giamtru_hosotainha from ttkd_bsc.bangluong_dongia_202409  a
-			    where exists (select 1 from ttkd_bsc.ct_giamtru where thang=202409 and ma_nv=a.ma_nv)
+--			    where exists (select 1 from ttkd_bsc.ct_giamtru where thang=202409 and ma_nv=a.ma_nv)
 			    ;
+
+-- Thu hoi GHTT va giam tru ghtt CA
+	update ttkd_bsc.bangluong_dongia_202409 a 
+    set 
+		giamtru_ghtt_cntt = (select -sum(tien) from ttkd_bsc.tl_giahan_tratruoc 
+												where thang = 202409 and ma_kpi = 'DONGIA' and loai_tinh = 'DONGIATRU_CA' and ma_nv = a.ma_nv
+                                                            group by ma_nv 
+                                                            having  sum(tien)  <> 0) 
+												
+		, thuhoi_dongia_ghtt = (select sum(tien) 
+												from ttkd_bsc.tl_giahan_tratruoc 
+												where thang = 202409 and ma_kpi = 'DONGIA' and loai_tinh in ('THUHOI_DONGIA_GHTT')
+																										 and ma_nv = a.ma_nv 
+													group by ma_nv having  sum(tien) <> 0) 
+	
+;
 
 
 -- tong_luong_thuhoi:
@@ -688,25 +698,7 @@ update ttkd_bsc.bangluong_dongia_202409 a set tong_luong_thuhoi='' where tong_lu
 		where donvi = 'TTKD' and TONG_THULAO_THUCCHI is not null; --nvl(tong_luong_dongia, 0) + nvl(tong_luong_thuhoi, 0) > 0
 						and ghichu is  null; 
 	 
-	   
-	   -- 2 099 414 559 16g35 4/7/24
-	   
-	   --5 967 854 054	274 841 178  20/07/24 14g39
-	   --6,016,308,054  274,841,178		24/07/24 15g38
-	   --    6,101,743,404	 274,841,178 24/07/24 16g21		---chi VUong 12 nv nvc 
-	   --    6,105,601,404	 274,841,178 24/07/24 23g08
-	   --    6,093,867,404	 274,841,178 25/07/24 13g08		---chi Nhu, sep Thao thong nhat 8 nvc
-	   
-	   --    2,425,446,332 16g26 4/8/24
-	   --    6,029,242,935	 338,400,092 11g51 16/08/24
-	   --   6,287,132,163	 334,739,253  17g50 20/08/2024
-	   --    6,159,878,169	 334,871,253  17g50 20/08/2024
-	   --    6,160,326,765	 291,755,141
-	   --    6,160,326,765	 335,001,333 18g50 20/08/2024
-	   --    6,160,279,964	 333,529,733 22g20 20/08/2024
-	   --    6,130,208,101	 333,529,733 16g40 22/08/2024
-	   --    6,136,311,839	 333,529,733 17g40 22/08/2024
-	   --    6,229,761,416	 333,529,733
+	 
 	   
 	   --   2,546,646,145	 134,571,803 16g40 04/09/2024
 	   --    2,304,818,712	 134,571,803 19g40 04/09/2024
@@ -718,9 +710,12 @@ update ttkd_bsc.bangluong_dongia_202409 a set tong_luong_thuhoi='' where tong_lu
 	--    2,175,592,077	  26,531,252	   2,149,060,825  10g20 04/10/2024
 	--    6,069,749,720	 256,930,066	   5,812,819,654  21g44 16/10/2024
 	--	  6,083,518,448	 281,895,931	   5,801,622,517
+	
+	--     6,301,501,931	 257,175,098	   6,044,326,833 21g20 20/10/2024
+	--		6,316,360,477	 282,140,963	   6,034,219,514
 
 ----Backup bang---
-create table ttkd_bsc.bangluong_dongia_202409_dot2 as select * from ttkd_bsc.bangluong_dongia_202409; 
+create table ttkd_bsc.bangluong_dongia_202409_dot3 as select * from ttkd_bsc.bangluong_dongia_202409; 
 select * from ttkd_bsc.bangluong_dongia_202409_dot2;
 	
 	----NSu tren 100tr gui NSU

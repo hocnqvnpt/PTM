@@ -129,6 +129,7 @@ create index ttkd_bsc.idx_thangptm on ttkd_bsc.ct_bsc_ptm (thang_ptm);
 				  ;
 				  --13
 commit;
+rollback;
 --***************** ky n-1 ******************
 --			
 		--15

@@ -56,6 +56,14 @@ update ttkd_bsc.ct_bsc_ptm a
 -- to - dnhm DL_CNT
 --update ttkd_bsc.ct_bsc_ptm set thang_tlkpi_dnhm_to='' where thang_ptm=202404
 --;
+			 	--Chi 1 thang 7, 8, 9 theo eo VANBAN_ID
+				update ttkd_bsc.ct_bsc_ptm a  
+								set thang_tlkpi_dnhm = 0		---khong tinh BSC cho NVPTM
+--										, ghi_chu = ghi_chu || '; ' || 'khong '
+--						select * from ttkd_bsc.ct_bsc_ptm a
+						where thang_luong = 71
+						
+				;
 			update ttkd_bsc.ct_bsc_ptm a 
 			   set thang_tlkpi_dnhm = a.thang_ptm, thang_tlkpi_dnhm_phong = a.thang_ptm
 						, thang_tlkpi_dnhm_to = case when MA_NGUOIGT  in (select MA_DAILY 
@@ -96,14 +104,7 @@ update ttkd_bsc.ct_bsc_ptm a
 ;				  
 commit;		
 				   
-				   	--Chi 1 thang 7, 8, 9 theo eo VANBAN_ID
-				update ttkd_bsc.ct_bsc_ptm a  
-								set thang_tlkpi_dnhm = 0		---khong tinh BSC cho NVPTM
---										, ghi_chu = ghi_chu || '; ' || 'khong '
---						select * from ttkd_bsc.ct_bsc_ptm a
-						where thang_luong = 71
-						
-				;
+				  
  
  rollback;
  commit;

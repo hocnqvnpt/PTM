@@ -1,4 +1,4 @@
----ngay 4/5 anh Nghia chua duyet xong, doi khi nào xong moi chay
+---ngay 4/5 anh Nghia chua duyet xong, doi khi nï¿½o xong moi chay
 		select * from ttkd_bct.ptm_gtgt where thang = 202407; and id in (7301445);
 			select * from ttkdhcm_ktnv.amas_duan_ngoai_doanhthu ptm  where  ma_yeucau = '235382';'183656'; 
 		--KTRA DU LIEU 447
@@ -59,7 +59,7 @@
 										from ttkdhcm_ktnv.amas_duan_ngoai_doanhthu ptm
 													join t on ptm.ma_yeucau = t.ma_yeucau and ptm.ma_dichvu = t.ma_dichvu
 												 where ptm.trangthai_tl=10 and ptm.dexuat=7 and ptm.ma_dichvu not in (20,149) 
-																and ptm.tienthu_khkt > 0 			--and id in (7301445)
+																and ptm.tienthu_khkt > 0 			--and id in (10972465)
 															    and trunc(ptm.ngaycapnhat) < trunc(sysdate, 'month') 			---ngay 1 thang n +1
 															    and trunc(ngaycapnhat_tl) <= to_date('08/10/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
 															    and trunc(ngaycapnhat_khkt) <= to_date('08/10/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
@@ -78,7 +78,7 @@
 			
 			    from d
 							left join ttkd_bsc.nhanvien e on d.manv_ptm = e.ma_nv and e.thang = 202409
---				where ma_yeucau = '235382'
+--				where ma_yeucau = '10972465'
 			    order by id
 			    ;
 			 
