@@ -29,9 +29,9 @@ select * from ttkd_bsc.ct_bsc_ptm where ma_gd = 'HCM-LD/01939638';
 select * from ttkd_bsc.ct_bsc_ptm where ma_tb = '84915496620';
 select * from ttkd_bsc.nhanvien where thang = 202409 and ten_nv = 'Lư Kim Sơn';
 
-delete from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202409 ; and ngay_ins = '03/10/2024 21:46:06'; 
+delete from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202409 and ma_tb = 'hcm_ioff_00000672';; and ngay_ins = '03/10/2024 21:46:06'; 
 
-select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_duan_banhang = '314760';
+select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_tb = 'hcm_ioff_00000672';ma_duan_banhang = '314760';
 delete from ttkd_bsc.ct_bsc_ptm_pgp where ma_gd = 'HCM-LD/01939638';
         
 insert into ttkd_bsc.ct_bsc_ptm_pgp a

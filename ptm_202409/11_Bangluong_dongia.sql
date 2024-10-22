@@ -160,7 +160,7 @@ drop table ttkd_bsc.bangluong_dongia_202409;
 		
 		create table  ttkd_bsc.tonghop_ct_dongia_ptm_202409_lan1 as select * from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202409;
 		select * from ttkd_bsc.tonghop_ct_dongia_ptm_202409_lan1;
-		select * from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202409; 22439.64 _96948.73
+		select * from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202409 and ma_gd = 'HCM-PS/000018263' or ma_tb = 'hcm_ioff_00000672'; 22439.64 _96948.73
 --		delete from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202409;
 		
 		-----*************Desc cong thuc
@@ -713,9 +713,10 @@ update ttkd_bsc.bangluong_dongia_202409 a set tong_luong_thuhoi='' where tong_lu
 	
 	--     6,301,501,931	 257,175,098	   6,044,326,833 21g20 20/10/2024
 	--		6,316,360,477	 282,140,963	   6,034,219,514
+	--       6,355,342,295	 282,140,963	   6,073,201,332 21g13 22/10/2024
 
 ----Backup bang---
-create table ttkd_bsc.bangluong_dongia_202409_dot3 as select * from ttkd_bsc.bangluong_dongia_202409; 
+create table ttkd_bsc.bangluong_dongia_202409_dot4 as select * from ttkd_bsc.bangluong_dongia_202409; 
 select * from ttkd_bsc.bangluong_dongia_202409_dot2;
 	
 	----NSu tren 100tr gui NSU

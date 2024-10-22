@@ -8,7 +8,7 @@ update ttkd_bsc.dinhmuc_dthu_ptm set  thang=202409 where thang is null;
 update ttkd_bsc.dinhmuc_dthu_ptm set dt_giao_bsc='' where thang=202409 and dt_giao_bsc=0;
 */
 create table ttkd_bsc.bangluong_kpi_202409_dot2 as select * from ttkd_bsc.bangluong_kpi_202409;  
-create table ttkd_bsc.bangluong_kpi_20241020_dot2 as select * from ttkd_bsc.bangluong_kpi where thang = 202409;  
+create table ttkd_bsc.bangluong_kpi_20241022_dot3 as select * from ttkd_bsc.bangluong_kpi where thang = 202409;  
 select * from ttkd_bsc.bangluong_kpi_dot2_20240920 where thang = 202409;  
 
 select distinct a.*, b.*, c.ten_vtcv 
