@@ -297,7 +297,7 @@ commit;
 				WHEN MATCHED THEN
 							UPDATE
 							SET a.manv_hotro = b.ma_gioithieu
-									, a.ghi_chu = ghi_chu || decode(ghi_chu, null, null, '; ') || 'donghang_digi'
+									, a.ghi_chu = ghi_chu || decode(ghi_chu, null, null, '; ') || 'donhang_digi'
 									, thang_luong = 4
 --									, a.nguoi_gt = b.tennv_gioithieu
 --					select thang_tldg_dt, thang_luong, thang_ptm, ma_gd_gt, ma_tb,  ghi_chu, ungdung_id, nguon, manv_ptm, ma_nguoigt, nguoi_gt, manv_hotro, heso_hotro_nvhotro, luong_dongia_nvptm, luong_dongia_nvhotro from ttkd_bsc.ct_bsc_ptm a
@@ -319,7 +319,7 @@ commit;
 									WHEN MATCHED THEN
 												UPDATE
 												SET a.manv_hotro = b.ma_gioithieu
-														, a.ghi_chu = ghi_chu || decode(ghi_chu, null, null, '; ') || 'donghang_digi'
+														, a.ghi_chu = ghi_chu || decode(ghi_chu, null, null, '; ') || 'donhang_digi'
 														, thang_luong = 4
 													--	, a.nguoi_gt = b.tennv_gioithieu
 --										select thang_tldg_dt, thang_luong, ngay_bbbg, thang_ptm, ma_gd_gt, ma_tb,  ghi_chu, ungdung_id, nguon, manv_ptm, ma_nguoigt, nguoi_gt, manv_hotro, heso_hotro_nvhotro, luong_dongia_nvptm, luong_dongia_nvhotro from ttkd_bsc.ct_bsc_ptm a
@@ -334,6 +334,30 @@ commit;
 --'HCM-GT/00158908',
 --'HCM-GT/00159113')
 										;
+---SHOP_CTV Fiber, MyTV, Mesh
+				---theo ma_dhsx = ma_gd_gt, trangthai_shop = thanh cong
+				Select * From khanhtdt_ttkd.IMP_SHOPCTV_DH_2024 where thang = 202409 and VAITRO_CTV = 'CTV liên kết' and MA_DHSXKD is not null
+				;
+					MERGE INTO ttkd_bsc.ct_bsc_ptm a
+									USING (select ma_dhsxkd, ma_nvkd, ten_nvkd, sodt_nvkd 
+																from khanhtdt_ttkd.IMP_SHOPCTV_DH_2024 
+																where thang = 202409 and VAITRO_CTV = 'CTV liên kết' and MA_DHSXKD is not null) b
+											ON (a.ma_gd_gt = b.ma_dhsxkd)
+									WHEN MATCHED THEN
+												UPDATE
+												SET a.manv_hotro = b.ma_nvkd
+														, a.ghi_chu = ghi_chu || decode(ghi_chu, null, null, '; ') || 'donhang_shopctv_CTV_LK'
+														, thang_luong = 4
+--														, thang_tldg_dt_nvhotro = 202410, thang_tlkpi_hotro = 202410
+													--	, a.nguoi_gt = b.tennv_gioithieu
+--										select thang_tldg_dt, thang_luong, ngay_bbbg, thang_ptm, ma_gd_gt, ma_tb,  ghi_chu, ungdung_id, nguon, manv_ptm, ma_nguoigt, nguoi_gt, manv_hotro, heso_hotro_nvhotro, luong_dongia_nvptm, luong_dongia_nvhotro from ttkd_bsc.ct_bsc_ptm a
+										WHERE thang_ptm = 202409 and ma_gd_gt is not null and a.manv_hotro is null
+														and ma_gd_gt  in (select ma_dhsxkd from khanhtdt_ttkd.IMP_SHOPCTV_DH_2024
+																						where VAITRO_CTV = 'CTV liên kết' and MA_DHSXKD is not null
+																										and thang >= 202408
+																					)
+														and nvl(thang_tldg_dt, 999999) >= 202409
+;
 commit;
 rollback;
 				select thang_ptm, ma_gd_gt, ma_tb, dich_vu, ghi_chu, ungdung_id, nguon, manv_ptm, manv_hotro, ma_gioithieu

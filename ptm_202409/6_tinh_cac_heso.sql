@@ -1107,7 +1107,7 @@ rollback;
 				drop table hocnq_ttkd.temp_hesohotro purge;
 				create table hocnq_ttkd.temp_hesohotro as 
 						select hdtb_id from ttkd_bct.ptm_codinh_202409
-										where nguoi_cn_goc in ('myvnpt','dhtt.mytv','ws_smes') 
+										where nguoi_cn_goc in ('myvnpt','dhtt.mytv','ws_smes') and ma_gd_gt is not null;
 																							   ;
 				update ttkd_bsc.ct_bsc_ptm a
 				    set heso_hotro_nvptm  = case 

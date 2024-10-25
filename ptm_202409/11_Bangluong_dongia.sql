@@ -661,13 +661,14 @@ update ttkd_bsc.bangluong_dongia_202409 a set tong_luong_thuhoi='' where tong_lu
 			   set tong_luong_thuhoi = round( nvl(luong_dongia_ptm_thuhoi,0) +  nvl(luong_dongia_khac_thuhoi,0)
 																	+ nvl(giamtru_hosotainha,0) 
 																	+ nvl(giamtru_ghtt_cntt,0)  + nvl(thuhoi_dongia_ghtt, 0)
-																	+ nvl(luong_dongia_ptm_thuhoi_t7_dot2, 0) 
+																	--+ nvl(luong_dongia_ptm_thuhoi_t7_dot2, 0) 
 															, 0)
 															;
 			
 			
 			update ttkd_bsc.bangluong_dongia_202409 a
 					   set tong_thulao_thucchi = nvl(tong_luong_dongia, 0) - nvl(tong_luong_thuhoi, 0)
+					   
 			
 			;
 			update ttkd_bsc.bangluong_dongia_202409 a
@@ -677,7 +678,7 @@ update ttkd_bsc.bangluong_dongia_202409 a set tong_luong_thuhoi='' where tong_lu
 			   ;
 			   
 			commit;
-
+			rollback;
 
 			/*
 			-- Kiem tra thu hoi:
@@ -714,9 +715,10 @@ update ttkd_bsc.bangluong_dongia_202409 a set tong_luong_thuhoi='' where tong_lu
 	--     6,301,501,931	 257,175,098	   6,044,326,833 21g20 20/10/2024
 	--		6,316,360,477	 282,140,963	   6,034,219,514
 	--       6,355,342,295	 282,140,963	   6,073,201,332 21g13 22/10/2024
+	--   6,355,342,295	 255,609,711	   6,099,732,584 16g59 23/10/24 khong theo doi tien thu hồi thang 7 nữa, loại bỏ 9 người ra
 
 ----Backup bang---
-create table ttkd_bsc.bangluong_dongia_202409_dot4 as select * from ttkd_bsc.bangluong_dongia_202409; 
+create table ttkd_bsc.bangluong_dongia_202409_dot5 as select * from ttkd_bsc.bangluong_dongia_202409; 
 select * from ttkd_bsc.bangluong_dongia_202409_dot2;
 	
 	----NSu tren 100tr gui NSU
@@ -734,7 +736,7 @@ select * from ttkd_bsc.bangluong_dongia_202409_dot2;
 				  luong_dongia_ghtt, luong_dongia_nghiepvu, luong_dongia_chungtu, luong_dongia_thucuoc
 				 , tong_luong_dongia,	ghichu
 				 , luong_dongia_ptm_thuhoi,	luong_dongia_khac_thuhoi, thuhoi_dongia_ghtt
-				  , giamtru_hosotainha, giamtru_ghtt_cntt, LUONG_DONGIA_PTM_THUHOI_T7_dot2, tong_luong_thuhoi
+				  , giamtru_hosotainha, giamtru_ghtt_cntt, tong_luong_thuhoi
 				  , TONG_THULAO_THUCCHI
 		from ttkd_bsc.bangluong_dongia_202409
 		where donvi = 'TTKD' and TONG_THULAO_THUCCHI is not null--nvl(tong_luong_dongia, 0) + nvl(tong_luong_thuhoi, 0) > 0

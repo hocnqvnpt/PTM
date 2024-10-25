@@ -93,9 +93,9 @@ select ma_nv, ten_nv,ma_vtcv,ten_vtcv,	ma_pb,	ten_pb,	ma_to,ten_to,	loai_ld,
 				  luong_dongia_ghtt, luong_dongia_nghiepvu, luong_dongia_chungtu, luong_dongia_thucuoc
 				 , tong_luong_dongia,	ghichu
 				  , luong_dongia_ptm_thuhoi,	luong_dongia_khac_thuhoi, thuhoi_dongia_ghtt
-				  , giamtru_hosotainha, giamtru_ghtt_cntt, LUONG_DONGIA_PTM_THUHOI_T7_DOT2, tong_luong_thuhoi
+				  , giamtru_hosotainha, giamtru_ghtt_cntt, tong_luong_thuhoi
 				  , TONG_THULAO_THUCCHI
 from ttkd_bsc.bangluong_dongia_202409
 ;
-select * from ttkd_bsc.bangluong_dongia_202409
+select * from ttkd_bsc.v_bangluong_dongia_ptm_202409
 

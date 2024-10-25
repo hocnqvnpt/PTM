@@ -183,9 +183,9 @@ Diều kiện ngoài chuong trình:
 												, a.lydo_khongtinh_luong = null
 												, a.lydo_khongtinh_dongia = null
 												, a.thang_luong = 87
-												, THANG_TLDG_DT = null, THANG_TLKPI = null
-												, THANG_TLKPI_TO = null, THANG_TLKPI_PHONG = null
-												, THANG_TLDG_DT_NVHOTRO = null, THANG_TLKPI_HOTRO = null, THANG_TLDG_DT_DAI = null
+--												, THANG_TLDG_DT = null, THANG_TLKPI = null
+--												, THANG_TLKPI_TO = null, THANG_TLKPI_PHONG = null
+--												, THANG_TLDG_DT_NVHOTRO = null, THANG_TLKPI_HOTRO = null, THANG_TLDG_DT_DAI = null
 						WHERE a.thuebao_id in (select thuebao_id from ttkd_bsc.ct_ptm_ngoaictr_imp where thang = 202409 and command = 'update')
 					;
 					commit;
