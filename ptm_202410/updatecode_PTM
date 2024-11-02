@@ -1,5 +1,5 @@
-drop table ptm_codinh_202409_cdbr purge;
-create table ptm_codinh_202409_br as
+drop table ptm_codinh_202410_cdbr purge;
+create table ptm_codinh_202410_br as
         with goi_dadv as (select b.thuebao_id,b.goi_id, b.nhomtb_id, c.ten_goi, row_number() over (partition by thuebao_id order by  nhomtb_id desc)rnk
                                                   from css.v_bd_goi_dadv b , css.v_goi_dadv c
                                                   where b.goi_id=c.goi_id and b.trangthai=1 
@@ -309,7 +309,7 @@ create table ptm_codinh_202409_br as
                  , admin.v_donvi dmgt1
                  , admin.v_donvi dmgt2      
                 
-         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id and v_db.chuquan_id in (145, 264, 266) and db_old.ky_cuoc (+) = 20240801 	---thang n-1
+         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id and v_db.chuquan_id in (145, 264, 266) and db_old.ky_cuoc (+) = 20240901 	---thang n-1
 --				and b.dichvuvt_id in (1, 10,11)		---CD, GP
 				and b.dichvuvt_id in (4)		---BR
 --				and b.dichvuvt_id in (7,8,9)	--TSL

@@ -1,11 +1,11 @@
-select * from ptm_codinh_202409_bs;  
-drop table ptm_codinh_202409_bs purge;
-drop table ptm_codinh_202409_cd purge;
-drop table ptm_codinh_202409_tsl purge;
-drop table ptm_codinh_202409_cntt purge;
-drop table ptm_codinh_202409_br purge;
+select * from ptm_codinh_202410_bs;  
+drop table ptm_codinh_202410_bs purge;
+drop table ptm_codinh_202410_cd purge;
+drop table ptm_codinh_202410_tsl purge;
+drop table ptm_codinh_202410_cntt purge;
+drop table ptm_codinh_202410_br purge;
 
-create table ptm_codinh_202409 as
+create table ptm_codinh_202410 as
         with goi_dadv as (select b.thuebao_id,b.goi_id, b.nhomtb_id, c.ten_goi, row_number() over (partition by thuebao_id order by  nhomtb_id desc)rnk
                                                   from css.v_bd_goi_dadv b , css.v_goi_dadv c
                                                   where b.goi_id=c.goi_id and b.trangthai=1 
@@ -347,7 +347,7 @@ create table ptm_codinh_202409 as
                  , admin.v_donvi dmgt1
                  , admin.v_donvi dmgt2      
                 
-         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id  and db_old.ky_cuoc (+) = 20240801 	---thang n-1
+         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id  and db_old.ky_cuoc (+) = 20240901 	---thang n-1
 				and b.thuebao_id = db_old.thuebao_id (+)
                 and b.hdtb_id = v_hdtb.hdtb_id(+) and b.tthd_id in (6) and a.loaihd_id = lhd.loaihd_id
                 and a.hdkh_cha_id = a1.hdkh_id (+)
@@ -404,23 +404,23 @@ create table ptm_codinh_202409 as
 --,'02743767015')
              ;
                           
-             select * from ptm_codinh_202409
+             select * from ptm_codinh_202410
                 where (ma_tb, ma_gd, hdtb_id) in 
                                                 (select ma_tb, ma_gd, hdtb_id
-                                                from ptm_codinh_202409 a 
+                                                from ptm_codinh_202410 a 
                                                 group by ma_tb, ma_gd, hdtb_id having count(*)>1 )
             ;
 --Them cot------ tien_dnhm, tien_camket, tien_sodep:
-                    ALTER TABLE ptm_codinh_202409 ADD (tien_dnhm NUMBER, tien_sodep NUMBER, tien_camket NUMBER)
+                    ALTER TABLE ptm_codinh_202410 ADD (tien_dnhm NUMBER, tien_sodep NUMBER, tien_camket NUMBER)
 				;
-                    UPDATE ptm_codinh_202409 a 
+                    UPDATE ptm_codinh_202410 a 
                         SET tien_camket = (SELECT tien_ck FROM css.v_camket_hdtb WHERE hdtb_id=a.hdtb_id)
                         WHERE dichvuvt_id in (1,10,11)
                         ;
                     
                 commit;
 			 
-                    MERGE INTO ptm_codinh_202409 a
+                    MERGE INTO ptm_codinh_202410 a
                     USING (with dnhm as (SELECT dnhm1.khoanmuctt_id loai,dnhm1.hdtb_id, dnhm1.phieutt_id
                                                                           FROM css.v_ct_phieutt dnhm1, css.v_hd_thuebao hd
                                                                           WHERE hd.hdtb_id=dnhm1.hdtb_id AND dnhm1.khoanmuctt_id IN(1,2,13,17)
@@ -457,7 +457,7 @@ create table ptm_codinh_202409 as
                     ;
                     commit;
                     
-                    MERGE INTO ptm_codinh_202409 a
+                    MERGE INTO ptm_codinh_202410 a
                                 USING (SELECT hdtb_id, SUM(ct.tien+ct.tienkm) tien_sodep
                                                  FROM css.v_phieutt_hd hd1,       
                                                             (SELECT decode(ct.khoanmuctt_id,19,dnhm.loai,20,thietbi.loai,ct.khoanmuctt_id) loai 
@@ -486,9 +486,9 @@ create table ptm_codinh_202409 as
                                     ;
                                 
                                 
-                                UPDATE ptm_codinh_202409 a
+                                UPDATE ptm_codinh_202410 a
                                         SET tien_sodep = (SELECT cuoc_sd FROM css.v_hdtb_cntt where cuoc_sd>0 and hdtb_id = a.hdtb_id)
-                                    -- SELECT ma_tb, tien_sodep FROM ttkd_bct.ptm_codinh_202409 a
+                                    -- SELECT ma_tb, tien_sodep FROM ttkd_bct.ptm_codinh_202410 a
                                     WHERE dichvuvt_id IN (13,14,15,16) AND EXISTS(SELECT 1 FROM css.v_hdtb_cntt where cuoc_sd>0 and hdtb_id=a.hdtb_id)
 							 ;
                                 
@@ -573,7 +573,7 @@ create table ptm_codinh_202409 as
 			 select thuebao_id, loaitb_id,  count(*) from temp_muccuoctb_thuebao group by thuebao_id, loaitb_id having count(*)>1;
 			 select hdtb_id,   count(*) from temp_muccuoctb_hdtb group by hdtb_id having count(*)>1;
 			
-                update ptm_codinh_202409 a 
+                update ptm_codinh_202410 a 
                     set muccuoc_tb = (case when loaitb_id=39 then (select muccuoc_tb from temp_muccuoctb_thuebao where thuebao_id = a.thuebao_id ) 
 																 else (select muccuoc_tb from temp_muccuoctb_hdtb where hdtb_id=a.hdtb_id ) 
 												end) 
@@ -639,28 +639,28 @@ create table ptm_codinh_202409 as
                 ;
 --                    create index temp_tien_dvgt_theothuebao_hdtb on temp_tien_dvgt_theothuebao (hdtb_id); 
                     
---                    update ptm_codinh_202409 set tien_dvgt=''
+--                    update ptm_codinh_202410 set tien_dvgt=''
 				;
-                    update ptm_codinh_202409 a 
+                    update ptm_codinh_202410 a 
                         set tien_dvgt = case when loaitb_id = 39 
 																	then (select cuoc_sd from temp_tien_dvgt_theothuebao where hdtb_id=a.hdtb_id) 
                                                             else (select cuoc_sd from temp_tien_dvgt_theohdtb where hdtb_id=a.hdtb_id)  
 											end 
-                        -- select tien_dvgt from ptm_codinh_202409 a
+                        -- select tien_dvgt from ptm_codinh_202410 a
                         where dichvuvt_id in (13,14,15,16) and loaitb_id=39
                         ;
                         commit;
                         
 				   
 -- tien_tbi: 
---                    UPDATE ptm_codinh_202409 SET tien_tbi=''
+--                    UPDATE ptm_codinh_202410 SET tien_tbi=''
 				;
-                    MERGE INTO ptm_codinh_202409 a
+                    MERGE INTO ptm_codinh_202410 a
                     USING (SELECT cttbi.hdtb_id, tbi_lhtb.loaitb_id, SUM(CASE WHEN tien_tratruoc>0 THEN cttbi.soluong*cttbi.tien_tratruoc ELSE cttbi.soluong*cttbi.tien END) tien_tbi
                                     FROM css.v_ct_mua_tbi cttbi, css.v_loai_tbi tbi, css.v_loai_tbi_lhtb tbi_lhtb , css.loaihinh_tb lhtb
                                     WHERE cttbi.loaitbi_id=tbi.loaitbi_id AND tbi.loaitbi_id=tbi_lhtb.loaitbi_id AND lhtb.loaitb_id=tbi_lhtb.loaitb_id
                                                         AND cttbi.loaitbi_id NOT IN (144,231,236,282,311,289,294,347,677,678,679)  --> loai tru cac loaitbi_id la thiet bi nhu Token, ..   
-                                                        AND EXISTS(SELECT 1 FROM ptm_codinh_202409 
+                                                        AND EXISTS(SELECT 1 FROM ptm_codinh_202410 
 																			WHERE hdtb_id=cttbi.hdtb_id AND loaitb_id=tbi_lhtb.loaitb_id
 																	)
                                     GROUP BY cttbi.hdtb_id, tbi_lhtb.loaitb_id
@@ -716,39 +716,39 @@ create table ptm_codinh_202409 as
                 where a.hdkh_id=b.hdkh_id and a.ctv_id=c.nhanvien_id(+) and b.hdtb_id = datcoc.hdtb_id
                         and a.loaihd_id = 31 and b.kieuld_id = 550
                         and to_number(to_char(b.ngay_ht,'yyyymm')) = to_number(to_char(trunc(sysdate, 'month') - 1, 'yyyymm'))		---thang n
-                        and exists(select 1 from ptm_codinh_202409 
+                        and exists(select 1 from ptm_codinh_202410 
 													where datcoc_csd is null and thuebao_id=b.thuebao_id and ma_tiepthi=c.ma_nv 
 										)
 		;
-            alter table ptm_codinh_202409 add hdtb_id_datcoc number
+            alter table ptm_codinh_202410 add hdtb_id_datcoc number
 		  ;
 		  
-            update ptm_codinh_202409 a 
+            update ptm_codinh_202410 a 
 				set (hdtb_id_datcoc, datcoc_csd, tien_td, thang_bddc, thang_ktdc, sothang_dc)
 							    = (select hdtb_id, datcoc_csd, tien_td, thang_bddc, thang_ktdc, sothang_dc
 											from temp_datcoc 
 											where datcoc_csd>0 and thuebao_id = a.thuebao_id and ma_nv = a.ma_tiepthi
 								   )
-                -- select thuebao_id, ma_tb, sothang_dc, datcoc_csd, tien_td from ptm_codinh_202409 a
+                -- select thuebao_id, ma_tb, sothang_dc, datcoc_csd, tien_td from ptm_codinh_202410 a
                 where datcoc_csd is null 
                     and exists(select 1 from temp_datcoc b
                                         where datcoc_csd>0 and thuebao_id=a.thuebao_id and ma_nv=a.ma_tiepthi)
-                    and ngay_bbbg=(select max(ngay_bbbg) from ptm_codinh_202409 where thuebao_id=a.thuebao_id )
+                    and ngay_bbbg=(select max(ngay_bbbg) from ptm_codinh_202410 where thuebao_id=a.thuebao_id )
                     ;
                     
             ---recover datcoc_csd updated
---                update ptm_codinh_202409 set datcoc_csd = null 
-----				select * from ttkd_bct.ptm_codinh_202409
+--                update ptm_codinh_202410 set datcoc_csd = null 
+----				select * from ttkd_bct.ptm_codinh_202410
 --				where hdtb_id_datcoc is not null;
             commit;
             
 --            select a.*, b.ma_tiepthi , b.DATCOC_CSD, b.SOTHANG_DC, b.hdtb_id_datcoc
---            from temp_datcoc a, ptm_codinh_202409 b
+--            from temp_datcoc a, ptm_codinh_202410 b
 --            where a.thuebao_id=b.thuebao_id
             ;
             
 ------ thoihan_id
-            update ptm_codinh_202409 set thoihan_id=1 
+            update ptm_codinh_202410 set thoihan_id=1 
                 where (thoihan_id<>1 or thoihan_id is null) and (tg_thue_tu is not null and tg_thue_den is not null )
                         and thoihan_id is null
             ;
@@ -761,16 +761,16 @@ create table ptm_codinh_202409 as
 				;    
 				create table ttkd_bsc.tmp_ct_no as 
 				select distinct a.* from bcss.v_ct_no a
-				    where phanvung_id = 28 and ky_cuoc = 20240901 		--thang n
+				    where phanvung_id = 28 and ky_cuoc = 20241001 		--thang n
 					   and khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) 
-					   and exists(select 1 from ttkd_bct.ptm_codinh_202409 where thuebao_id=a.thuebao_id)
+					   and exists(select 1 from ttkd_bct.ptm_codinh_202410 where thuebao_id=a.thuebao_id)
 					   ;
 				create index ttkd_bsc.tmp_ct_no_tbid on ttkd_bsc.tmp_ct_no (thuebao_id);
 				
-				alter table ttkd_bct.ptm_codinh_202409 add dthu_ps number(12)
---				update ptm_codinh_202409 a set dthu_ps=''
+				alter table ttkd_bct.ptm_codinh_202410 add dthu_ps number(12)
+--				update ptm_codinh_202410 a set dthu_ps=''
 				;
-				update ttkd_bct.ptm_codinh_202409 a 
+				update ttkd_bct.ptm_codinh_202410 a 
 				    set dthu_ps = (select sum(nogoc) from ttkd_bsc.tmp_ct_no where thuebao_id=a.thuebao_id)
 		;
 		commit;
@@ -779,15 +779,15 @@ create table ptm_codinh_202409 as
 			
 				---select dthu_ps from ptm_codinh_202405 a
 -- Dthu goi:
-				alter table ptm_codinh_202409 
+				alter table ptm_codinh_202410 
 				    add (dthu_goi_goc number(12), dthu_goi number(12), dthu_goi_ngoaimang number(12))
 				;
-				update ptm_codinh_202409 bc set dthu_goi_goc='', dthu_goi='', dthu_goi_ngoaimang=''
+				update ptm_codinh_202410 bc set dthu_goi_goc='', dthu_goi='', dthu_goi_ngoaimang=''
 				
 				;
-				--  select * from ttkd_bct.ptm_codinh_202409;
+				--  select * from ttkd_bct.ptm_codinh_202410;
 				
-				update ptm_codinh_202409 bc set dthu_goi_goc=
+				update ptm_codinh_202410 bc set dthu_goi_goc=
 				    (case
 						-- 1800,1900: phi duy tri + phi tai nguyen + phi so dep
 						when bc.loaitb_id in (38,127) and bc.thang_bddc is null 
@@ -1184,38 +1184,38 @@ create table ptm_codinh_202409 as
 
 -------- Tinh lai dthu_goi_goc cho thue bao vua lap moi co dinh vua chuyen sang Siptrunk trong thang:
 
-			update ptm_codinh_202409 a 
+			update ptm_codinh_202410 a 
 					set (dthu_goi_goc, ghi_chu)=
 									   (select case when goi_dadv_id = 15587 then 355000 - dthu_goi_goc
 															else 250000 - dthu_goi_goc end, 'dthu goi=250000-dthu goi cua hs lap moi (lap moi, chuyen doi cung thang)' 
-                                            from ptm_codinh_202409 b
+                                            from ptm_codinh_202410 b
 										  where loaihd_id=1 and thuebao_id=a.thuebao_id                 
-											  and exists (select 1 from ptm_codinh_202409 where thuebao_id=b.thuebao_id and loaihd_id=6)
+											  and exists (select 1 from ptm_codinh_202410 where thuebao_id=b.thuebao_id and loaihd_id=6)
 											  )
 		    where loaitb_id=77 and loaihd_id=6
-					  and exists (select 1 from ptm_codinh_202409 where thuebao_id=a.thuebao_id and loaihd_id<>6)
+					  and exists (select 1 from ptm_codinh_202410 where thuebao_id=a.thuebao_id and loaihd_id<>6)
 								
 				;
 			
-			update ptm_codinh_202409 set dthu_goi=dthu_goi_goc
+			update ptm_codinh_202410 set dthu_goi=dthu_goi_goc
 			 
 			;
             commit
 			;
-			update ptm_codinh_202409 a 
+			update ptm_codinh_202410 a 
 					    set dthu_goi_ngoaimang =
 											 (select sum(nogoc) from bcss.v_tonghop
-												where ky_cuoc = 20240901 --thang n
+												where ky_cuoc = 20241001 --thang n
                                                         and khoanmuctc_id in (37,38,39,40,935,936,938,939,943,944,945,4097) and ma_tb=a.ma_tb)
 							, dthu_goi = (select sum(nogoc) from bcss.v_tonghop
-													   where ky_cuoc=20240901 --thang n
+													   where ky_cuoc=20241001 --thang n
                                                        and khoanmuctc_id not in (37,38,39,40,935,936,938,939,943,944,945,4097) and ma_tb=a.ma_tb) 
 					where loaitb_id = 131 
 					
 			;
 					
 					
-					update ptm_codinh_202409 a 
+					update ptm_codinh_202410 a 
 					    set dthu_goi = dthu_ps
 					    where thoihan_id = 1 and (dichvuvt_id in (1,10,11,7,8,9) or loaitb_id in (58,59,39) )
 					    
@@ -1223,13 +1223,13 @@ create table ptm_codinh_202409 as
 			commit;
 
 -- ISDN 30B+D lon hon hoac bang 30 kenh/1 luong tu thang truoc => dthu goi =10K
-			update ptm_codinh_202409 a 
+			update ptm_codinh_202410 a 
 						set dthu_goi_goc=10000, dthu_goi=10000
---			    select * from ptm_codinh_202409 a
+--			    select * from ptm_codinh_202410 a
                 where loaitb_id in (15,17) 
 				   and exists (select thuebao_cha_id, count(*) sl_socon 
                                     from tinhcuoc.v_dbtb 
-                                     where ky_cuoc = 20240801 ---thang n-1
+                                     where ky_cuoc = 20240901 ---thang n-1
                                                     and thuebao_cha_id = a.thuebao_cha_id
                                      group by thuebao_cha_id having count(*)>=29     --tu 29 so con
 								)
@@ -1237,28 +1237,28 @@ create table ptm_codinh_202409 as
 				;
 			
 			
-			update ptm_codinh_202409 a 
+			update ptm_codinh_202410 a 
 				   set dthu_goi_goc = (select cuoc_tggoc + cuoc_ipgoc 
                                                 from bcss.v_thftth 
-                                                where phanvung_id=28 and ky_cuoc = 20240901 --thang n
+                                                where phanvung_id=28 and ky_cuoc = 20241001 --thang n
                                                         and ma_tb = a.ma_tb)
 					    , dthu_goi = (select cuoc_tggoc + cuoc_ipgoc 
                                             from bcss.v_thftth 
-                                            where phanvung_id=28 and ky_cuoc = 20240901 --thang n
+                                            where phanvung_id=28 and ky_cuoc = 20241001 --thang n
                                                     and ma_tb = a.ma_tb)
 			    where loaitb_id in (58) and (thoihan_id = 2 or thoihan_id is null) and dthu_goi_goc is null
 			    
 			    
 			 ;  
 			   
-			update ptm_codinh_202409
+			update ptm_codinh_202410
 				   set dthu_goi_goc = muccuoc_tb
                         , dthu_goi = muccuoc_tb
 			    where thoihan_id = 2 and chuquan_id in (145,266) and loaitb_id = 58 
 					  and dthu_goi is null 
 				;
 			   
-			update ptm_codinh_202409 
+			update ptm_codinh_202410 
 				   set dthu_goi = dthu_goi_goc
 			    where loaitb_id = 277 and dthu_goi is null 
 			    
@@ -1268,25 +1268,25 @@ create table ptm_codinh_202409 as
 
 
  ---move ve TTKDDB
-		  create table ttkd_bct.ptm_codinh_202409 as select * from ttkd_hcm.ptm_codinh_202409@dataguard;
-		  SELECT * FROM ttkd_bct.ptm_codinh_202409;
+		  create table ttkd_bct.ptm_codinh_202410 as select * from ttkd_hcm.ptm_codinh_202410@dataguard;
+		  SELECT * FROM ttkd_bct.ptm_codinh_202410;
 		  
 		  ----Update ma_nguoigt la daily
-		  update ttkd_bct.ptm_codinh_202409 a
+		  update ttkd_bct.ptm_codinh_202410 a
 						set NHANVIENGT_ID= a.ctv_id
 								, ma_nguoigt = upper(a.ma_tiepthi)
 								, NGUOI_GT =  a.ten_tiepthi
 								, NHOM_GT = a.donvi_tt
---					select * from ttkd_bct.ptm_codinh_202409 a
+--					select * from ttkd_bct.ptm_codinh_202410 a
 		  where upper(ma_tiepthi) like 'DL_%' or upper(ma_tiepthi)like'GTGT_%'  --and a.ma_tiepthi = 'GTGT00012'
 		  ;
 		  
 		  DROP INDEX  ttkd_bct.idx_ptm_hdtbid;
-		  create index ttkd_bct.idx_ptm_hdtbid on ttkd_bct.ptm_codinh_202409 (hdtb_id);
+		  create index ttkd_bct.idx_ptm_hdtbid on ttkd_bct.ptm_codinh_202410 (hdtb_id);
 		  -- lydo_khongtinh_luong: Update ky luong T3/24
-						alter table ttkd_bct.ptm_codinh_202409 add lydo_khongtinh_luong varchar2(200)
+						alter table ttkd_bct.ptm_codinh_202410 add lydo_khongtinh_luong varchar2(200)
 						;
-						update ttkd_bct.ptm_codinh_202409 a
+						update ttkd_bct.ptm_codinh_202410 a
 									set lydo_khongtinh_luong = (
 														   with x as (
 																			  select hdtb_id
@@ -1306,7 +1306,7 @@ create table ptm_codinh_202409 as
 																						  ,case when loaihd_id=41 and loaitb_id=153 and nvl(sothang_dc,0)<6 
 																											then ';kq7 Ghi nhan dthu khi gia han goi>=6 thang' 
 																									end kq7       
-																			  from ttkd_bct.ptm_codinh_202409 b
+																			  from ttkd_bct.ptm_codinh_202410 b
 																			)                                        
 													  select nvl(kq1,'') || nvl(kq2,'') || nvl(kq3,'') || nvl(kq4,'') || nvl(kq5,'') || nvl(kq6,'') || nvl(kq7,'') 
 													  from x
@@ -1318,7 +1318,7 @@ create table ptm_codinh_202409 as
                     commit;
                  
                     -- nv ptm:   
-                    alter table ttkd_bct.ptm_codinh_202409
+                    alter table ttkd_bct.ptm_codinh_202410
                         add (manv_ptm varchar2(20), tennv_ptm varchar2(100)
 							, ma_pb varchar2(20), ten_pb varchar2(100), ma_to varchar2(20), ten_to varchar2(100)
 							, ten_vtcv varchar2(100), ma_vtcv varchar2(20), loainv_id number, ten_loainv varchar2(100), loai_ld varchar2(100)
@@ -1327,26 +1327,26 @@ create table ptm_codinh_202409 as
 				-- NV TTKD:
 				-- Nhom TL da xin y kien GD 22/04/2024 tinh 50% cho Huong BHOL cong doan hoan tat thu tuc dich vu SmartCA ko co ma tiep thi (KH vang lai) va co dthu :
 				insert into ttkd_bsc.ptm_xuly_50_BHOL 
-						 select 202409 thang, hdtb_id, thuebao_id, loaitb_id, ma_tiepthi, pbh_nhan_id
+						 select 202410 thang, hdtb_id, thuebao_id, loaitb_id, ma_tiepthi, pbh_nhan_id
 									, nhanvien_id, datcoc_csd, 'Tinh 50% MANV VNP017772 neu tbao hok co ma_tiepthi va BHOL xu ly don hang only loaitb_id_288' ghi_chu
-						 from ttkd_bct.ptm_codinh_202409 a
+						 from ttkd_bct.ptm_codinh_202410 a
 						    where loaitb_id=288 and ma_tiepthi is null 
 							   and pbh_nhan_id=2941 and nhanvien_id=1077 and datcoc_csd>0
 				 ;
 				 select * from ttkd_bsc.ptm_xuly_50_BHOL 
 				 ;
-				update ttkd_bct.ptm_codinh_202409 a 
+				update ttkd_bct.ptm_codinh_202410 a 
 				    set manv_ptm =(select ma_nv from admin_hcm.nhanvien_onebss where nhanvien_id=a.nhanvien_id)  --manv_ptm='VNP017772'
---				     select ma_tiepthi, manv_ptm from ttkd_bct.ptm_codinh_202409 a
+--				     select ma_tiepthi, manv_ptm from ttkd_bct.ptm_codinh_202410 a
 				    where loaitb_id = 288 and ma_tiepthi is null 
 					   and pbh_nhan_id=2941 and nhanvien_id=1077 and datcoc_csd>0
 					   ; 
 				
-				update ttkd_bct.ptm_codinh_202409 a 
+				update ttkd_bct.ptm_codinh_202410 a 
 				    set manv_ptm = ma_tiepthi
 				    where chuquan_id in (145,266,264) and manv_ptm is null
 				;
-				update ttkd_bct.ptm_codinh_202409 a 
+				update ttkd_bct.ptm_codinh_202410 a 
 				    set (tennv_ptm, ma_to, ten_to, ma_pb, ten_pb, ten_vtcv, ma_vtcv, loai_ld, nhom_tiepthi)
 						= (select b.ten_nv, b.ma_to, b.ten_to, b.ma_pb, b.ten_pb, b.ten_vtcv, b.ma_vtcv, b.loai_ld, b.nhomld_id
 							  from ttkd_bsc.nhanvien b
@@ -1365,57 +1365,57 @@ create table ptm_codinh_202409 as
 				commit;
 -- Tao ds dai ly thang va ins dai ly moi:
 			--****-- Dai ly hien huu:
---			delete from dm_daily_khdn where thang='202409' ;
-			select * from  ttkd_bsc.dm_daily_khdn where thang = 202409;
+--			delete from dm_daily_khdn where thang='202410' ;
+			select * from  ttkd_bsc.dm_daily_khdn where thang = 202410;
 			
 			insert into ttkd_bsc.dm_daily_khdn --(ma_daily,ten_daily,manv_qldaily,ma_pb,thang,thang_kyhd,ma_to)
 																(thang, ma_daily, ten_daily, manv_qldaily, ma_to, ma_pb, ma_vtcv, ten_vtcv, thang_kyhd, ghichu)
-			    select 202409, ma_daily, ten_daily, manv_qldaily, ma_to, ma_pb, ma_vtcv, ten_vtcv, thang_kyhd, ghichu
+			    select 202410, ma_daily, ten_daily, manv_qldaily, ma_to, ma_pb, ma_vtcv, ten_vtcv, thang_kyhd, ghichu
 								
 			    from ttkd_bsc.dm_daily_khdn a
-			    where a.thang = 202408
+			    where a.thang = 202409
 						 and not exists (select 1 from ttkd_bsc.dm_daily_khdn where thang > a.thang and ma_daily=a.ma_daily)
 			 ;
 			  --****-- Dai ly moi:
 					insert into ttkd_bsc.dm_daily_khdn (ma_daily,ten_daily,ma_pb, ma_to, manv_qldaily, thang, thang_kyhd, loai_hopdong )
 					    select distinct ma_tiepthi ma_daily, (select upper(ten_nv) from admin_hcm.nhanvien_onebss where ma_nv = a.ma_tiepthi) ten_daily,
-								 ma_pb, ma_to, ma_nv, 202409, 202409, 'DAI LY MOI' loai_hopdong
+								 ma_pb, ma_to, ma_nv, 202410, 202410, 'DAI LY MOI' loai_hopdong
 					    from 
 						   (
 						   ---khong bao gio co theo doi T4,T5,T6
 						   select distinct ma_tiepthi, (select ma_dv from admin_hcm.donvi where donvi_id = a.pbh_nhan_id) ma_pb,  ma_to, phongbh_nhan
 										   , case when substr(ma_nguoigt,1,3) in ('VNP','CTV') then ma_tiepthi else null end ma_nv                             
-							  from ttkd_bct.ptm_codinh_202409 a
+							  from ttkd_bct.ptm_codinh_202410 a
 							  where ma_tiepthi like 'GT%' and ma_tiepthi not in (select ma_daily from ttkd_bsc.dm_daily_khdn)
 							  
 						   ---khong bao gio co theo doi T4,T5,T6
 						   union all
 						   select distinct ma_tiepthi, (select ma_dv from admin_hcm.donvi where donvi_id=a.pbh_nhan_id) ma_pb,  ma_to, phongbh_nhan, 
 											  case when substr(ma_nguoigt,1,3) in ('VNP','CTV') then ma_tiepthi else null end 
-							  from ttkd_bct.ptm_codinh_202409 a
+							  from ttkd_bct.ptm_codinh_202410 a
 							  where ma_tiepthi like 'DL%' and ma_tiepthi not in (select ma_daily from ttkd_bsc.dm_daily_khdn)
 						   
 						   union all
 						   select distinct ma_nguoigt, (select ma_dv from admin_hcm.donvi where donvi_id=a.pbh_nhan_id) ma_pb,  ma_to, phongbh_nhan , 
 											   case when substr(ma_tiepthi,1,3) in ('VNP','CTV') then ma_tiepthi else null end
-							  from ttkd_bct.ptm_codinh_202409 a
+							  from ttkd_bct.ptm_codinh_202410 a
 							  where ma_nguoigt like 'DL%' and ma_nguoigt not in (select ma_daily from ttkd_bsc.dm_daily_khdn)
 							  
 						   union all
 						   select distinct ma_nguoigt, (select ma_dv from admin_hcm.donvi where donvi_id=a.pbh_nhan_id) ma_pb,  ma_to, phongbh_nhan,
 											  case when substr(ma_tiepthi,1,3) in ('VNP','CTV') then ma_tiepthi else null end
-							  from ttkd_bct.ptm_codinh_202409 a
+							  from ttkd_bct.ptm_codinh_202410 a
 							  where ma_nguoigt like 'GT%' and ma_nguoigt not in (select ma_daily from ttkd_bsc.dm_daily_khdn)          
 					    ) a
 					    ;
 					    commit;
 			
 					---nho check before update
-					update ttkd_bct.ptm_codinh_202409 a
+					update ttkd_bct.ptm_codinh_202410 a
 					    set
 						    ma_pb=(select ma_pb from ttkd_bsc.dm_phongban where active=1 and ma_pb_pttb=a.pbh_nhan_goc_id)
 						   , ten_pb=(select ten_pb from ttkd_bsc.dm_phongban where active=1 and ma_pb_pttb=a.pbh_nhan_goc_id)
---					     select MA_GD, pbh_nhan_id, pbh_nhan_goc_id, donvi_tt_id, ma_pb, ten_pb from ttkd_bct.ptm_codinh_202409 a
+--					     select MA_GD, pbh_nhan_id, pbh_nhan_goc_id, donvi_tt_id, ma_pb, ten_pb from ttkd_bct.ptm_codinh_202410 a
 					    where chuquan_id in (145,266)
 									and donvi_tt_id=283427 and (pbh_nhan_goc_id in (284316,2943,11352,2942,2947,2944,2945,284317,2946)
 																						or pbh_nhan_id in (284316,2943,11352,2942,2947,2944,2945,284317,2946)
@@ -1425,20 +1425,20 @@ create table ptm_codinh_202409 as
 						   select donvi_id, ten_dv from admin_Hcm.donvi where donvi_id in (2948, 284316,2943,11352,2942,2947,2944,2945,284317,2946, 2948,11563,11564, 283427, 11298);
 										   
 					
-					update ttkd_bct.ptm_codinh_202409 a
+					update ttkd_bct.ptm_codinh_202410 a
 					    set  --pbh_ptm_id=(select pbh_id from ttkd_bsc.dm_phongban where active=1 and ma_pb_pttb = a.pbh_nhan_id)
 							   ma_pb = (select ma_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id)
 							  , ten_pb = (select ten_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id)
---					     select ma_tiepthi, ma_gd, ma_nguoigt, (select ma_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id)ma_dv, ma_pb, ten_pb, pbh_nhan_id from ttkd_bct.ptm_codinh_202409 a
+--					     select ma_tiepthi, ma_gd, ma_nguoigt, (select ma_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id)ma_dv, ma_pb, ten_pb, pbh_nhan_id from ttkd_bct.ptm_codinh_202410 a
 					    where chuquan_id in (145,266,264) and ma_pb is null --and pbh_nhan_id in (2948,11563,11564)
 						    and (ma_tiepthi is null or ma_nguoigt like 'GTGT%' or ma_nguoigt like '%DL_%')
 					;
 					commit;
 			-- PTTT:
-				update ttkd_bct.ptm_codinh_202409 a 
+				update ttkd_bct.ptm_codinh_202410 a 
 				    set  ma_pb = (select ma_dv from admin_Hcm.donvi where donvi_id = 11298)
 						  , ten_pb = (select ten_dv from admin_Hcm.donvi where donvi_id = 11298)
---				    select ma_gd, (select ten_dv from admin_Hcm.donvi where donvi_id = 11298) ten_dv, pbh_nhan_id, pbh_nhan_goc_id from ttkd_bct.ptm_codinh_202409 a
+--				    select ma_gd, (select ten_dv from admin_Hcm.donvi where donvi_id = 11298) ten_dv, pbh_nhan_id, pbh_nhan_goc_id from ttkd_bct.ptm_codinh_202410 a
 				    where chuquan_id in (145,266) and ma_pb is null 
 									  and ((pbh_nhan_id=11298 and pbh_nhan_goc_id is null)
 											 or (pbh_nhan_id=11298 and pbh_nhan_goc_id not in (11352,11563,11564,11578,284316,284317,2941,2942,2943,2944,2945,2946,2947,2948)))
@@ -1446,15 +1446,15 @@ create table ptm_codinh_202409 as
 
 			commit;
 				-- KTNV: test khong tinh
-				update ttkd_bct.ptm_codinh_202409 a 
+				update ttkd_bct.ptm_codinh_202410 a 
 				    set ma_pb=null,ten_pb=null,ma_to=null, ten_to=null, manv_ptm=null, ma_vtcv=null,loainv_id=null,ten_loainv=null,loai_ld=null
---				      select ma_gd, (select ten_dv from admin_Hcm.donvi where donvi_id = 11298) ten_dv, pbh_nhan_id, pbh_nhan_goc_id, ten_tb, ma_pb, manv_ptm from ttkd_bct.ptm_codinh_202409 a
+--				      select ma_gd, (select ten_dv from admin_Hcm.donvi where donvi_id = 11298) ten_dv, pbh_nhan_id, pbh_nhan_goc_id, ten_tb, ma_pb, manv_ptm from ttkd_bct.ptm_codinh_202410 a
 				    where chuquan_id in (145,266) and ( (ma_pb='VNP0700700' and pbh_nhan_id<>283530) or upper(ten_tb) like '%ERP TEST%')
 			;
 				-- TTVT ptm nhung ko co ma_tiepthi hoac ma_tiepthi sai/nghi viec: 
-				update ttkd_bct.ptm_codinh_202409 a
+				update ttkd_bct.ptm_codinh_202410 a
 				    set ma_pb = (select ma_dv from admin_hcm.donvi where donvi_id = a.donvi_tt_id)
---				     select ma_tiepthi, ma_pb, pbh_nhan_id, donvi_tt_id, donviql_tt_id, (select ma_dv from admin_hcm.donvi where donvi_id = a.donvi_tt_id) ma_pb_new from ttkd_bct.ptm_codinh_202409 a
+--				     select ma_tiepthi, ma_pb, pbh_nhan_id, donvi_tt_id, donviql_tt_id, (select ma_dv from admin_hcm.donvi where donvi_id = a.donvi_tt_id) ma_pb_new from ttkd_bct.ptm_codinh_202410 a
 				    where ma_pb is null and chuquan_id in (145,266)
 					   and (pbh_nhan_id in (283451,283452,283453,283454,283455,283466,283467,283468,283469)
 							 or donvi_tt_id in (283451,283452,283453,283454,283455,283466,283467,283468,283469)
@@ -1462,19 +1462,19 @@ create table ptm_codinh_202409 as
 							 ;
 
 					-- Don vi phat trien la cac PBH nhung ko co ma_tiepthi hoac ma_tiepthi sai/nghi viec: 
-					update ttkd_bct.ptm_codinh_202409 a
+					update ttkd_bct.ptm_codinh_202410 a
 					    set  
 							  ma_pb = (select ma_dv from admin_Hcm.donvi where donvi_id = a.DONVI_TT_ID)
 							  , ten_pb = (select ten_dv from admin_Hcm.donvi where donvi_id = a.DONVI_TT_ID)
---					      select ma_gd, ma_tiepthi, ma_pb, pbh_nhan_id, donvi_tt_id, donviql_tt_id, (select ma_dv ||ten_dv from admin_Hcm.donvi where donvi_id = a.DONVI_TT_ID) from ttkd_bct.ptm_codinh_202409 a
+--					      select ma_gd, ma_tiepthi, ma_pb, pbh_nhan_id, donvi_tt_id, donviql_tt_id, (select ma_dv ||ten_dv from admin_Hcm.donvi where donvi_id = a.DONVI_TT_ID) from ttkd_bct.ptm_codinh_202410 a
 					    where ma_pb is null and chuquan_id in (145,266,264)
 							  and DONVI_TT_ID is not null
 						;
-					update ttkd_bct.ptm_codinh_202409 a
+					update ttkd_bct.ptm_codinh_202410 a
 					    set  
 							  ma_pb = (select ma_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id)
 							  , ten_pb = (select ten_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id)
---					      select ma_gd, ma_tiepthi, manv_ptm, ma_pb, pbh_nhan_id, donvi_tt_id, donviql_tt_id, (select ma_dv ||ten_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id) from ttkd_bct.ptm_codinh_202409 a
+--					      select ma_gd, ma_tiepthi, manv_ptm, ma_pb, pbh_nhan_id, donvi_tt_id, donviql_tt_id, (select ma_dv ||ten_dv from admin_Hcm.donvi where donvi_id = a.pbh_nhan_id) from ttkd_bct.ptm_codinh_202410 a
 					    where ma_pb is null and chuquan_id in (145,266,264)
 							  and pbh_nhan_id is not null
 						;
@@ -1482,11 +1482,11 @@ create table ptm_codinh_202409 as
 						rollback;
 
 
-				update ttkd_bct.ptm_codinh_202409 a set manv_hotro='', tyle_hotro='', tyle_am='' where ma_duan_banhang is not null
+				update ttkd_bct.ptm_codinh_202410 a set manv_hotro='', tyle_hotro='', tyle_am='' where ma_duan_banhang is not null
 				;	
 
 				--select * from ttkdhcm_ktnv.amas_booking_presale where ma_yeucau = 228705;
-					MERGE into ttkd_bct.ptm_codinh_202409 a
+					MERGE into ttkd_bct.ptm_codinh_202410 a
 							using (
 												with 
 													yc_dv as (select ma_yeucau, id_ycdv, ma_dichvu, row_number() over(partition by MA_YEUCAU, MA_DICHVU order by NGAYCAPNHAT desc) rnk
@@ -1516,7 +1516,7 @@ create table ptm_codinh_202409 as
 															, a.tyle_hotro = b.tyle_hotro
 															, a.tyle_am = b.tyle_am
 															
---					select manv_hotro, tyle_hotro, tyle_am, ma_duan_banhang, loaitb_id, ma_gd, to_number(regexp_replace (a.ma_duan_banhang, '\D', '')) mada from ttkd_bct.ptm_codinh_202409 a
+--					select manv_hotro, tyle_hotro, tyle_am, ma_duan_banhang, loaitb_id, ma_gd, to_number(regexp_replace (a.ma_duan_banhang, '\D', '')) mada from ttkd_bct.ptm_codinh_202410 a
 							where ma_duan_banhang is not null and manv_hotro is null
 							 and exists (select distinct c.manv_presale_hrm, c.tyle/100, b.ma_yeucau, d.loaitb_id_obss
 												from ttkdhcm_ktnv.amas_yeucau_dichvu b, ttkdhcm_ktnv.amas_booking_presale c, ttkdhcm_ktnv.amas_loaihinh_tb d
@@ -1537,20 +1537,20 @@ create table ptm_codinh_202409 as
 			    select ma_gd, hdtb_id,thuebao_id, ma_tb, ten_kieuld, 
 			    thang_bddc, datcoc_csd, phongbh_nhan, loaitb_id,
 							dthu_ps, dthu_goi, lydo_khongtinh_luong, ma_duan
-					  from ttkd_bct.ptm_codinh_202409
-					  where (ma_gd, thuebao_id) in (select ma_gd, thuebao_id from ttkd_bct.ptm_codinh_202409 group by ma_gd, thuebao_id having count(*)>1) 
+					  from ttkd_bct.ptm_codinh_202410
+					  where (ma_gd, thuebao_id) in (select ma_gd, thuebao_id from ttkd_bct.ptm_codinh_202410 group by ma_gd, thuebao_id having count(*)>1) 
 					  order by thuebao_id, ngay_bbbg
 					;
             
 
 -- Kiem tra dthu goi:
 				select a.ma_gd, ma_tb, datcoc_csd, dthu_goi, dthu_ps, manv_ptm
-				    from ttkd_bct.ptm_codinh_202409 a
-				    where (thuebao_id, ma_tb, kieuld_id) in (select thuebao_id, ma_tb, kieuld_id from ttkd_bct.ptm_codinh_202409 group by thuebao_id, ma_tb, kieuld_id having count(*)>1) 
+				    from ttkd_bct.ptm_codinh_202410 a
+				    where (thuebao_id, ma_tb, kieuld_id) in (select thuebao_id, ma_tb, kieuld_id from ttkd_bct.ptm_codinh_202410 group by thuebao_id, ma_tb, kieuld_id having count(*)>1) 
 				    order by thuebao_id, ngay_bbbg;
 				
-				select * from ttkd_bct.ptm_codinh_202409 
---				 delete from ttkd_bct.ptm_codinh_202409
+				select * from ttkd_bct.ptm_codinh_202410 
+--				 delete from ttkd_bct.ptm_codinh_202410
 				where loaitb_id in (20, 21);
 				
 				select  chuquan_id, ten_kieuld, manv_ptm, dich_vu, thuebao_id, ma_gd, ma_tb, loaitb_id, doituong_id, ten_tb, diachi_ld, ma_td, ngaycn_bbbg, ngay_bbbg
@@ -1559,7 +1559,7 @@ create table ptm_codinh_202409 as
 						  (select ten_goi from css_hcm.goi_dadv where goi_id=a.goi_dadv_id) ten_goiddv,   
 						  datcoc_csd, sothang_dc, tien_td, sl_mailing, muccuoc_tb, tien_dvgt, tien_tbi,
 						  dthu_goi_goc, dthu_goi, dthu_ps--, lydo_khongtinh_luong, ten_tb
-					   from ttkd_bct.ptm_codinh_202409  a
+					   from ttkd_bct.ptm_codinh_202410  a
 					   where chuquan_id in (145,266,264) and loaitb_id not in (61,210,222,224) and (thoihan_id=2 or thoihan_id is null)
 							    -- and loaitb_id = 279 
 								and dthu_goi is null ; 
@@ -1569,74 +1569,74 @@ create table ptm_codinh_202409 as
 				select  chuquan_id, ten_kieuld, dich_vu, ma_tb, loaitb_id, doituong_id, ngaycn_bbbg, ngay_bbbg, muccuoc_tb, goi_dadv_id, 
 						  datcoc_csd, sothang_dc, tien_td, muccuoc_tb, tien_dvgt, tien_tbi,
 						  dthu_goi_goc, dthu_goi, dthu_ps, lydo_khongtinh_luong, ten_tb
-					   from ttkd_bct.ptm_codinh_202409  a
+					   from ttkd_bct.ptm_codinh_202410  a
 					   where chuquan_id in (145,266,264) and loaitb_id not in (61,210) and (thoihan_id=2 or thoihan_id is null)
 								and dthu_goi is null ; 
 				
 				
 				select * from bcss.v_thftth@dataguard a 
-				    where phanvung_id=28 and ky_cuoc=20240901
-					   and exists(select 1 from ptm_codinh_202409 
+				    where phanvung_id=28 and ky_cuoc=20241001
+					   and exists(select 1 from ptm_codinh_202410 
 								    where loaitb_id in (58) and dthu_goi is null
 									   and ma_tb=a.ma_tb);
 															 
 				    
-				select * from ptm_codinh_202409
+				select * from ptm_codinh_202410
 					   where thoihan_id=2 and chuquan_id in (145,266,264) and loaitb_id not in (61,171,131,210) and dthu_goi is null 
 					   order by loaitb_id;        
 				
-				select * from ptm_codinh_202409
+				select * from ptm_codinh_202410
 					   where thoihan_id=2 and chuquan_id in (145,266,264) and loaitb_id in (58) and dthu_goi is null 
 					   order by loaitb_id;     
 					   
 				select thuebao_id, ma_tb,dich_vu,DTHU_GOI, DTHU_GOI_NGOAIMANG , nvl(DTHU_GOI,0)+nvl(DTHU_GOI_NGOAIMANG,0), dthu_ps 
-				    from ptm_codinh_202409 
+				    from ptm_codinh_202410 
 				    where loaitb_id=131;    
 					   
 				
 				   -- Kiem tra chua gan dthu_goi_goc:
-				select * from ttkd_bct.ptm_codinh_202409  a
+				select * from ttkd_bct.ptm_codinh_202410  a
 					   where dthu_goi_goc is null and loaitb_id not in (131,210)
 					   order by loaitb_id;
 				
 				
 				-- Kiem tra ISDN:
 				select thuebao_cha_id, count(*) sl_ptm
-				from ptm_codinh_202409
+				from ptm_codinh_202410
 				where loaitb_id in (3,4,5,6,14,15,16,17)
 				group by thuebao_cha_id
 				;
  
 -- Tai lap:
---				update ttkd_bct.ptm_codinh_202409 a
---				    set ngay_td_kytruoc = (select ngay_td from tinhcuoc.v_dbtb@dataguard where ky_cuoc=20240901 and ngay_td is not null and thuebao_id=a.thuebao_id)
+--				update ttkd_bct.ptm_codinh_202410 a
+--				    set ngay_td_kytruoc = (select ngay_td from tinhcuoc.v_dbtb@dataguard where ky_cuoc=20241001 and ngay_td is not null and thuebao_id=a.thuebao_id)
 --				    where loaihd_id=7 and kieuld_id in (96,13089) and ngay_td_kytruoc is null;
 --				commit;
 --				
 --				
---				update ptm_codinh_202409 a set songay_tamngung = '' 
+--				update ptm_codinh_202410 a set songay_tamngung = '' 
 --				;
---				update ptm_codinh_202409 a
+--				update ptm_codinh_202410 a
 --				    set songay_tamngung = trunc(ngay_kh)-trunc(ngay_td_kytruoc),
 --						duoctinh_ptm = (case when trunc(ngay_kh)-trunc(ngay_td_kytruoc) >=35 then 1 else 0 end)     
 --				    where loaihd_id=7 and kieuld_id in (96,13089) and ngay_td_kytruoc is not null;
 --				commit;
 				
 											  
-				drop table ttkd_bct.tailap_202409 purge
+				drop table ttkd_bct.tailap_202410 purge
 				;
-				select * from ttkd_bct.tailap_202409;
-				create table ttkd_bct.tailap_202409 as 
-				    select a.* from ttkd_bct.ptm_codinh_202409 a
+				select * from ttkd_bct.tailap_202410;
+				create table ttkd_bct.tailap_202410 as 
+				    select a.* from ttkd_bct.ptm_codinh_202410 a
 					   where a.kieuld_id in (96,13089) and duoctinh_ptm=1
-						  and hdtb_id=(select max(hdtb_id) from ttkd_bct.ptm_codinh_202409 
+						  and hdtb_id=(select max(hdtb_id) from ttkd_bct.ptm_codinh_202410 
 											  where kieuld_id in (96,13089) and thuebao_id=a.thuebao_id)
 								;
 												 
 												    
---				create index ttkd_bct.tailap_202409_ttid on ttkd_bct.tailap_202409 (thanhtoan_id);
---				create index ttkd_bct.tailap_202409_tbid on ttkd_bct.tailap_202409 (thuebao_id);
---				create index ttkd_bct.tailap_202409_hdtbid on ttkd_bct.tailap_202409 (hdtb_id)
+--				create index ttkd_bct.tailap_202410_ttid on ttkd_bct.tailap_202410 (thanhtoan_id);
+--				create index ttkd_bct.tailap_202410_tbid on ttkd_bct.tailap_202410 (thuebao_id);
+--				create index ttkd_bct.tailap_202410_hdtbid on ttkd_bct.tailap_202410 (hdtb_id)
 				;
 				
 			-----	
