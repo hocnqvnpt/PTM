@@ -366,16 +366,21 @@ select distinct a.*, b.*, c.ten_vtcv
 --		select * from  ttkd_bsc.bangluong_kpi
 		where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_021' and ma_nv in ('VNP027259', 'VNP017190')
 		;
+		update ttkd_bsc.bangluong_kpi a set NGAYCONG = 23
+				where a.thang = 202409
+		;
+		update ttkd_bsc.bangluong_kpi a set CHITIEU_GIAO = 100
+				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202409
+		;
 		update ttkd_bsc.bangluong_kpi a set GIAO = 
 																					case 
 																							when ma_vtcv in ('VNP-HNHCM_GP_3') then 16		---fix so theo vb ap dung T8
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_4') then 14.5		---fix so theo vb ap dung T8
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_5') then 72.5		---fix so theo vb ap dung T8_ Vinh y/c tren Group Xu ly tinh tren 5 nvien, Tiên hok co
-																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') and ma_nv in ('VNP017163', 'VNP016808')	
-																										then 2.6
+																							
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 5.6		---fix so theo vb ap dung T9, nhung chua bik vi tri nao 2.6tr																							
 																							when ma_vtcv in ('VNP-HNHCM_BHKV_53') then 5.6 		---Fix so theo vb ap dung T8 lay theo dinh muc, 430 để đánh giá P1
-																							when ma_vtcv in ('VNP-HNHCM_BHKV_52') then  		---Fix so theo vb ap dung T8 lay theo 430, tối thiểu >= đinh mực nvien thực tế
+																							when ma_vtcv in ('VNP-HNHCM_BHKV_52') then  		---TT BHOL, Fix so theo vb ap dung T8 lay theo 430, tối thiểu >= đinh mực nvien thực tế
 																										(select case when nvl(TONG_DTGIAO, 0) < DINHMUC_2 then  round(DINHMUC_2/1000000, 3)
 																														else round(TONG_DTGIAO/1000000, 3) end
 																											from ttkd_bsc.dinhmuc_giao_dthu_ptm 
@@ -410,6 +415,9 @@ select distinct a.*, b.*, c.ten_vtcv
 																												when ma_vtcv in ('VNP-HNHCM_BHKV_6', 'VNP-HNHCM_BHKV_41') ----KDDB, AM BHKV
 																																		and giao < 13 and thuchien >= 13 
 																															then ROUND(THUCHIEN/13 *100, 2)	
+																												when ma_vtcv in ('VNP-HNHCM_BHKV_6', 'VNP-HNHCM_BHKV_41') ----KDDB, AM BHKV
+																																		and giao > 16				---so voi muc chuan 1
+																															then ROUND(THUCHIEN/16 *100, 2)
 																															
 																												when ma_vtcv in ('VNP-HNHCM_BHKV_22') ----GDV
 																																		and giao < 8 and thuchien < 8 and ROUND(THUCHIEN/GIAO*100, 2) > 100
@@ -417,6 +425,9 @@ select distinct a.*, b.*, c.ten_vtcv
 																												when ma_vtcv in ('VNP-HNHCM_BHKV_22') ----GDV
 																																		and giao < 8 and thuchien >= 8 
 																															then ROUND(THUCHIEN/8 *100, 2)
+																												when ma_vtcv in ('VNP-HNHCM_BHKV_22') ----GDV
+																																		and giao >10  				---so voi muc chuan 1
+																															then ROUND(THUCHIEN/10 *100, 2)
 																															
 																												when ma_vtcv in ('VNP-HNHCM_BHKV_53') ----OB BHKV
 																																		and giao < 5.6 and thuchien < 5.6 and ROUND(THUCHIEN/GIAO*100, 2) > 100
@@ -424,6 +435,9 @@ select distinct a.*, b.*, c.ten_vtcv
 																												when ma_vtcv in ('VNP-HNHCM_BHKV_53') ----OB BHKV
 																																		and giao < 5.6 and thuchien >= 5.6 
 																															then ROUND(THUCHIEN/5.6 *100, 2)
+																												when ma_vtcv in ('VNP-HNHCM_BHKV_53') ----OB BHKV
+																																		and giao > 7  				---so voi muc chuan 1
+																															then ROUND(THUCHIEN/7 *100, 2)
 																												
 																												when ma_vtcv in ('VNP-HNHCM_BHKV_27', 'VNP-HNHCM_BHKV_28'
 																																				, 'VNP-HNHCM_BHKV_51', 'VNP-HNHCM_BHKV_42') ----CHT/kGDV, TT CNTT, TT KDDB
@@ -440,6 +454,13 @@ select distinct a.*, b.*, c.ten_vtcv
 																																		and thuchien >= (select nvl(DINHMUC_2, 0) /1000000
 																																										from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = a.thang and ma_nv = a.ma_nv)  
 																															then ROUND(THUCHIEN/(select nvl(DINHMUC_2, 0) /1000000
+																																										from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = a.thang and ma_nv = a.ma_nv)
+																																							*100, 2)
+																												when ma_vtcv in ('VNP-HNHCM_BHKV_27', 'VNP-HNHCM_BHKV_28'
+																																				, 'VNP-HNHCM_BHKV_51', 'VNP-HNHCM_BHKV_42') ----CHT/kGDV, TT CNTT, TT KDDB
+																																		and giao > (select nvl(DINHMUC_1, 0) /1000000			---so voi muc chuan 1
+																																										from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = a.thang and ma_nv = a.ma_nv)  
+																															then ROUND(THUCHIEN/(select nvl(DINHMUC_1, 0) /1000000
 																																										from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = a.thang and ma_nv = a.ma_nv)
 																																							*100, 2)
 																												else ROUND(THUCHIEN/GIAO*100, 2) 
@@ -483,7 +504,7 @@ rollback;
 		where a.HCM_DT_PTMOI_021 != b.HCM_DT_PTMOI_021
 ;
 		----tinh heso doanhthu de tinh dongia
-		select * from ttkd_bsc.bldg_danhmuc_vtcv_p1 where thang = 202409;
+		select * from ttkd_bsc.bldg_danhmuc_vtcv_p1 where thang = 202410;
 		---Heso dthu CHT kGDV lay theo muc chuan trong bang ttkd_bsc.bldg_danhmuc_vtcv_p1
 		----Update Heso dthu tu 2 table ttkd_bsc.dinhmuc_giao_ptm va TLTH chi tieu 1 KHDN
 			---Ap dung vb 323 dv BHKV	
@@ -524,7 +545,7 @@ rollback;
 																				when KHDK >= dinhmuc_1 and KQTH >= dinhmuc_1 then 1.1		--1
 																	else null
 																				 end
-					where ma_vtcv not in ('VNP-HNHCM_BHKV_27') and thang = 202409 
+					where ma_vtcv not in ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_22', 'VNP-HNHCM_BHKV_41', 'VNP-HNHCM_BHKV_53', 'VNP-HNHCM_BHKV_6') and thang = 202409 
 								and ma_pb not in (
 																'VNP0702300',
 																'VNP0702400',
