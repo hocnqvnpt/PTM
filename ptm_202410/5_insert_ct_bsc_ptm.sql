@@ -1,10 +1,11 @@
 rename  ct_bsc_ptm_202408 to  ct_bsc_ptm_202408_lan1;
 
-create table ttkd_bsc.ct_bsc_ptm_202408 as
-	select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202309
+create table ttkd_bsc.ct_bsc_ptm_202409 as
+	select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202310
 	;
+alter table ttkd_bsc.ct_bsc_ptm_202409 read only;
 update ttkd_bsc.ct_bsc_ptm set thang_luong = thang_ptm
-    where thang_luong<>thang_ptm and thang_ptm < 202409
+    where thang_luong<>thang_ptm and thang_ptm < 202410
     ;
     
 

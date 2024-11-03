@@ -639,8 +639,8 @@ create table ptm_codinh_202410 as
                 ;
 --                    create index temp_tien_dvgt_theothuebao_hdtb on temp_tien_dvgt_theothuebao (hdtb_id); 
                     
---                    update ptm_codinh_202410 set tien_dvgt=''
-				;
+--                    update ptm_codinh_202410 set tien_dvgt='';
+				
                     update ptm_codinh_202410 a 
                         set tien_dvgt = case when loaitb_id = 39 
 																	then (select cuoc_sd from temp_tien_dvgt_theothuebao where hdtb_id=a.hdtb_id) 
@@ -756,23 +756,23 @@ create table ptm_codinh_202410 as
 
 
 	-- Cuoc phat sinh:    ---chuyen len dataguard
-				select * from ttkd_bsc.tmp_ct_no;
-				drop table ttkd_bsc.tmp_ct_no purge
+				select * from tmp_ct_no;
+				drop table tmp_ct_no purge
 				;    
-				create table ttkd_bsc.tmp_ct_no as 
+				create table tmp_ct_no as 
 				select distinct a.* from bcss.v_ct_no a
 				    where phanvung_id = 28 and ky_cuoc = 20241001 		--thang n
 					   and khoanmuctt_id not in (441,520,521,527,3126,3127,3421,3953) 
-					   and exists(select 1 from ttkd_bct.ptm_codinh_202410 where thuebao_id=a.thuebao_id)
+					   and exists(select 1 from ptm_codinh_202410 where thuebao_id=a.thuebao_id)
 					   ;
-				create index ttkd_bsc.tmp_ct_no_tbid on ttkd_bsc.tmp_ct_no (thuebao_id);
+				create index tmp_ct_no_tbid on tmp_ct_no (thuebao_id);
 				
-				alter table ttkd_bct.ptm_codinh_202410 add dthu_ps number(12)
+				alter table ptm_codinh_202410 add dthu_ps number(12)
 --				update ptm_codinh_202410 a set dthu_ps=''
 				;
-				update ttkd_bct.ptm_codinh_202410 a 
-				    set dthu_ps = (select sum(nogoc) from ttkd_bsc.tmp_ct_no where thuebao_id=a.thuebao_id)
-		;
+				update ptm_codinh_202410 a 
+				    set dthu_ps = (select sum(nogoc) from tmp_ct_no where thuebao_id=a.thuebao_id)
+		;				
 		commit;
 
 	
@@ -1270,6 +1270,13 @@ create table ptm_codinh_202410 as
  ---move ve TTKDDB
 		  create table ttkd_bct.ptm_codinh_202410 as select * from ttkd_hcm.ptm_codinh_202410@dataguard;
 		  SELECT * FROM ttkd_bct.ptm_codinh_202410;
+
+--- Rycle Bin DATAGUARD
+		drop table ptm_codinh_202410_bs purge;
+		drop table ptm_codinh_202410_cd purge;
+		drop table ptm_codinh_202410_tsl purge;
+		drop table ptm_codinh_202410_cntt purge;
+		drop table ptm_codinh_202410_br purge;
 		  
 		  ----Update ma_nguoigt la daily
 		  update ttkd_bct.ptm_codinh_202410 a
@@ -1361,7 +1368,7 @@ create table ptm_codinh_202410 as
 				----END
 					   ;
 				
-					select * from ttkd_bsc.nhanvien;
+					-- select * from ttkd_bsc.nhanvien;
 				commit;
 -- Tao ds dai ly thang va ins dai ly moi:
 			--****-- Dai ly hien huu:
@@ -1505,7 +1512,7 @@ create table ptm_codinh_202410 as
 																, decode(sum(ps_truong), 1, sum(tyle_hotro), max(tyle_hotro)) tyle_hotro
 																, decode(sum(ps_truong), 1, sum(TYLE_NHOM), max(TYLE_NHOM)) TYLE_NHOM
 															from t
-															where ma_yeucau  in (213513)
+															-- where ma_yeucau  in (213513)
 															group by MANV_PRESALE_HRM, LOAITB_ID_OBSS, MA_YEUCAU, TYLE_AM, MA_DICHVU
 														
 										) b
