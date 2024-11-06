@@ -1057,7 +1057,9 @@ rollback;
 			
                    
 				update ttkd_bsc.ct_bsc_ptm a
-				    set heso_khachhang = case when heso_kvdacthu < 1 then 1                                                       -- ap dung cho thue bao thuoc kv doc quyen, Mai linh, Coop, vnpts Hoa Binh 
+				    set heso_khachhang = case when heso_kvdacthu < 1 then 1                                                       -- ap dung cho thue bao thuoc kv doc quyen, Mai linh, Coop, vnpts Hoa Binh
+																	when loaitb_id in (208) or
+																				loaitb_id in (select loaitb_id from css_hcm.loaihinh_tb where upper(loaihinh_tb) like 'VNEDU%') then 1 --(mail anh Nghia trong folder xuly T11/2024, LDTT duyet)
 																   when khhh_khm = 'KHM' then 1		---KH moi thi khong xet phan loai KH vi, xet phanloai_kh 6T/lan
 																   when phanloai_kh in ('DA1','DA2','DB1') then 0.7
 																	when phanloai_kh in ('DB2') then 0.85
@@ -1286,7 +1288,7 @@ update ttkd_bsc.ct_bsc_ptm a
 --							and ma_duan_banhang in ('185813', '185810', '265802') and ma_gd in ('00901934', '00898044', '00897956')
 --			   and ma_tb = '84916803831'
 --			  and heso_daily is not null
-			 
+			
 			    ;                       
 
             commit;

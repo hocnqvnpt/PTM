@@ -1,11 +1,15 @@
-select * from ptm_codinh_202410_bs;  
-drop table ptm_codinh_202410_bs purge;
-drop table ptm_codinh_202410_cd purge;
-drop table ptm_codinh_202410_tsl purge;
-drop table ptm_codinh_202410_cntt purge;
-drop table ptm_codinh_202410_br purge;
-
 create table ptm_codinh_202410 as
+select * from ptm_codinh_202410_cntt
+union all
+select * from ptm_codinh_202410_tsl
+union all
+select * from ptm_codinh_202410_cd
+union all
+select * from ptm_codinh_202410_br
+;
+union all;
+select * from ptm_codinh_202410;
+create table ptm_codinh_202410_cntt as
         with goi_dadv as (select b.thuebao_id,b.goi_id, b.nhomtb_id, c.ten_goi, row_number() over (partition by thuebao_id order by  nhomtb_id desc)rnk
                                                   from css.v_bd_goi_dadv b , css.v_goi_dadv c
                                                   where b.goi_id=c.goi_id and b.trangthai=1 
@@ -72,213 +76,181 @@ create table ptm_codinh_202410 as
                                                     from css.v_hd_khachhang a1, css.v_hdkh_sub a3, css.ds_ungdung_online a4
                                                     where a1.hdkh_id = a3.hdkh_id and a3.ungdung_id = a4.ungdung_id
                                      )
-        , v_db as (select  b.khachhang_id, b.thanhtoan_id,a.thuebao_id,b.ma_tb, b.dichvuvt_id, b.loaitb_id, b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id, 
-                                        f.so_gt, f.mst, e.mst mst_tt, f.loaikh_id, f.so_dt, 
-                                        null daucuoi_id,a.tocdo_id,b.mucuoctb_id,a.muccuoc_id,null ne_id,a.madoicap, matb_tn,a.port_id,a.vci_vpi_id,a.ma_lt,
-                                        null ma_tb_sub,a.cap_id,a.vitri,a.vitri_2,a.ketcuoi_id,a.doicap,a.doicap_2,
-                                        null loaikenh_id,a.culy,a.slid,a.password,a.seri_md, a.chuquan_id,a.tramtb_id,a.bras_id,a.dslam_id,
-                                        null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                        null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, cuoc_sd, cuoc_doitac,
-                                        null TOCDO_ISP,null  TOCDO_NIX,null  TOCDO_PIR_ID,null  cuoc_cir ,null cuoc_pir, null cuoc_bd,
-                                        null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                        trangbi_id, null phanloai_id, null linhvuc_id, null cuoc_tn, LOAICAP_ID, THONGTIN_TC, sltv_htvc, null loainode_id,
-                                       a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id, d.ma_duan
+        , v_db as (select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id
+                                        , f.mst, e.mst mst_tt
+                                        , b.mucuoctb_id
+								, a.chuquan_id                                       
+                                        , cast(null as number) cuoc_dt
+                                       , a.toanha_id, d.ma_duan
                              from css.v_db_adsl a, css.v_db_thuebao b
-                                       ,css.v_toanha c, css.v_duan d 
-                                       ,css.v_db_thanhtoan e, css.v_db_khachhang f
-                             where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                                        and c.DUAN_ID=d.DUAN_ID(+)
-                                        and a.toanha_id=c.toanha_id(+)
+                                       , css.v_toanha c, css.v_duan d
+                                       , css.v_db_thanhtoan e, css.v_db_khachhang f
+                             where a.thuebao_id = b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
+                                        and a.toanha_id=c.toanha_id(+)  and c.DUAN_ID=d.DUAN_ID(+) --and a.chuquan_id in (145, 264, 266)
                             
                              union all
                             
-                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id,b.ma_tb,b.dichvuvt_id, b.loaitb_id,b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id,
-                                        f.so_gt, f.mst, e.mst mst_tt, f.loaikh_id, f.so_dt, 
-                                        null daucuoi_id,null tocdo_id,b.mucuoctb_id,null muccuoc_id,a.ne_id,a.madoicap, matb_tn,null port_id,null   vci_vpi_id,a.ma_lt,
-                                        null ma_tb_sub,a.cap_id,a.vitri,a.vitri_2,a.ketcuoi_id,a.doicap,a.doicap_2,
-                                        null loaikenh_id,a.culy,null slid,null password,null seri_md, a.chuquan_id,a.tramtb_id,null bras_id,null dslam_id,
-                                        null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                        null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp,null  cuoc_sd, cuoc_doitac,
-                                        null TOCDO_ISP,null  TOCDO_NIX,null  TOCDO_PIR_ID,null  cuoc_cir ,null cuoc_pir, cuoc_bd,
-                                        null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                        trangbi_id, null phanloai_id, null linhvuc_id, null cuoc_tn,   LOAICAP_ID, null THONGTIN_TC, null sltv_htvc, null loainode_id,
-                                       a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id, d.ma_duan
+                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id
+                                        , f.mst, e.mst mst_tt
+                                        , b.mucuoctb_id
+								, a.chuquan_id
+								, null cuoc_dt, a.toanha_id, d.ma_duan
                              from css.v_db_cd a, css.v_db_thuebao b
                                        ,css.v_toanha c, css.v_duan d 
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                                        and c.DUAN_ID=d.DUAN_ID(+)
-                                        and a.toanha_id=c.toanha_id(+)
+                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) --and a.chuquan_id in (145, 264, 266)
                              
                               union all
                              
-                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id,b.ma_tb,b.dichvuvt_id, b.loaitb_id,b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id, 
-                                        f.so_gt, f.mst, e.mst mst_tt, f.loaikh_id, f.so_dt, 
-                                       null daucuoi_id,null tocdo_id,b.mucuoctb_id,null muccuoc_id,null ne_id,null madoicap, null matb_tn,null port_id,null vci_vpi_id,null ma_lt,
-                                        null ma_tb_sub,null cap_id,null vitri,null vitri_2,null ketcuoi_id,null doicap,null doicap_2,
-                                        null loaikenh_id,0 culy,null slid,null password,null seri_md, a.chuquan_id,null tramtb_id,null bras_id,null dslam_id,
-                                        null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                        null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac,
-                                        null TOCDO_ISP,null  TOCDO_NIX,null  TOCDO_PIR_ID,null  cuoc_cir ,null cuoc_pir, null cuoc_bd,
-                                        null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                        trangbi_id, null phanloai_id, null linhvuc_id, null cuoc_tn, null  LOAICAP_ID, null THONGTIN_TC, null sltv_htvc, null loainode_id,
-                                       a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, null toanha_id, null  ma_duan
+                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id
+                                        , f.mst, e.mst mst_tt
+								, b.mucuoctb_id
+								, a.chuquan_id
+								, null cuoc_dt, null toanha_id, null  ma_duan
                              from css.v_db_gp a, css.v_db_thuebao b
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
-                             where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                            
-                             
+                             where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id
+										and b.thanhtoan_id=e.thanhtoan_id --and a.chuquan_id in (145, 264, 266)
+                        
                                union all
-                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id,b.ma_tb,b.dichvuvt_id, b.loaitb_id,b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id, 
-                                        f.so_gt, f.mst, e.mst mst_tt, f.loaikh_id, f.so_dt, 
-                                       null daucuoi_id,a.tocdo_id,b.mucuoctb_id,null muccuoc_id,null ne_id,a.madoicap, matb_tn,a.port_id,a.vci_vpi_id,a.ma_lt,
-                                        null ma_tb_sub,a.cap_id,a.vitri,a.vitri_2,a.ketcuoi_id,a.doicap,a.doicap_2,
-                                        loaikenh_id,a.culy,null slid,null password,null seri_md, a.chuquan_id,a.tramtb_id,null bras_id,null dslam_id,
-                                        null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                        a.cuoc_tk, a.cuoc_tc, a.cuoc_tbi, a.cuoc_ht, a.cuoc_tkdt, a.cuoc_tcdt, a.cuoc_ip, a.cuoc_nix, a.cuoc_isp,null cuoc_sd, null cuoc_doitac,
-                                        TOCDO_ISP, TOCDO_NIX, TOCDO_PIR_ID, cuoc_cir , cuoc_pir, null cuoc_bd,
-                                        null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                        trangbi_id, null phanloai_id, null linhvuc_id, null cuoc_tn, LOAICAP_ID, null THONGTIN_TC, null sltv_htvc, to_char(loainode_id)  loainode_id,
-                                       a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id, d.ma_duan
+                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id
+                                        , f.mst, e.mst mst_tt
+								, b.mucuoctb_id
+								, a.chuquan_id
+								, null cuoc_dt, a.toanha_id, d.ma_duan
                              from css.v_db_mgwan a, css.v_db_thuebao b
                                        ,css.v_toanha c, css.v_duan d 
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                                        and c.DUAN_ID=d.DUAN_ID(+)
-                                        and a.toanha_id=c.toanha_id(+)
+                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) --and a.chuquan_id in (145, 264, 266)
                              
                               union all
                              
-                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id,b.ma_tb, b.dichvuvt_id, b.loaitb_id,b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id,
-                                        f.so_gt, f.mst, e.mst mst_tt, f.loaikh_id, f.so_dt, 
-                                        a.daucuoi_id,a.tocdo_id,b.mucuoctb_id,null muccuoc_id,null ne_id,a.madoicap, null matb_tn,a.port_id,a.vci_vpi_id,a.ma_lt,
-                                        a.ma_tb_sub, a.cap_id,a.vitri,a.vitri_2,a.ketcuoi_id,a.doicap,a.doicap_2,
-                                        loaikenh_id,a.culy,null slid,null password,null seri_md, a.chuquan_id,a.tramtb_id,null bras_id,null dslam_id,
-                                        null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                        a.cuoc_tk, a.cuoc_tc, a.cuoc_tbi, a.cuoc_ht, a.cuoc_tkdt, a.cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac,
-                                        null TOCDO_ISP,null  TOCDO_NIX,null  TOCDO_PIR_ID,null  cuoc_cir ,null cuoc_pir, null cuoc_bd,
-                                        null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                        trangbi_id, null phanloai_id, null linhvuc_id, null cuoc_tn, LOAICAP_ID, null THONGTIN_TC, null sltv_htvc, to_char(loainode_id)  loainode_id,
-                                       a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id, d.ma_duan
+                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id
+                                        , f.mst, e.mst mst_tt
+                                       , b.mucuoctb_id
+							    , a.chuquan_id
+							    , null cuoc_dt, a.toanha_id, d.ma_duan
                              from css.v_db_tsl a, css.v_db_thuebao b
                                        ,css.v_toanha c, css.v_duan d 
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                                        and c.DUAN_ID=d.DUAN_ID(+) and a.daucuoi_id = 1
-                                        and a.toanha_id=c.toanha_id(+)
+                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) and a.daucuoi_id = 1 --and a.chuquan_id in (145, 264, 266)
                              
                               union all
                              
-                             select b.khachhang_id, b.thanhtoan_id, a.thuebao_id,b.ma_tb,b.dichvuvt_id, b.loaitb_id,b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id, 
-                                        f.so_gt, f.mst, e.mst mst_tt, f.loaikh_id, f.so_dt, 
-                                       null daucuoi_id,null tocdo_id,b.mucuoctb_id,null muccuoc_id,null ne_id,a.madoicap, matb_tn,a.port_id,a.vci_vpi_id,a.ma_lt,
-                                        null ma_tb_sub,a.cap_id,a.vitri,a.vitri_2,a.ketcuoi_id,a.doicap,a.doicap_2,
-                                        null loaikenh_id,a.culy,null slid,null password,null seri_md, a.chuquan_id,a.tramtb_id,a.bras_id,a.dslam_id,
-                                        null goicuoc_id, sl_cuocgoi, tinhkhac,
-                                        null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp,null cuoc_sd, cuoc_doitac,
-                                        null TOCDO_ISP,null  TOCDO_NIX,null  TOCDO_PIR_ID,null  cuoc_cir ,null cuoc_pir, null cuoc_bd,
-                                        null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                        trangbi_id, null phanloai_id, null linhvuc_id, null cuoc_tn, LOAICAP_ID, null THONGTIN_TC, null sltv_htvc, null loainode_id,
-                                       a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id, d.ma_duan
+                             select b.khachhang_id, b.thanhtoan_id, a.thuebao_id, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id
+                                        , f.mst, e.mst mst_tt
+								, b.mucuoctb_id
+								, a.chuquan_id
+								, null cuoc_dt, a.toanha_id, d.ma_duan
                              from css.v_db_ims a, css.v_db_thuebao b
                                        ,css.v_toanha c, css.v_duan d 
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
-                             where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                                        and c.DUAN_ID=d.DUAN_ID(+)
-                                        and a.toanha_id=c.toanha_id(+)
-								
+                             where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id                                        
+                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) --and a.chuquan_id in (145, 264, 266)
+                             
+--                               union all
+--                             
+--                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id,b.ma_tb,b.dichvuvt_id, b.loaitb_id,b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id, 
+--                                        f.so_gt, f.mst, e.mst mst_tt, f.loaikh_id, f.so_dt, 
+--                                         null daucuoi_id,null tocdo_id,b.mucuoctb_id,null muccuoc_id,null ne_id,null madoicap,null matb_tn,null port_id,null vci_vpi_id,null ma_lt,
+--                                         null ma_tb_sub,null cap_id,null vitri,null vitri_2,null ketcuoi_id,null doicap,null doicap_2,
+--                                         null loaikenh_id,0 culy,null slid,null password,null seri_md, a.chuquan_id,null tramtb_id,null bras_id,null dslam_id,
+--                                        goicuoc_id, null sl_cuocgoi, null tinhkhac,
+--                                        null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac,
+--                                        null TOCDO_ISP,null  TOCDO_NIX,null  TOCDO_PIR_ID,null  cuoc_cir ,null cuoc_pir, null cuoc_bd,
+--                                        null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
+--                                        trangbi_id, null phanloai_id, null linhvuc_id, null cuoc_tn,null  LOAICAP_ID, null THONGTIN_TC, null sltv_htvc, null loainode_id,
+--                                       null thoihan_id, b.tg_thue_tu, b.tg_thue_den, null toanha_id, null ma_duan
+--                             from css.v_db_dd a, css.v_db_thuebao b
+--                                       ,css.v_db_thanhtoan e, css.v_db_khachhang f
+--                             where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
+                             
                              union all
                              
-                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id,b.ma_tb,b.dichvuvt_id, b.loaitb_id,b.ngay_sd, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id, 
-                                        f.so_gt, f.mst, e.mst mst_tt, f.loaikh_id, f.so_dt, 
-                                        null daucuoi_id,a.tocdo_id,b.mucuoctb_id,a.muccuoc_id,null ne_id,a.madoicap, matb_tn,null port_id,null vci_vpi_id,null ma_lt,
-                                        null ma_tb_sub,null cap_id,null vitri,null vitri_2,null ketcuoi_id,null doicap,null doicap_2,
-                                        null loaikenh_id,null culy,null slid,a.password,null seri_md, a.chuquan_id,null tramtb_id,null bras_id,null dslam_id,
-                                        null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                        cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, cuoc_sd, cuoc_doitac,
-                                        null TOCDO_ISP,null  TOCDO_NIX,null  TOCDO_PIR_ID,null  cuoc_cir ,null cuoc_pir, null cuoc_bd,
-                                        sl_mailing, cuoc_dt, ngay_duytri, ngay_duytri_kt,
-                                        null trangbi_id, phanloai_id, linhvuc_id, cuoc_tn, null  LOAICAP_ID, null THONGTIN_TC, null sltv_htvc, null loainode_id,
-                                       null thoihan_id, b.tg_thue_tu, b.tg_thue_den, null toanha_id, null ma_duan
+                             select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id
+                                        , f.mst, e.mst mst_tt
+								, b.mucuoctb_id
+								, a.chuquan_id
+								, cuoc_dt, null toanha_id, null ma_duan
                              from css.v_db_cntt a, css.v_db_thuebao b
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
-                             where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
+                             where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id
+										and b.thanhtoan_id=e.thanhtoan_id --and a.chuquan_id in (145, 264, 266)
                              )
-            , v_hdtb as (select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
-                                                    b.kieuld_id, b.tthd_id, b.loaitb_id, b.doituong_id, b.dichvuvt_id, b.donvi_id, b.ngay_ht, b.ngay_tt, b.ngay_ins, b.ngay_kh, 
-                                                    b.mucuoc_tb, b.ghichu, b.nguoi_cn, null daucuoi_id,a.tocdo_id,a.muccuoc_id, 
-                                                    null loaikenh_id, a.chuquan_id, null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                                    null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, cuoc_sd, cuoc_doitac,
-                                                    null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                                    null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id                
+
+            , v_hdtb as (select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb
+                                                    , b.mucuoc_tb, a.tocdo_id, a.muccuoc_id
+                                                    , null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_ip, null cuoc_nix, null cuoc_isp, cuoc_sd, cuoc_doitac
+                                                    , null sl_mailing
+                                                    , null phanloai_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den                
                                      from css.v_hdtb_adsl a, css.v_hd_thuebao b
-                                     where b.dichvuvt_id not in (7,8,9) and a.hdtb_id=b.hdtb_id and b.tthd_id = 6
+                                     where b.dichvuvt_id not in (7,8,9) and b.tthd_id = 6 and a.hdtb_id=b.hdtb_id 
                                      
                                     union all
-                                    select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
-                                                    b.kieuld_id, b.tthd_id, b.loaitb_id, b.doituong_id, b.dichvuvt_id, b.donvi_id, b.ngay_ht, b.ngay_tt, b.ngay_ins, b.ngay_kh, 
-                                                    b.mucuoc_tb, b.ghichu, b.nguoi_cn, null daucuoi_id,null tocdo_id,null muccuoc_id, 
-                                                    null loaikenh_id, a.chuquan_id, null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                                    null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp,null cuoc_sd, cuoc_doitac,
-                                                    null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                                    null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id                
+                                    select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb
+                                                    , b.mucuoc_tb, null tocdo_id,null muccuoc_id
+                                                    , null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, cuoc_doitac
+                                                    , null sl_mailing
+                                                    , null phanloai_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den         
                                      from css.v_hdtb_cd a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6 
                                      
                                     union all
-                                    select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
-                                                    b.kieuld_id, b.tthd_id, b.loaitb_id, b.doituong_id, b.dichvuvt_id, b.donvi_id, b.ngay_ht, b.ngay_tt, b.ngay_ins, b.ngay_kh, 
-                                                    b.mucuoc_tb, b.ghichu, b.nguoi_cn, null daucuoi_id,null tocdo_id,null muccuoc_id,
-                                                    null loaikenh_id, a.chuquan_id, null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                                    null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac,
-                                                    null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                                    null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, null toanha_id                
+                                    select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb
+                                                    , b.mucuoc_tb,null tocdo_id,null muccuoc_id
+                                                    , null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac
+                                                    , null sl_mailing
+                                                    , null phanloai_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den
                                      from css.v_hdtb_gp a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6 
                                      
                                     union all
-                                    select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
-                                                    b.kieuld_id, b.tthd_id, b.loaitb_id, b.doituong_id, b.dichvuvt_id, b.donvi_id, b.ngay_ht, b.ngay_tt, b.ngay_ins, b.ngay_kh, 
-                                                    b.mucuoc_tb, b.ghichu, b.nguoi_cn, null daucuoi_id,a.tocdo_id,null muccuoc_id, 
-                                                    loaikenh_id, a.chuquan_id,null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                                    a.cuoc_tk, a.cuoc_tc, a.cuoc_tbi, a.cuoc_ht, a.cuoc_tkdt, a.cuoc_tcdt, a.cuoc_ip, a.cuoc_nix, a.cuoc_isp,null cuoc_sd, null cuoc_doitac,
-                                                    cuoc_cir , cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                                    null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id               
+                                    select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb
+                                                    , b.mucuoc_tb,a.tocdo_id,null muccuoc_id 
+                                                    , a.cuoc_tk, a.cuoc_tc, a.cuoc_tbi, a.cuoc_ht, a.cuoc_ip, a.cuoc_nix, a.cuoc_isp,null cuoc_sd, null cuoc_doitac
+                                                    , null sl_mailing
+                                                    , null phanloai_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den              
                                      from css.v_hdtb_mgwan a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6 
                                      
                                       union all
-                                    select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
-                                                    b.kieuld_id, b.tthd_id, b.loaitb_id, b.doituong_id, b.dichvuvt_id, b.donvi_id, b.ngay_ht, b.ngay_tt, b.ngay_ins, b.ngay_kh, 
-                                                    b.mucuoc_tb, b.ghichu, b.nguoi_cn,a.daucuoi_id,a.tocdo_id,null muccuoc_id,
-                                                    loaikenh_id, a.chuquan_id, null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                                    a.cuoc_tk, a.cuoc_tc, a.cuoc_tbi, a.cuoc_ht, a.cuoc_tkdt, a.cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac,
-                                                    null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                                    null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id                
+                                    select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb
+                                                    , b.mucuoc_tb,a.tocdo_id,null muccuoc_id
+                                                    , a.cuoc_tk, a.cuoc_tc, a.cuoc_tbi, a.cuoc_ht, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac
+                                                    , null sl_mailing
+                                                    , null phanloai_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den
                                      from css.v_hdtb_tsl a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id and daucuoi_id = 1 and b.tthd_id = 6
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6 and daucuoi_id = 1
                                     
                                       union all
-                                    select  a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
-                                                    b.kieuld_id, b.tthd_id, b.loaitb_id, b.doituong_id, b.dichvuvt_id, b.donvi_id, b.ngay_ht, b.ngay_tt, b.ngay_ins, b.ngay_kh,               
-                                                    b.mucuoc_tb, b.ghichu, b.nguoi_cn, null daucuoi_id,null tocdo_id,null muccuoc_id,
-                                                    null loaikenh_id, a.chuquan_id, null goicuoc_id, sl_cuocgoi, tinhkhac,
-                                                    null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp,null cuoc_sd, cuoc_doitac,
-                                                    null  cuoc_cir ,null cuoc_pir, null cuoc_bd, null sl_mailing, null cuoc_dt, null ngay_duytri, null ngay_duytri_kt,
-                                                    null phanloai_id, null linhvuc_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, a.toanha_id
+                                    select  a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb
+                                                    , b.mucuoc_tb,null tocdo_id,null muccuoc_id
+                                                    , null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_ip, null cuoc_nix, null cuoc_isp,null cuoc_sd, cuoc_doitac
+                                                    , null sl_mailing
+                                                    , null phanloai_id, null cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den
                                      from css.v_hdtb_ims a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
-							  
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6 
+                                     
+--                                    union all
+--                                    select  a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb
+--                                                    , b.mucuoc_tb,null tocdo_id,null muccuoc_id
+--                                                    , null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_ip, null cuoc_nix, null cuoc_isp, null cuoc_sd, null cuoc_doitac
+--                                                    , null sl_mailing
+--                                                    , null phanloai_id, null cuoc_tn, null thoihan_id, b.tg_thue_tu, b.tg_thue_den
+--                                     from css.v_hdtb_dd a, css.v_hd_thuebao b
+--                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6 
+                                     
                                      union all
-                                     select  a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb, 
-                                                    b.kieuld_id, b.tthd_id, b.loaitb_id, b.doituong_id, b.dichvuvt_id, b.donvi_id, b.ngay_ht, b.ngay_tt, b.ngay_ins, b.ngay_kh,
-                                                    b.mucuoc_tb, b.ghichu, b.nguoi_cn, null daucuoi_id,a.tocdo_id,a.muccuoc_id,
-                                                    null loaikenh_id, a.chuquan_id, null goicuoc_id, null sl_cuocgoi, null tinhkhac,
-                                                    null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_tkdt, null cuoc_tcdt, null cuoc_ip, null cuoc_nix, null cuoc_isp, cuoc_sd, cuoc_doitac,
-                                                    null  cuoc_cir ,null cuoc_pir, null cuoc_bd, sl_mailing, cuoc_dt, ngay_duytri, ngay_duytri_kt,
-                                                    phanloai_id, linhvuc_id, cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den, null toanha_id
+                                     select  a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb
+                                                    , b.mucuoc_tb,a.tocdo_id,a.muccuoc_id
+                                                    , null cuoc_tk, null cuoc_tc, null cuoc_tbi, null cuoc_ht, null cuoc_ip, null cuoc_nix, null cuoc_isp, cuoc_sd, cuoc_doitac
+                                                    , sl_mailing
+                                                    , phanloai_id, cuoc_tn, a.thoihan_id, b.tg_thue_tu, b.tg_thue_den
                                      from css.v_hdtb_cntt a, css.v_hd_thuebao b
-                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6
+                                     where a.hdtb_id=b.hdtb_id and b.tthd_id = 6 
                                      )
  
   select lhtb.loaihinh_tb dich_vu
@@ -347,7 +319,12 @@ create table ptm_codinh_202410 as
                  , admin.v_donvi dmgt1
                  , admin.v_donvi dmgt2      
                 
-         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id  and db_old.ky_cuoc (+) = 20240901 	---thang n-1
+         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id --and v_db.chuquan_id in (145, 264, 266) 
+                and db_old.ky_cuoc (+) = 20240901 	---thang n-1
+--				and b.dichvuvt_id in (1, 10,11)		---CD, GP
+--				and b.dichvuvt_id in (4)		---BR
+--				and b.dichvuvt_id in (7,8,9)	--TSL
+				and b.dichvuvt_id in (12, 13, 14, 15, 16, 26)	--CNTT
 				and b.thuebao_id = db_old.thuebao_id (+)
                 and b.hdtb_id = v_hdtb.hdtb_id(+) and b.tthd_id in (6) and a.loaihd_id = lhd.loaihd_id
                 and a.hdkh_cha_id = a1.hdkh_id (+)
@@ -381,7 +358,7 @@ create table ptm_codinh_202410 as
                 and dmgt1.donvi_cha_id = dmgt2.donvi_id (+)
                 
                 and ( (a.loaihd_id=1 and b.kieuld_id not in (540,541,557,249,13130,13222,13224,71,280,550,551,13235, 14069) )  
-                                      or (a.loaihd_id=6 and b.kieuld_id in (81,567,623,677,701,703,719,825,828,904,913,789,770,13258) and b.loaitb_id=77)  -- co dinh,vfone,bfone -> siptrunk
+                                      or (a.loaihd_id=6 and b.kieuld_id in (81,567,623,677,701,703,719,825,828,904,913,789,770,13258, 13244) and b.loaitb_id=77)  -- co dinh,vfone,bfone -> siptrunk
                                       or (a.loaihd_id=41 and b.kieuld_id not in (13179, 13261, 13286, 280, 13187, 14050) and b.loaitb_id in (140,80,116,117,55,122, 132, 154,153, 288, 40,2116 , 352, 373) )  
                                       or (a.loaihd_id=41 and b.kieuld_id in (13281,13189, 13236)  ) 
                                       or (b.kieuld_id=49 AND b.loaitb_id in (122, 175,2116,373,2116) )  -- Ban thiet bi/Ban goi dich vu
@@ -392,17 +369,8 @@ create table ptm_codinh_202410 as
                     )        
 
 			 and to_number(to_char(b.ngay_ht, 'yyyymm')) = to_number(to_char(trunc(sysdate, 'month') - 1, 'yyyymm')) 		--thang n
---and b.ma_tb in ('02743767017'
---,'02743767018'
---,'02743767019'
---,'02743767020'
---,'02743767010'
---,'02743767011'
---,'02743767012'
---,'02743767013'
---,'02743767014'
---,'02743767015')
-             ;
+;
+             
                           
              select * from ptm_codinh_202410
                 where (ma_tb, ma_gd, hdtb_id) in 
@@ -1553,7 +1521,7 @@ create table ptm_codinh_202410 as
 -- Kiem tra dthu goi:
 				select a.ma_gd, ma_tb, datcoc_csd, dthu_goi, dthu_ps, manv_ptm
 				    from ttkd_bct.ptm_codinh_202410 a
-				    where (thuebao_id, ma_tb, kieuld_id) in (select thuebao_id, ma_tb, kieuld_id from ttkd_bct.ptm_codinh_202410 group by thuebao_id, ma_tb, kieuld_id having count(*)>1) 
+				    where (ma_gd, thuebao_id, ma_tb, kieuld_id) in (select ma_gd, thuebao_id, ma_tb, kieuld_id from ttkd_bct.ptm_codinh_202410 group by ma_gd, thuebao_id, ma_tb, kieuld_id having count(*)>1) 
 				    order by thuebao_id, ngay_bbbg;
 				
 				select * from ttkd_bct.ptm_codinh_202410 
@@ -1570,34 +1538,24 @@ create table ptm_codinh_202410 as
 					   where chuquan_id in (145,266,264) and loaitb_id not in (61,210,222,224) and (thoihan_id=2 or thoihan_id is null)
 							    -- and loaitb_id = 279 
 								and dthu_goi is null ; 
-							  
-				
-								
-				select  chuquan_id, ten_kieuld, dich_vu, ma_tb, loaitb_id, doituong_id, ngaycn_bbbg, ngay_bbbg, muccuoc_tb, goi_dadv_id, 
-						  datcoc_csd, sothang_dc, tien_td, muccuoc_tb, tien_dvgt, tien_tbi,
-						  dthu_goi_goc, dthu_goi, dthu_ps, lydo_khongtinh_luong, ten_tb
-					   from ttkd_bct.ptm_codinh_202410  a
-					   where chuquan_id in (145,266,264) and loaitb_id not in (61,210) and (thoihan_id=2 or thoihan_id is null)
-								and dthu_goi is null ; 
-				
 				
 				select * from bcss.v_thftth@dataguard a 
 				    where phanvung_id=28 and ky_cuoc=20241001
-					   and exists(select 1 from ptm_codinh_202410 
+					   and exists(select 1 from ttkd_bct.ptm_codinh_202410 
 								    where loaitb_id in (58) and dthu_goi is null
 									   and ma_tb=a.ma_tb);
 															 
 				    
-				select * from ptm_codinh_202410
+				select * from ttkd_bct.ptm_codinh_202410
 					   where thoihan_id=2 and chuquan_id in (145,266,264) and loaitb_id not in (61,171,131,210) and dthu_goi is null 
 					   order by loaitb_id;        
 				
-				select * from ptm_codinh_202410
+				select * from ttkd_bct.ptm_codinh_202410
 					   where thoihan_id=2 and chuquan_id in (145,266,264) and loaitb_id in (58) and dthu_goi is null 
 					   order by loaitb_id;     
 					   
 				select thuebao_id, ma_tb,dich_vu,DTHU_GOI, DTHU_GOI_NGOAIMANG , nvl(DTHU_GOI,0)+nvl(DTHU_GOI_NGOAIMANG,0), dthu_ps 
-				    from ptm_codinh_202410 
+				    from ttkd_bct.ptm_codinh_202410 
 				    where loaitb_id=131;    
 					   
 				
@@ -1609,7 +1567,7 @@ create table ptm_codinh_202410 as
 				
 				-- Kiem tra ISDN:
 				select thuebao_cha_id, count(*) sl_ptm
-				from ptm_codinh_202410
+				from ttkd_bct.ptm_codinh_202410
 				where loaitb_id in (3,4,5,6,14,15,16,17)
 				group by thuebao_cha_id
 				;

@@ -367,17 +367,22 @@ select distinct a.*, b.*, c.ten_vtcv
 		where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_021' and ma_nv in ('VNP027259', 'VNP017190')
 		;
 		update ttkd_bsc.bangluong_kpi a set NGAYCONG = 23
-				where a.thang = 202409
+				where a.thang = 202410
 		;
 		update ttkd_bsc.bangluong_kpi a set CHITIEU_GIAO = 100
 				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202409
 		;
-		update ttkd_bsc.bangluong_kpi a set GIAO = 
+		update ttkd_bsc.bangluong_kpi a set CHITIEU_GIAO = 100
+																		, GIAO = 
 																					case 
 																							when ma_vtcv in ('VNP-HNHCM_GP_3') then 16		---fix so theo vb ap dung T8
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_4') then 14.5		---fix so theo vb ap dung T8
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_5') then 72.5		---fix so theo vb ap dung T8_ Vinh y/c tren Group Xu ly tinh tren 5 nvien, Tiên hok co
-																							
+																							when ma_vtcv in ('VNP-HNHCM_KDOL_3.1') then 42		---file giao PBHOL T10
+																							when ma_nv = 'VNP017740' then 144.5	--file giao PBHOL T10
+																							when ma_nv in ('VNP017344') then 2.8 --file giao PBHOL T10
+																							when ma_nv in ('VNP017852') then 2.68 --file giao PBHOL T10
+
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 5.6		---fix so theo vb ap dung T9, nhung chua bik vi tri nao 2.6tr																							
 																							when ma_vtcv in ('VNP-HNHCM_BHKV_53') then 5.6 		---Fix so theo vb ap dung T8 lay theo dinh muc, 430 để đánh giá P1
 																							when ma_vtcv in ('VNP-HNHCM_BHKV_52') then  		---TT BHOL, Fix so theo vb ap dung T8 lay theo 430, tối thiểu >= đinh mực nvien thực tế
@@ -406,7 +411,7 @@ select distinct a.*, b.*, c.ten_vtcv
 --																									when ma_vtcv in ('VNP-HNHCM_BHKV_28', 'VNP-HNHCM_BHKV_27') then 60	--thay doi theo thang CHT, CHT kGDV
 --																						 end
 --				select * from ttkd_bsc.bangluong_kpi a
-				where a.ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202409 
+				where a.ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202410
 			;
 		update ttkd_bsc.bangluong_kpi a set TYLE_THUCHIEN = case when GIAO = 0 then null
 																												when ma_vtcv in ('VNP-HNHCM_BHKV_6', 'VNP-HNHCM_BHKV_41') ----KDDB, AM BHKV
@@ -467,8 +472,7 @@ select distinct a.*, b.*, c.ten_vtcv
 																									end
 				where ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202409 
 			;
-		update ttkd_bsc.bangluong_kpi a set CHITIEU_GIAO = 100
-																		, MUCDO_HOANTHANH = case 
+		update ttkd_bsc.bangluong_kpi a set MUCDO_HOANTHANH = case 
 																														--- case: khong danh gia BSC
 																														when exists (select 1 from ttkd_bsc.nhanvien where thang = a.thang and ma_nv = a.ma_nv and tinh_bsc = 0)
 																																	then 100
@@ -486,7 +490,7 @@ select distinct a.*, b.*, c.ten_vtcv
 				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202409  --and ma_nv = 'VNP016902'
 				
 			;
-		select * from ttkd_bsc.bangluong_kpi where ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202409
+		select * from ttkd_bsc.bangluong_kpi where ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202410
 --		where ma_nv in ('VNP027259', 'VNP017190')
 --		where ma_nv = 'CTV028802'
 		;

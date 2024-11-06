@@ -1,5 +1,15 @@
-drop table ptm_codinh_202410_cdbr purge;
-create table ptm_codinh_202410_br as
+create table ptm_codinh_202410 as
+select * from ptm_codinh_202410_cntt
+union all
+select * from ptm_codinh_202410_tsl
+union all
+select * from ptm_codinh_202410_cd
+union all
+select * from ptm_codinh_202410_br
+;
+union all;
+select * from ptm_codinh_202410;
+create table ptm_codinh_202410_cntt as
         with goi_dadv as (select b.thuebao_id,b.goi_id, b.nhomtb_id, c.ten_goi, row_number() over (partition by thuebao_id order by  nhomtb_id desc)rnk
                                                   from css.v_bd_goi_dadv b , css.v_goi_dadv c
                                                   where b.goi_id=c.goi_id and b.trangthai=1 
@@ -76,7 +86,7 @@ create table ptm_codinh_202410_br as
                                        , css.v_toanha c, css.v_duan d
                                        , css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id = b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                                        and a.toanha_id=c.toanha_id(+)  and c.DUAN_ID=d.DUAN_ID(+) and a.chuquan_id in (145, 264, 266)
+                                        and a.toanha_id=c.toanha_id(+)  and c.DUAN_ID=d.DUAN_ID(+) --and a.chuquan_id in (145, 264, 266)
                             
                              union all
                             
@@ -89,7 +99,7 @@ create table ptm_codinh_202410_br as
                                        ,css.v_toanha c, css.v_duan d 
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) and a.chuquan_id in (145, 264, 266)
+                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) --and a.chuquan_id in (145, 264, 266)
                              
                               union all
                              
@@ -101,7 +111,7 @@ create table ptm_codinh_202410_br as
                              from css.v_db_gp a, css.v_db_thuebao b
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id
-										and b.thanhtoan_id=e.thanhtoan_id and a.chuquan_id in (145, 264, 266)
+										and b.thanhtoan_id=e.thanhtoan_id --and a.chuquan_id in (145, 264, 266)
                         
                                union all
                              select  b.khachhang_id, b.thanhtoan_id, a.thuebao_id, b.ngay_td, b.ngay_cat, b.doituong_id, b.trangthaitb_id
@@ -113,7 +123,7 @@ create table ptm_codinh_202410_br as
                                        ,css.v_toanha c, css.v_duan d 
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) and a.chuquan_id in (145, 264, 266)
+                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) --and a.chuquan_id in (145, 264, 266)
                              
                               union all
                              
@@ -126,7 +136,7 @@ create table ptm_codinh_202410_br as
                                        ,css.v_toanha c, css.v_duan d 
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id
-                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) and a.daucuoi_id = 1 and a.chuquan_id in (145, 264, 266)
+                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) and a.daucuoi_id = 1 --and a.chuquan_id in (145, 264, 266)
                              
                               union all
                              
@@ -139,7 +149,7 @@ create table ptm_codinh_202410_br as
                                        ,css.v_toanha c, css.v_duan d 
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id and b.thanhtoan_id=e.thanhtoan_id                                        
-                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) and a.chuquan_id in (145, 264, 266)
+                                        and a.toanha_id=c.toanha_id(+) and c.DUAN_ID=d.DUAN_ID(+) --and a.chuquan_id in (145, 264, 266)
                              
 --                               union all
 --                             
@@ -168,7 +178,7 @@ create table ptm_codinh_202410_br as
                              from css.v_db_cntt a, css.v_db_thuebao b
                                        ,css.v_db_thanhtoan e, css.v_db_khachhang f
                              where a.thuebao_id=b.thuebao_id and b.khachhang_id=f.khachhang_id
-										and b.thanhtoan_id=e.thanhtoan_id and a.chuquan_id in (145, 264, 266)
+										and b.thanhtoan_id=e.thanhtoan_id --and a.chuquan_id in (145, 264, 266)
                              )
 
             , v_hdtb as (select a.hdtb_id, b.hdkh_id, b.hdtt_id, b.thuebao_id, b.ma_tb
@@ -309,11 +319,12 @@ create table ptm_codinh_202410_br as
                  , admin.v_donvi dmgt1
                  , admin.v_donvi dmgt2      
                 
-         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id and v_db.chuquan_id in (145, 264, 266) and db_old.ky_cuoc (+) = 20240901 	---thang n-1
+         where a.hdkh_id = b.hdkh_id and b.thuebao_id = v_db.thuebao_id --and v_db.chuquan_id in (145, 264, 266) 
+                and db_old.ky_cuoc (+) = 20240901 	---thang n-1
 --				and b.dichvuvt_id in (1, 10,11)		---CD, GP
-				and b.dichvuvt_id in (4)		---BR
+--				and b.dichvuvt_id in (4)		---BR
 --				and b.dichvuvt_id in (7,8,9)	--TSL
---				and b.dichvuvt_id in (12, 13, 14, 15, 16, 26)	--CNTT
+				and b.dichvuvt_id in (12, 13, 14, 15, 16, 26)	--CNTT
 				and b.thuebao_id = db_old.thuebao_id (+)
                 and b.hdtb_id = v_hdtb.hdtb_id(+) and b.tthd_id in (6) and a.loaihd_id = lhd.loaihd_id
                 and a.hdkh_cha_id = a1.hdkh_id (+)
@@ -347,7 +358,7 @@ create table ptm_codinh_202410_br as
                 and dmgt1.donvi_cha_id = dmgt2.donvi_id (+)
                 
                 and ( (a.loaihd_id=1 and b.kieuld_id not in (540,541,557,249,13130,13222,13224,71,280,550,551,13235, 14069) )  
-                                      or (a.loaihd_id=6 and b.kieuld_id in (81,567,623,677,701,703,719,825,828,904,913,789,770,13258) and b.loaitb_id=77)  -- co dinh,vfone,bfone -> siptrunk
+                                      or (a.loaihd_id=6 and b.kieuld_id in (81,567,623,677,701,703,719,825,828,904,913,789,770,13258, 13244) and b.loaitb_id=77)  -- co dinh,vfone,bfone -> siptrunk
                                       or (a.loaihd_id=41 and b.kieuld_id not in (13179, 13261, 13286, 280, 13187, 14050) and b.loaitb_id in (140,80,116,117,55,122, 132, 154,153, 288, 40,2116 , 352, 373) )  
                                       or (a.loaihd_id=41 and b.kieuld_id in (13281,13189, 13236)  ) 
                                       or (b.kieuld_id=49 AND b.loaitb_id in (122, 175,2116,373,2116) )  -- Ban thiet bi/Ban goi dich vu
@@ -358,10 +369,9 @@ create table ptm_codinh_202410_br as
                     )        
 
 			 and to_number(to_char(b.ngay_ht, 'yyyymm')) = to_number(to_char(trunc(sysdate, 'month') - 1, 'yyyymm')) 		--thang n
---			 and rownum = 1
 ;
 
-----PTM Băng rong dichvt_id = 4
+----PTM Băng rong dichvt_id = 4 (dang test)
 select * from ptm_codinh_202410_br;
 drop table ptm_codinh_202410_br purge;
 create table ptm_codinh_202410_br as
