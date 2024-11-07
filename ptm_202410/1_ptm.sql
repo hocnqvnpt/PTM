@@ -787,6 +787,12 @@ create table ptm_codinh_202410_cntt as
 					    
 					   -- VNPT SSL: 78 (Chung thu so cong cong quoc te SSL)
 						when bc.loaitb_id=78 and bc.thang_bddc is not null then bc.datcoc_csd
+						
+						-- POSIO: 294 (Dich vu quan ly ban hang): giong CA
+					    when bc.loaitb_id in (294) then bc.datcoc_csd
+					    
+					    -- VNPT Smart IR: 324: giong CA
+					    when bc.loaitb_id in (324) then bc.datcoc_csd
 				  
 					    
 					  -- VNPT eKYC (He thong xac thuc va dinh danh dien tu) - theo thang va tra 1 lan thi heso_dv = 0.3
@@ -962,12 +968,7 @@ create table ptm_codinh_202410_cntt as
 					    
 					    -- vnFace: 284 (Phan mem cham cong, diem danh VNPT VnFace, la ung dung nhan dien khuon mat su dung cong nghe tri tue nhan tao (AI) ): theo thang
 					    when bc.loaitb_id=284 and nvl(muccuoc_tb,0)>0 then nvl(muccuoc_tb,0)+nvl(tien_dvgt,0)+nvl(tien_tbi,0) 
-					    when bc.loaitb_id=284 and nvl(muccuoc_tb,0)=0 then nvl(tien_td,0)+nvl(tien_dvgt,0) 
-					    
-					    
-					    -- POSIO: 294 (Dich vu quan ly ban hang): giong CA
-					    when bc.loaitb_id in (294) then bc.datcoc_csd
-					    
+					    when bc.loaitb_id=284 and nvl(muccuoc_tb,0)=0 then nvl(tien_td,0)+nvl(tien_dvgt,0) 					    
 						 
 					    -- VNPT AntiDDoS  : 
 						  -- 847/TTr-DH - 13/08/2021, theo thang =1, theo thu� dich vu 72 gio = 0.3, eoffice 718660  

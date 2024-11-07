@@ -376,6 +376,7 @@ select distinct a.*, b.*, c.ten_vtcv
 																		, GIAO = 
 																					case 
 																							when ma_vtcv in ('VNP-HNHCM_GP_3') then 16		---fix so theo vb ap dung T8
+																							when ma_vtcv in ('VNP-HNHCM_KHDN_18') then 6		---fix 6tr doi voi thang 10, thang 11 là 16tr
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_4') then 14.5		---fix so theo vb ap dung T8
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_5') then 72.5		---fix so theo vb ap dung T8_ Vinh y/c tren Group Xu ly tinh tren 5 nvien, Tiên hok co
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_3.1') then 42		---file giao PBHOL T10

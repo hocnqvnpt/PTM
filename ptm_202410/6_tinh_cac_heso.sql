@@ -516,8 +516,8 @@ delete from ttkd_bsc.ct_bsc_ptm_kiemtraduan where thang=202410; and ma_duan_banh
 																				and d.loaitb_id_obss= a.loaitb_id
 																	) 
 														then 1 
-										when exists(select * from ttkd_bsc.map_loaihinhtb where loaitb_id=a.loaitb_id and loaitb_id_qlda=b.ma_dichvu) 
-											    then 1 
+--										when exists(select * from ttkd_bsc.map_loaihinhtb where loaitb_id=a.loaitb_id and loaitb_id_qlda=b.ma_dichvu) 
+--											    then 1 
 										else 0 end 
 							  ) kt_loaitb_id
 						 , (case when regexp_replace (mst, '\D', '')=regexp_replace (b.masothue, '\D', '') or regexp_replace (mst_tt, '\D', '')=regexp_replace (b.masothue, '\D', '') 
