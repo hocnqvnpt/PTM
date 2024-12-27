@@ -96,6 +96,7 @@ select ma_nv, ten_nv,ma_vtcv,ten_vtcv,	ma_pb,	ten_pb,	ma_to,ten_to,	loai_ld,
 				  , giamtru_hosotainha, giamtru_ghtt_cntt, tong_luong_thuhoi
 				  , TONG_THULAO_THUCCHI
 from ttkd_bsc.bangluong_dongia_202410
+where nvl(ghichu, 'a') <> 'khongtontai' and donvi = 'TTKD'
 ;
 select * from ttkd_bsc.v_bangluong_dongia_ptm_202410
 

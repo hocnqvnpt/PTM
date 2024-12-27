@@ -3,12 +3,9 @@
 rollback;
 commit;
 select *  from ttkd_bsc.dm_daily_khdn 
---    update ttkd_bsc.dm_daily_khdn  set TEN_DAILY = 'CHI NH�NH H? CH� MINH - C�NG TY C? PH?N GI?I PH�P C�NG NGH? S? CALLSTACK'--MANV_QLDAILY = 'VNP029157'
-where thang=202410 and ma_daily in ('GTGT00060');,'GTGT00054','GTGT00050','GTGT00116','GTGT00136','GTGT00144')
+--    update ttkd_bsc.dm_daily_khdn  set MANV_QLDAILY = 'CTV073464'
+where thang=202411 and ma_daily in ('GTGT00205');,'GTGT00054','GTGT00050','GTGT00116','GTGT00136','GTGT00144')
 ;
-   and ma_nguoigt in ('GTGT00012','GTGT00054','GTGT00050','GTGT00116','GTGT00136','GTGT00144');
-alter table ttkd_bsc.dm_daily_khdn add MANV_QLDAILY       VARCHAR2(20)  ;
-desc ttkd_bsc.dm_daily_khdn;
 		
 		----insert daily moi tu excel
 		insert into ttkd_bsc.dm_daily_khdn (THANG, MA_DAILY, TEN_DAILY, MANV_QLDAILY, THANG_KYHD, LOAI_HOPDONG)		
@@ -28,7 +25,7 @@ desc ttkd_bsc.dm_daily_khdn;
 		---update maTo, PB, VTCV
 		update ttkd_bsc.dm_daily_khdn a
 			set (ma_to, ma_pb, ma_vtcv, ten_vtcv)= (select ma_to, ma_pb, ma_vtcv, ten_vtcv from ttkd_bsc.nhanvien where ma_nv = a.MANV_QLDAILY and thang = a.thang)
-			where a.thang=202409;
+			where a.thang=202411;
 	commit;
 	;
 delete from ttkd_bsc.dm_daily_khdn where thang=202404  --thang n

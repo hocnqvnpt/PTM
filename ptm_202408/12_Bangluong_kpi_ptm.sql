@@ -110,6 +110,10 @@ drop table ttkd_bsc.bangluong_kpi_202408_ptm purge
 		;
 	create index ttkd_bsc.temp_trasau_canhan_manv on ttkd_bsc.temp_trasau_canhan (ma_nv)
 	;
+	insert into ttkd_bsc.tonghop_dthu_ptm
+		select cast(202408 as number) thang, DICH_VU, LOAITB_ID, DICHVUVT_ID, MA_NV, DTHU_KPI 
+		from ttkd_bsc.temp_trasau_canhan	
+	;
 -- to truong: thieu 0021_ts
 	drop table ttkd_bsc.temp_totruong purge;
 	
@@ -384,7 +388,7 @@ drop table ttkd_bsc.bangluong_kpi_202408_ptm purge
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_5') then 72.5		---fix so theo vb ap dung T8_ Vinh y/c tren Group Xu ly
 																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') and ma_nv in ('VNP017344', 'VNP017778', 'VNP017163', 'VNP016808')	
 																										then 2.6
-																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 6.5		---fix so theo vb ap dung T6, nhung chua bik vi tri nào 2.6tr																							
+																							when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 6.5		---fix so theo vb ap dung T6, nhung chua bik vi tri nï¿½o 2.6tr																							
 																							when ma_vtcv in ('VNP-HNHCM_BHKV_53') then 5.6 		---Fix so theo vb ap dung T8
 																								else	(select round(TONG_DTGIAO/1000000, 3) from ttkd_bsc.dinhmuc_giao_dthu_ptm 
 																											where thang = a.thang and ma_nv = a.ma_nv 
@@ -463,7 +467,7 @@ drop table ttkd_bsc.bangluong_kpi_202408_ptm purge
 																																	then round(1 * TYLE_THUCHIEN, 2)				-- 100% *TLTH --> chi Vuong Viber y/c delete * ty trong
 																														when TYLE_THUCHIEN > 100
 																																	then case when 100 + (1.2 * (TYLE_THUCHIEN - 100)) > 150 then 150
-																																						else round(100 + (1.2 * (TYLE_THUCHIEN - 100)), 2) end ---100% + 1.2 x (TLTH – 100%) -- max 150%
+																																						else round(100 + (1.2 * (TYLE_THUCHIEN - 100)), 2) end ---100% + 1.2 x (TLTH ï¿½ 100%) -- max 150%
 																												end
 																													
 				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202408  --and ma_nv = 'VNP016902'
@@ -561,7 +565,7 @@ select *
 					;
 
 		
-		-- san luong phát trien moi brcd, vnp tra sau
+		-- san luong phï¿½t trien moi brcd, vnp tra sau
 			---kiem tra co giao hay khong
 		select distinct a.*, b.*, b.ten_vtcv from blkpi_danhmuc_kpi a, blkpi_danhmuc_kpi_vtcv b, nhanvien_202402 c  
 				where a.ma_kpi=b.ma_kpi and b.ma_vtcv=c.ma_vtcv       

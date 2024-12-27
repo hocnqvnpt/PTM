@@ -65,39 +65,41 @@ Diều kiện ngoài chuong trình:
 										command = 'insert'
 --										command = 'update'
 --										command = 'khongtinh' 
---													,loaitb_id = 999, dichvuvt_id = 15,
+--													,loaitb_id = 999, dichvuvt_id = 16,
+										, loaitb_id =180,
 --												, dthu_goi = round(4645615/1.1, 0)
 --												, ma_gd = 'HCM-CQ/13636831'
 --												ma_tb = 'hcm_vbn_00001181'
---												doituong_kh = 'KHDN'
+												doituong_kh = 'KHDN'
+--								HESO_HOSO = 0.8
 --								,  ghichu = ghichu || '; thu hoi T05, T06, tính bsung T10'
 --								, DIEN_GIAI = DIEN_GIAI || '; ' ||GHICHU
-								--	, ghichu = 'hop dong lap moi, qua han, hok co dthu_goi, bsung bq dthu_ps Obss, CCBS'
+--									, ghichu = 'Hệ số hồ sơ = 0.8 (P2 có VB số 6582/KHDN2 ngày 26/11/2024)'
 --									, TENKIEU_LD = 'Mua them dich vu'
 --								mst = '0301239352'
 --, thang = 202408
 --				select * from ttkd_bsc.ct_ptm_ngoaictr_imp 
-				where thang = 202410 --and dichvuvt_id in (14, 15, 16)
+				where thang = 202411 --and dichvuvt_id in (14, 15, 16)
 --							ma_tb = 'hcm_vbn_00001181'
 --							and DICHVU_VT = 'ID Check'
 --							and thuebao_id = 12574448 --chu upda, dang kiem tra vi sao tien hok c� trong ctr
 --							and thuebao_id in (12208645) 
-							and ma_gd in ('HCM-LD/01939335')
+--							and ma_gd in ('00998559')
 --							and ma_tb = 'hcm_vbn_00001078'
---							and rowid in ( 'AAHL0jABmAAAaEVAAA', 'AAHL0jABmAAAaE7AAG')
+							and rowid in ( 'AAHL0jABmAAAaElAAA')
 --							and ma_duan_banhang = '237001'
 --							and doituong_kh is null
 --							and manv_hotro = 'VNP017373; D?ch v? ch?a c� tr�n oneBSS'--is not null
 				;		
 
 				--ktra ma_gd da tinh tien
-				select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202401 and  ma_tb = 'hcm_vbn_00001027';
+				select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202404 and  ma_tb = 'hcm_edu_lms_00001045';
 				
-				select dthu_goi, luong_dongia_nvptm, thang_tldg_dt, ma_tb, thuebao_id from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202403 and replace(ma_gd, ' ', '') = 'HCM-TD/00720135';'00928721'; 00927583
+				select dthu_goi, luong_dongia_nvptm, thang_tldg_dt, ma_tb, thuebao_id from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202404 and replace(ma_gd, ' ', '') = '00998559';'00928721'; 00927583
 
 
 				select * from ttkd_bsc.ct_ptm_ngoaictr_imp 
-								where thang = 202410 and nvl(dichvuvt_id, 0)  in (7, 13, 14, 15, 16, 0) 
+								where thang = 202411 and nvl(dichvuvt_id, 0)  in (7, 13, 14, 15, 16, 0) 
 												and command is   null ;and ghichu is not null;= 'update'; and ma_tb= 'hcm_vbn_00001065';
 
 				select * from ttkd_bsc.ct_bsc_ptm where  thang_luong in ( 86, 87);
@@ -116,8 +118,8 @@ Diều kiện ngoài chuong trình:
 											, nvl(kh.TEN_KH, a.ten_kh) ten_kh, a.NGAY_YC, a.GOI_CUOC_MOI, a.DTHU_GOI, a.HESO_DICHVU
 											, HESO_HOTRO_NVHOTRO, MANV_HOTRO, HESO_HOTRO_NVHOTRO tyle_hotro, DIEN_GIAI ||'; ' ||a.GHICHU GHI_CHU, a.LOAITB_ID, a.DICHVUVT_ID, a.DOITUONG_KH, a.THUEBAO_ID, c.khachhang_id, tt.thanhtoan_id
 											, 'ct_ptm_ngoaictr_imp_'||command as nguon, nvl(a.mst, kh.mst) mst, tt.mst mst_tt, nvl(db.dthu_ps, a.DTHU_GOI) dthu_ps, nvl(c.trangthaitb_id, 1) trangthaitb_id, 145 chuquan_id, null dongia, nvl(lh.loaihinh_tb, dichvu_vt) dich_vu
---											, 1 nop_du, 1 mien_hsgoc			---khong co ma_gd
-											, null nop_du, null mien_hsgoc		--co ma_gd
+											, 1 nop_du, 1 mien_hsgoc			---khong co ma_gd
+--											, null nop_du, null mien_hsgoc		--co ma_gd
 											, 1 trangthai_tt_id
 											, hdkh.hdkh_id, hdtb.hdtb_id, nvl(hdkh.loaihd_id, 1) loaihd_id, nvl(hdtb.kieuld_id, 13266) kieuld_id, a.ma_duan_banhang
 								from ttkd_bsc.ct_ptm_ngoaictr_imp a
@@ -134,12 +136,13 @@ Diều kiện ngoài chuong trình:
 											left join css_hcm.hd_khachhang hdkh on a.ma_gd = hdkh.ma_gd
 											left join css_hcm.hd_thuebao hdtb on hdkh.hdkh_id = hdtb.hdkh_id and a.thuebao_id = hdtb.thuebao_id
 											left join css_hcm.kieu_ld kld on kld.kieuld_id = hdtb.kieuld_id
-								where a.thang = 202410 and a.dichvuvt_id in (14, 15, 16)-- not in ('VNP tra sau', 'Internet truc tiep')
+								where a.thang = 202411 and a.dichvuvt_id in (14, 15, 16)-- not in ('VNP tra sau', 'Internet truc tiep')
 												and command = 'insert' 
 												and not exists (select 1 from ttkd_bsc.ct_bsc_ptm where thang_ptm = a.thang and nguon like 'ct_ptm_ngoaictr_imp%' and ma_gd = a.ma_gd and ma_tb = nvl(c.MA_TB, 'khongco'||rownum))
---												and a.ma_gd  in ('HCM-LD/01939335')
+												and a.ma_gd  in ('00998559')
 												--and a.thuebao_id in (8328877, 8592878)
 --												and a.ma_gd is not null
+--												and a.rowid in ( 'AAHL0jABmAAAaElAAA')
 					;
 					
 					commit;
@@ -163,7 +166,7 @@ Diều kiện ngoài chuong trình:
 																		join ttkd_bct.cuoc_thuebao_ttkd y on x.tb_id = y.tb_id 
 																group by x.thuebao_id, plkh_id) db on a.thuebao_id = db.thuebao_id
 											left join css_hcm.phanloai_kh plk on db.plkh_id = plk.PHANLOAIKH_ID
-								where a.thang = 202410 and a.dichvuvt_id in (13, 14, 15, 16, 7)
+								where a.thang = 202411 and a.dichvuvt_id in (13, 14, 15, 16, 7)
 												and command = 'update'
 								) t
 					ON (t.thuebao_id = a.thuebao_id and t.ma_gd = a.ma_gd)
@@ -188,7 +191,7 @@ Diều kiện ngoài chuong trình:
 												, THANG_TLDG_DT = null, THANG_TLKPI = null
 												, THANG_TLKPI_TO = null, THANG_TLKPI_PHONG = null
 												, THANG_TLDG_DT_NVHOTRO = null, THANG_TLKPI_HOTRO = null, THANG_TLDG_DT_DAI = null
-						WHERE a.thuebao_id in (select thuebao_id from ttkd_bsc.ct_ptm_ngoaictr_imp where thang = 202410 and command = 'update')
+						WHERE a.thuebao_id in (select thuebao_id from ttkd_bsc.ct_ptm_ngoaictr_imp where thang = 202411 and command = 'update')
 					;
 					commit;
 					rollback;

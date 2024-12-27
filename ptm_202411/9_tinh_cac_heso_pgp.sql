@@ -21,27 +21,27 @@ drop table ttkd_bsc.x_ct_bsc_ptm_pgp purge;
 
 rollback;
 commit;
-select * from ttkd_bsc.ct_bsc_ptm_pgp where trunc(ngay_ins) >= '01/11/2024'; 
+select * from ttkd_bsc.ct_bsc_ptm_pgp where trunc(ngay_ins) >= '01/12/2024'; 
 select * from ttkd_bsc.ct_bsc_ptm_pgp where thang_tldg_dt_nvhotro = 202408; and heso_daily = 0.05;
-select * from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202410; and hdtb_id in (26277035, 26276940); or ngay_ins >= '01/09/2024'; and heso_daily = 0.05; and ma_tb in ('hcm_hddt_00013102', 'hcm_hddt_00023066', 'hcm_hddt_00007104')
+select * from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202411; and hdtb_id in (26277035, 26276940); or ngay_ins >= '01/09/2024'; and heso_daily = 0.05; and ma_tb in ('hcm_hddt_00013102', 'hcm_hddt_00023066', 'hcm_hddt_00007104')
 							and thang_ptm = 202406; 
 							
 select * from ttkd_bsc.ct_bsc_ptm where ma_gd = 'HCM-LD/01791391';
 select * from ttkd_bsc.ct_bsc_ptm where  ma_duan_banhang = '282078';
 select * from ttkd_bsc.ct_bsc_ptm where ma_tb = 'hcm_hddt_mtt_00000342';
 
-select * from ttkd_bsc.nhanvien where thang = 202410 and ma_nv = 'VNP001686';
+select * from ttkd_bsc.nhanvien where thang = 202411 and ma_nv = 'VNP001686';
 
---delete from ttkd_bsc.ct_bsc_ptm_pgp where trunc(ngay_ins) >= '01/11/2024'; 
---delete from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202410 and ma_tb = 'hcm_ioff_00000672';; and ngay_ins = '04/11/2024 12:27:39'; 
+--delete from ttkd_bsc.ct_bsc_ptm_pgp where trunc(ngay_ins) >= '01/12/2024'; 
+--delete from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202411 and ma_tb = 'hcm_ioff_00000672';; and ngay_ins = '04/11/2024 12:27:39'; 
 
 ----***check 1 duan án, 1 tbao mà tỷ lê 1 nhóm PGP vượt 100%.
-select ma_duan_banhang, ptm_id from ttkd_bsc.ct_bsc_ptm_pgp where trunc(ngay_ins) >= '01/11/2024' group by ma_duan_banhang, ptm_id having sum(TYLE_HOTRO_NV) >1;
-select ma_duan_banhang, ptm_id from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202410 group by ma_duan_banhang, ptm_id having count(TYLE_HOTRO_NV) =2;
+select ma_duan_banhang, ptm_id from ttkd_bsc.ct_bsc_ptm_pgp where trunc(ngay_ins) >= '01/12/2024' group by ma_duan_banhang, ptm_id having sum(TYLE_HOTRO_NV) >1;
+select ma_duan_banhang, ptm_id from ttkd_bsc.ct_bsc_ptm_pgp where thang_ptm = 202411 group by ma_duan_banhang, ptm_id having count(TYLE_HOTRO_NV) =2;
 ----***END check;
 select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_tb = 'hcm_hddt_mtt_00000342';
-select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_duan_banhang = '282078';
-select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_gd = '00978807';
+select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_duan_banhang = '277600';
+select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_gd = 'HCM-LD/01959575';
 --delete from ttkd_bsc.ct_bsc_ptm_pgp where  ma_duan_banhang = '307441' and manv_hotro = 'VNP028491' and NGAY_INS ='20/11/2024 09:54:45';
         
 	   
@@ -49,9 +49,9 @@ select * from ttkd_bsc.ct_bsc_ptm_pgp where ma_gd = '00978807';
 	   	---code moi
 		delete from ttkd_bsc.ct_bsc_ptm_pgp a
 --		select * from ttkd_bsc.ct_bsc_ptm_pgp a
-			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tldg_dt_nvhotro = 202410 and a.ptm_id = id and luong_dongia_nvhotro <> a.LG_DONGIA_PGP)
+			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tldg_dt_nvhotro = 202411 and a.ptm_id = id and luong_dongia_nvhotro <> a.LG_DONGIA_PGP)
 						and THANG_TLDG_DT_NVHOTRO is not null 
-						and thang_ptm = 202410
+						and thang_ptm = 202411
 --						and ma_duan_banhang = '00882474'
 		;
 insert into ttkd_bsc.ct_bsc_ptm_pgp a
@@ -102,10 +102,10 @@ select id, thang_ptm, nguon, ma_gd, ma_kh, ma_tb, dich_vu, dichvuvt_id, loaitb_i
 				   ,doanhthu_dongia_nvhotro dt_dongia_pgp, luong_dongia_nvhotro lg_dongia_pgp, doanhthu_kpi_nvhotro dt_kpi_gp
     from ttkd_bsc.ct_bsc_ptm a
 				left join tt b on to_number(regexp_replace (a.ma_duan_banhang, '\D', ''))=b.ma_yeucau and a.loaitb_id=b.loaitb_id_obss
-    where thang_ptm = 202410 and manv_hotro is not null and a.ma_duan_banhang is not null and (loaitb_id is null or loaitb_id<>21)			--thang n
+    where thang_ptm = 202411 and manv_hotro is not null and a.ma_duan_banhang is not null and (loaitb_id is null or loaitb_id<>21)			--thang n
 					  and exists(select ten_pb from ttkd_bsc.nhanvien where (ma_pb='VNP0702600' or ma_nv = 'VNP017718') and thang= a.thang_ptm and ma_nv=a.manv_hotro)
 					  and not exists(select 1 from ttkd_bsc.ct_bsc_ptm_pgp where ptm_id = a.id)
---				 and a.ma_duan_banhang = '313141'
+--				 and a.ma_duan_banhang = '277600'
 			--	and thang_luong = 87 ---loai ds imp_ctr
 --			and ma_tb = 'hcm_tdth_00000296'
 --and ma_gd = 'HCM-LD/01939638'
@@ -116,16 +116,16 @@ select id, thang_ptm, nguon, ma_gd, ma_kh, ma_tb, dich_vu, dichvuvt_id, loaitb_i
 		---code moi
 		delete from ttkd_bsc.ct_bsc_ptm_pgp a
 --		select * from ttkd_bsc.ct_bsc_ptm_pgp a
-			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tldg_dt_nvhotro = 202410 and a.ptm_id = id )
+			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tldg_dt_nvhotro = 202411 and a.ptm_id = id )
 						and THANG_TLDG_DT_NVHOTRO is null 
-						and thang_ptm < 202410
+						and thang_ptm < 202411 
 --						and ma_duan_banhang = '00882474'
 		;
 		delete from ttkd_bsc.ct_bsc_ptm_pgp a
 --		select * from ttkd_bsc.ct_bsc_ptm_pgp a
-			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tlkpi_hotro = 202410 and a.ptm_id = id )
+			where exists (select * from ttkd_bsc.ct_bsc_ptm where ma_duan_banhang is not null and thang_tlkpi_hotro = 202411 and a.ptm_id = id )
 						and THANG_TLKPI_HOTRO is null 
-						and thang_ptm < 202410
+						and thang_ptm < 202411
 		;
 		select * from ttkd_bsc.ct_bsc_ptm_pgp a
 			where ptm_id in (select ptm_id from ttkd_bsc.ct_bsc_ptm_pgp group by ptm_id having count(*)>1)
@@ -185,6 +185,7 @@ select id, thang_ptm, nguon, ma_gd, ma_kh, ma_tb, dich_vu, dichvuvt_id, loaitb_i
 										  and exists(select 1 from ttkd_bsc.nhanvien where thang = 202411 and (ma_pb='VNP0702600' or ma_nv = 'VNP017718' ) and ma_nv=a.manv_hotro)
 										  and not exists (select ptm_id from ttkd_bsc.ct_bsc_ptm_pgp where ptm_id is not null and ptm_id = a.id)
 --										  and a.ma_duan_banhang = '282078'
+
 			;		  
 		---end code moi
 		;

@@ -5,7 +5,7 @@
 		select id, ma_yeucau, ma_dichvu, trangthai_tl, dexuat, tienthu_khkt, ngaycapnhat, ngaycapnhat_tl, ngaycapnhat_khkt , ma_gd, MA_TB
 		from ttkdhcm_ktnv.amas_duan_ngoai_doanhthu ptm
 					
-		where id in (12113745)  and
+		where id in (12562481)  and
 					 trangthai_tl=10 and dexuat=7 and ma_dichvu  not in (20,149) 
 																and tienthu_khkt > 0
 															    and trunc(ptm.ngaycapnhat) <= to_date('31/08/2024','dd/mm/yyyy') 			---ngay 31 thang n
@@ -61,13 +61,13 @@
 												 where ptm.trangthai_tl=10 and ptm.dexuat=7 and ptm.ma_dichvu not in (20,149) 
 																and ptm.tienthu_khkt > 0 			--and id in (10972465)
 															    and trunc(ptm.ngaycapnhat) < trunc(sysdate, 'month') 			---ngay 1 thang n +1
-															    and trunc(ngaycapnhat_tl) <= to_date('08/11/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
-															    and trunc(ngaycapnhat_khkt) <= to_date('08/11/2024','dd/mm/yyyy') 			---ngay 8 thang n+ 1
+															    and trunc(ngaycapnhat_tl) <= to_date('07/12/2024','dd/mm/yyyy') 			---ngay 7 thang n+ 1
+															    and trunc(ngaycapnhat_khkt) <= to_date('07/12/2024','dd/mm/yyyy') 			---ngay 7 thang n+ 1
 															    and not exists(select * from ttkd_bct.ptm_gtgt where id=ptm.id)                 
 												 )
 --												 	select * from d where id in (7301445)
 --SELECT trunc(sysdate, 'month') FROM DUAL
-			    select 202410 thang, d.id, d.ma_yeucau, d.ngaycapnhat, d.ngaycapnhat_tl, d.loaihinh_tb, d.dichvuvt_id, d.loaitb_id_obss, d.ma_gd
+			    select 202411 thang, d.id, d.ma_yeucau, d.ngaycapnhat, d.ngaycapnhat_tl, d.loaihinh_tb, d.dichvuvt_id, d.loaitb_id_obss, d.ma_gd
 							   , d.ma_tb, d.sohopdong, d.ten_kh, d.sonha diachi_kh
 							   , d.masothue mst, d.so_gt, d.ngaynghiemthu, d.dt_hopdong, d.dt_doitac, d.tendoitac
 							   , d.sotienthu, d.ngaythanhtoan, d.sohoadon, d.tienthu_khkt tien_tt_khkt, d.ngaythanhtoan_khkt, d.sohoadon_khkt, d.ngaycapnhat_khkt
@@ -77,7 +77,7 @@
 							   , d.dthu_goi_goc,  d.dthu_goi, d.dthu_ps, d.heso_dichvu, 'web123-ID447', d.ghichu_ntl
 			
 			    from d
-							left join ttkd_bsc.nhanvien e on d.manv_ptm = e.ma_nv and e.thang = 202410
+							left join ttkd_bsc.nhanvien e on d.manv_ptm = e.ma_nv and e.thang = 202411
 --				where ma_yeucau = '10972465'
 			    order by id
 			    ;
@@ -102,7 +102,7 @@
 								   , ngay_tt,soseri,tien_tt, trangthai_tt_id,dthu_ps, dthu_goi_goc,dthu_goi,heso_dichvu,ma_duan_banhang,nguon, chuquan_id
 								   , tyle_am, heso_hotro_nvptm, heso_hotro_nvhotro, xacnhan_khkt, thang_xacnhan_khkt)
 								   
-			    select 202410 thang_ins, 202410 thang_ptm, id, case when ma_gd is not null then ma_gd else sohopdong end ma_gd, 'GTGT rieng' ma_kh, ma_tb, 1 loaihd_id
+			    select 202411 thang_ins, 202411 thang_ptm, id, case when ma_gd is not null then ma_gd else sohopdong end ma_gd, 'GTGT rieng' ma_kh, ma_tb, 1 loaihd_id
 							   ,sohopdong, dich_vu, 'Dat moi hop dong GTGT/CNTT', ten_kh, diachi_kh,so_gt,mst,sothang, ngay_nghiemthu, ngay_nghiemthu ngay_luuhs_ttkd, dichvuvt_id,loaitb_id
 							   , 1, 21 doituong_id, manv_ptm, ten_pb, ghi_chu
 							   , manv_hotro, tyle_hotro
@@ -110,7 +110,7 @@
 							   ,ngay_tt, sohoadon, tien_tt, 1 trangthai_tt_id, dthu_ps, dthu_theohopdong, dthu_goi, heso_dichvu
 							   ,ma_duan_banhang, nguon, chuquan_id, tyle_am, tyle_am heso_hotro_nvptm, tyle_hotro heso_hotro_nvhotro, tien_tt_khkt, to_char(ngaycapnhat_khkt, 'yyyymm')
 			    from ttkd_bct.ptm_gtgt a
-			    where thang = 202410 and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where id_447 = a.id) 
+			    where thang = 202411 and not exists(select 1 from ttkd_bsc.ct_bsc_ptm where id_447 = a.id) 
 			    ;
 
 commit;
