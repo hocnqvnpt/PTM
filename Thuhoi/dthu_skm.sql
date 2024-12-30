@@ -3,12 +3,12 @@ select * from hocnq_ttkd.x_br_ck;
 ---nếu không có goi_dadv thì lấy cột DTHU_GOI_SKM đên hêt tháng 10, sau tháng 11 sử dung cột DTHU_GOI (vì đã tính ck sẵn rôi)
 ;
 drop table hocnq_ttkd.x_br_ck;
-create table hocnq_ttkd.x_br_ck as;
+create table hocnq_ttkd.x_br_ck_202405 as
 with tbl as
 			(select thuebao_id, tien_td, 'km_dbtb' nguon, ngay_sd 
-					from css_hcm.khuyenmai_dbtb where hieuluc = 1 and ttdc_id = 0 and tien_td > 0 and to_number(to_char(ngay_sd, 'yyyymm')) >= 202404
+					from css_hcm.khuyenmai_dbtb where hieuluc = 1 and ttdc_id = 0 and tien_td > 0 and to_number(to_char(ngay_sd, 'yyyymm')) >= 202405
 				union all
-				select thuebao_id, tien_td, 'db_datcoc', ngay_cn from css_hcm.db_datcoc where hieuluc = 1 and ttdc_id = 0 and tien_td > 0 and to_number(to_char(ngay_cn, 'yyyymm')) >= 202404
+				select thuebao_id, tien_td, 'db_datcoc', ngay_cn from css_hcm.db_datcoc where hieuluc = 1 and ttdc_id = 0 and tien_td > 0 and to_number(to_char(ngay_cn, 'yyyymm')) >= 202405
 			)
 		, dthu_skm as
 			(
@@ -20,25 +20,27 @@ with tbl as
 select db.thuebao_id, db.ma_tb, db.dichvuvt_id, db.loaitb_id, db.goi_id goi_dadv_id, db.dthu_goi, a.tyle_sd, db.dthu_goi * (100 - nvl(a.tyle_sd, 0))/100 dthu_goi_skm, round((b.tien_td/1.1), 0) dthu_goi_tt
 			, nvl(c.dthu_goi_dadv, c1.dthu_goi_dadv) dthu_goi_dadv, c.dthu_goi_dadv gf, c1.dthu_goi_dadv gm
 from ttkd_bsc.ct_bsc_ptm db
-			left join ttkd_bct.ptm_codinh_202404 a on db.hdtb_id = a.hdtb_id
+			left join ttkd_bct.ptm_codinh_202405 a on db.hdtb_id = a.hdtb_id
 			left join dthu_skm b on a.thuebao_id = b.thuebao_id and b.rnk = 1
 			left join f_dadv c on db.goi_id = c.goi_id and db.loaitb_id = c.loaitb_id
 			left join tv_dadv c1 on db.goi_id = c1.goi_id and db.loaitb_id = c1.loaitb_id
-where db.thang_ptm = 202404 and db.dichvuvt_id = 4 and db.dthu_goi > 0 and db.thang_tldg_dt > 0 and db.ma_tb in ('plan0324','nvm24','460phuoc')
+where db.thang_ptm = 202405 and db.dichvuvt_id = 4 and db.dthu_goi > 0 and db.thang_tldg_dt > 0; and db.ma_tb in ('plan0324','nvm24','460phuoc')
 ;
-create table hocnq_ttkd.x_vnp_ck as;
+create table hocnq_ttkd.x_vnp_ck_202405 as
 with tbl_ps as
 			(select '84' || ma_tb ma_tb, sum(NOGOC) NOGOC
-				from bcss_hcm.ct_no partition (kc20241101) 
+				from bcss_hcm.ct_no partition (kc20240701) 
 				where loaitb_id = 20 and khoanmuctt_id in (212, 208)
 				group by ma_tb)
 select db.id, db.thuebao_id, db.ma_tb, db.dichvuvt_id, db.loaitb_id, db.goi_id, db.dthu_goi, a1.NOGOC + a.NOGOC dthu_goi_skm, a1.NOGOC dthu_goi_goc, a.NOGOC tien_ck
 from ttkd_bsc.ct_bsc_ptm db
-			join bcss_hcm.ct_no partition (kc20241101) a on db.ma_tb = '84' || a.ma_tb and a.loaitb_id = 20 and a.khoanmuctt_id = 3993
+			join bcss_hcm.ct_no partition (kc20240701) a on db.ma_tb = '84' || a.ma_tb and a.loaitb_id = 20 and a.khoanmuctt_id = 3993
 			left join tbl_ps a1 on db.ma_tb = a1.ma_tb
-where db.thang_ptm = 2024011 and db.loaitb_id = 20 and db.dthu_goi > 0 and db.thang_tldg_dt > 0 and db.ma_tb in ('84812679205')
+where db.thang_ptm = 202406 and db.loaitb_id = 20 and db.dthu_goi > 0 and db.thang_tldg_dt > 0
 ;
-drop table hocnq_ttkd.x_vnp_ck;
+and db.ma_tb in ('84812679205')
+;
+drop table hocnq_ttkd.x_vnp_ck_202405;
 select * from bcss_hcm.ct_no partition (kc20241101) where ma_tb in ('915249680');
 select * from bcss_hcm.khoanmuc_tt where khoanmuctt_id in (3993, 212, 208, 201);
 select * from v_thongtinkm_all where ma_tb = 'loan0511';
@@ -54,7 +56,7 @@ select * from ttkd_bsc.ct_bsc_ptm  where thang_ptm = 202411 and loaitb_id = 20 a
 select * from ttkd_bsc.ct_thuhoi_online a
  where thang=202411 and loaitb_id in (58,59,61,171) and thuhoi_ktnv=1 and goi_saukm is null;
  
- create table ttkd_bsc.x_vnp_ck_202411 as;
+ create table ttkd_bsc.x_vnp_ck_202412 as
 		 with tbl_ps as
 					(select ma_tb, sum(NOGOC) NOGOC
 						from bcss_hcm.ct_no partition (kc20241101) 
