@@ -55,7 +55,8 @@ drop table ttkd_bsc.bangluong_dongia_202411;
 				luong_dongia_ptm_thuhoi number,		--vb 353
 				thuhoi_dongia_ghtt number,	--vb Nhu Y
 				giamtru_hosotainha               number,	--vb 353
-				giamtru_ghtt_cntt				number,		--vb Nhu Y
+				giamtru_ghtt_cntt				number		--vb Nhu Y
+				, giamtru_vnphh_pttt	number,	---vb 435--CTV PTTT trong 2 tháng 11, 12 gia = 250k
 				luong_dongia_khac_thuhoi    number
 				, tong_luong_thuhoi                number
 				, tong_thulao_thucchi			number
@@ -721,6 +722,13 @@ select sum(tong_thulao_thucchi) from ttkd_bsc.bangluong_dongia_202411;--79690098
 													group by ma_nv having  sum(tien) <> 0) 
 	
 ;
+----Giam tru 250K doi voi CTV PTT ban VNPhh
+	update ttkd_bsc.bangluong_dongia_202411 a 
+	    set 
+			giamtru_vnphh_pttt = 250000
+		where LUONG_DONGIA_VNPHH_PTTT > 0
+	;
+---End Giam tru
 
 
 -- tong_luong_thuhoi:
@@ -730,7 +738,7 @@ select sum(tong_thulao_thucchi) from ttkd_bsc.bangluong_dongia_202411;--79690098
 			   set tong_luong_thuhoi = round( nvl(luong_dongia_ptm_thuhoi,0) +  nvl(luong_dongia_khac_thuhoi,0)
 																	+ nvl(giamtru_hosotainha,0) 
 																	+ nvl(giamtru_ghtt_cntt,0)  + nvl(thuhoi_dongia_ghtt, 0)
-																	--+ nvl(luong_dongia_ptm_thuhoi_t7_dot2, 0) 
+																	+ nvl(giamtru_vnphh_pttt, 0)
 															, 0)
 															;
 			
@@ -810,7 +818,7 @@ select * from ttkd_bsc.bangluong_dongia_202411_dot2;
 				  luong_dongia_ghtt, luong_dongia_nghiepvu, luong_dongia_chungtu, luong_dongia_thucuoc
 				 , tong_luong_dongia,	ghichu
 				 , luong_dongia_ptm_thuhoi,	luong_dongia_khac_thuhoi, thuhoi_dongia_ghtt
-				  , giamtru_hosotainha, giamtru_ghtt_cntt, tong_luong_thuhoi
+				  , giamtru_hosotainha, giamtru_ghtt_cntt, giamtru_vnphh_pttt,  tong_luong_thuhoi
 				  , TONG_THULAO_THUCCHI
 		from ttkd_bsc.bangluong_dongia_202411
 		where donvi = 'TTKD' and TONG_THULAO_THUCCHI is not null--nvl(tong_luong_dongia, 0) + nvl(tong_luong_thuhoi, 0) > 0
