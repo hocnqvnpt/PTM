@@ -18,10 +18,10 @@ select distinct a.*, b.*, c.ten_vtcv
                     and a.ma_kpi='HCM_DT_PTMOI_021' ;
 
 --      select * from ttkd_bsc.temp_trasau_canhan     
-          select * from ttkd_bsc.temp_trasau_canhan;
+          select * from vietanhvh.dthu_44;
 		drop table ttkd_bsc.temp_trasau_canhan purge;
 		desc ttkd_bsc.ghtt_vnpts;
-		;4126.4881767
+		;4413.4234936
 		select sum(dthu_kpi)/1000000
 		from ttkd_bsc.temp_trasau_canhan a
 							join ttkd_bsc.nhanvien nv on nv.thang = 202412 and a.ma_nv = nv.ma_nv
@@ -30,61 +30,60 @@ select distinct a.*, b.*, c.ten_vtcv
 		----Tat ca dich vu, ngoai tru VNPtt
 		create table ttkd_bsc.temp_trasau_canhan as
 --		insert into ttkd_bsc.temp_trasau_canhan --(MANV_PTM, DTHU_KPI)
-				select DICH_VU, LOAITB_ID, dichvuvt_id, cast(manv_ptm as varchar(20)) ma_nv,  sum(dthu_kpi) dthu_kpi, nguon
+				select DICH_VU, LOAITB_ID, dichvuvt_id, cast(manv_ptm as varchar(20)) ma_nv,  sum(dthu_kpi) dthu_kpi
 				from (
 					
 						---DNHM cho cot NVPTM
-						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_ptm, doanhthu_kpi_dnhm * heso_hotro_nvptm dthu_kpi, cast('vb353_ptm' as varchar(20)) nguon
+						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_ptm, doanhthu_kpi_dnhm * heso_hotro_nvptm dthu_kpi
 						from ttkd_bsc.ct_bsc_ptm
 						where thang_tlkpi_dnhm = 202412 and (loaitb_id<>21 or ma_kh='GTGT rieng')
 									and doanhthu_kpi_dnhm >0
 					union all
 					---DNHM cho cot NVHOTRO kenh ngoai
-						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_hotro, doanhthu_kpi_dnhm * heso_hotro_nvhotro doanhthu_kpi_dnhm, 'vb353_ptm' nguon
+						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_hotro, doanhthu_kpi_dnhm * heso_hotro_nvhotro doanhthu_kpi_dnhm
 						from ttkd_bsc.ct_bsc_ptm
 						where thang_tlkpi_hotro = 202412 
 									and tyle_am is null and tyle_hotro is null and (loaitb_id<>21 or ma_kh='GTGT rieng')
 									and doanhthu_kpi_dnhm >0
 					union all
 					---DNHM cho cot DAI
-						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_tt_dai, doanhthu_kpi_dnhm * heso_hotro_dai doanhthu_kpi_dnhm, 'vb353_ptm' nguon
+						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_tt_dai, doanhthu_kpi_dnhm * heso_hotro_dai doanhthu_kpi_dnhm
 						from ttkd_bsc.ct_bsc_ptm
 						where thang_tldg_dt_dai = 202412 and (loaitb_id<>21 or ma_kh='GTGT rieng')
 									and doanhthu_kpi_dnhm >0
 					union all
 						---dich vu ngoai ctr OR dvu khac VNPtt
-						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_ptm, doanhthu_kpi_nvptm dthu_kpi, 'vb353_ptm' nguon
+						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_ptm, doanhthu_kpi_nvptm dthu_kpi
 						from ttkd_bsc.ct_bsc_ptm 
 						where thang_tlkpi = 202412 and (loaitb_id<>21 or ma_kh='GTGT rieng')
 										and doanhthu_kpi_nvptm >0
 					union all
 					----Dthu nvho tro ban kenh ngoai
-						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_hotro, doanhthu_kpi_nvhotro, 'vb353_ptm' nguon
+						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_hotro, doanhthu_kpi_nvhotro 
 						from ttkd_bsc.ct_bsc_ptm 
 						where thang_tlkpi_hotro = 202412
 										and tyle_am is null and tyle_hotro is null and (loaitb_id<>21 or ma_kh='GTGT rieng')
 										and doanhthu_kpi_nvhotro >0
 					union all
 					---Dthu nvhotro PGP
-						select cast(thang_ptm as number) thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_hotro, doanhthu_kpi_nvhotro, 'vb353_ptm' nguon
+						select cast(thang_ptm as number) thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_hotro, doanhthu_kpi_nvhotro
 						from ttkd_bsc.ct_bsc_ptm_pgp 
 						where thang_tlkpi_hotro=202412 and (loaitb_id<>21 or ma_kh='GTGT rieng')
 									and doanhthu_kpi_nvhotro >0
 					union all
 					---Dthu nv DAI
-						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_tt_dai, doanhthu_kpi_nvdai, 'vb353_ptm' nguon
+						select thang_ptm, ma_gd, ma_tb, dich_vu, loaitb_id, dichvuvt_id, manv_tt_dai, doanhthu_kpi_nvdai 
 						from ttkd_bsc.ct_bsc_ptm 
 						where thang_tldg_dt_dai = 202412 and (loaitb_id<>21 or ma_kh='GTGT rieng')
 									and doanhthu_kpi_nvdai >0
 					union all
 					----Gia han VNPts
-						select thang, ma_kh, ma_tb, 'VNPTS' dich_vu, 20 loaitb_id, 2 dichvuvt_id, ma_nv, doanhthu_dongia, 'vnpts_ptm_ghtt' nguon
+						select thang, ma_kh, ma_tb, 'VNPTS' dich_vu, 20 loaitb_id, 2 dichvuvt_id, ma_nv, doanhthu_dongia 
 						from ttkd_bsc.ghtt_vnpts 		--- Nguyen quan ly, chua co vb, toan noi mieng
 						where thang=202412 and thang_giao is not null and ma_nv is not null
-										--and ma_nv = 'VNP031710'
 					union all
 					----GHTT toBHOL BHKV (Nhu Y)
-						select a.THANG, null ma_gd, 'ghtt' ma_tb, 'Fiber', 58, 4, a.MA_NV, sum(TIEN) dthu_kpi, 'brcd_qd' nguon
+						select a.THANG, null ma_gd, 'ghtt' ma_tb, 'Fiber', 58, 4, a.MA_NV, sum(TIEN) dthu_kpi
 						from ttkd_Bsc.tl_Giahan_Tratruoc a
 									join ttkd_bsc.nhanvien nv on a.thang = nv.thang and a.ma_nv = nv.ma_nv
 						where a.thang = 202412 and loai_tinh = 'DOANHTHU'
@@ -93,32 +92,25 @@ select distinct a.*, b.*, c.ten_vtcv
 						group by a.THANG, a.MA_NV
 					----VB VNP hien huu 384
 					union all
-						select thang, loai_gd, ma_tb, 'VNP' || loaihinh_tb, decode(loaihinh_tb, 'TT', 21, 20), 2, ma_nv, dthu_kpi, 'vnp_qd' nguon
+						select thang, loai_gd, ma_tb, 'VNP' || loaihinh_tb, decode(loaihinh_tb, 'TT', 21, 20), 2, ma_nv, dthu_kpi
 --						select *
-						from ttkd_bsc.va_ct_bsc_vnphh
+						from vietanhvh.dongia_DTHH
 						where thang = 202412 
 										and (ma_vtcv in ('VNP-HNHCM_BHKV_52', 'VNP-HNHCM_BHKV_53') ---To BHOL BHKV
-												or (ma_to in ('VNP0703004') and ma_vtcv in ('VNP-HNHCM_KDOL_17')) --- NV OBBH - To OBBH - PBHOL
+												or ma_to in ('VNP0703004') --- to OBBH - PBHOL
 												)
---										and ma_vtcv in ('VNP-HNHCM_KDOL_17') --- NV OBBH - To OBBH - PBHOL
 				)
 --				where MANV_PTM in ('CTV071620','VNP027259')
-				group by DICH_VU, LOAITB_ID, dichvuvt_id, manv_ptm, nguon
+				group by DICH_VU, LOAITB_ID, dichvuvt_id, manv_ptm
 		;
 	create index ttkd_bsc.temp_trasau_canhan_manv on ttkd_bsc.temp_trasau_canhan (ma_nv)
 	;
-	delete from ttkd_bsc.tonghop_dthu_ptm where thang = 202412;
-	insert into ttkd_bsc.tonghop_dthu_ptm
-		select cast(202412 as number) thang, DICH_VU, LOAITB_ID, DICHVUVT_ID, MA_NV, DTHU_KPI 
-		from ttkd_bsc.temp_trasau_canhan
-	;
-	commit;
 -- to truong: thieu 0021_ts
 	drop table ttkd_bsc.temp_totruong purge;
 	
-	select sum(dthu_kpi)/1000000 from ttkd_bsc.temp_totruong ---4449.8077501 ---4167.8310628 ---4132.2632568
+	select sum(dthu_kpi)/1000000 from ttkd_bsc.temp_totruong ---4449.8077501
 	where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200', 'VNP0703000');
-	select * from ttkd_bsc.temp_totruong where ma_to = 'VNP0702120'; 9 984 154 803.9 (10 999 250 012.15 )
+	select sum(dthu_kpi) dthu_to, 0 dthu_cn from ttkd_bsc.temp_totruong where ma_to = 'VNP0702120'; 9 984 154 803.9 (10 999 250 012.15 )
 	union all 
 	;
 	select a.ma_nv, nv.ten_nv, ten_to, ten_pb, ten_vtcv, sum(dthu_kpi)
@@ -128,16 +120,16 @@ select distinct a.*, b.*, c.ten_vtcv
 	group by a.ma_nv, nv.ten_nv, ten_to, ten_pb, ten_vtcv
 	;
 	create table ttkd_bsc.temp_totruong as
-			select ma_pb, ma_to, loaitb_id, dichvuvt_id, sum(doanhthu_kpi_to) dthu_kpi, nguon
+			select ma_pb, ma_to, loaitb_id, dichvuvt_id, sum(doanhthu_kpi_to) dthu_kpi
 			from(
 					---- To NVPTM
-					select ma_pb, ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_to * heso_hotro_nvptm as doanhthu_kpi_to, cast('vb353_ptm' as varchar(20)) nguon
+					select ma_pb, ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_to * heso_hotro_nvptm as doanhthu_kpi_to
 					  from ttkd_bsc.ct_bsc_ptm a
 					  where thang_tlkpi_to = 202412 and (loaitb_id<>21 or loaitb_id is null) 
 									and doanhthu_kpi_to >0
 				union all
 					---- To NVHOTRO DIGISHOP
-					select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_to * heso_hotro_nvhotro as doanhthu_kpi_to, 'vb353_ptm' nguon
+					select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_to * heso_hotro_nvhotro as doanhthu_kpi_to
 					  from ttkd_bsc.ct_bsc_ptm a
 									join ttkd_bsc.nhanvien b on a.thang_tlkpi_to = b.thang and a.manv_hotro = b.ma_nv
 					  where thang_tlkpi_to = 202412 and (loaitb_id<>21 or loaitb_id is null)
@@ -146,7 +138,7 @@ select distinct a.*, b.*, c.ten_vtcv
 									and nvl(vanban_id, 0) != 764  ---only T7, 8,9, thang sau xoa
 				union all
 					---To  Nvien Cot MANV_HOTRO PGP
-					select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_nvhotro, 'vb353_ptm' nguon
+					select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_nvhotro
 					  from ttkd_bsc.ct_bsc_ptm a
 									join ttkd_bsc.nhanvien b on a.thang_tlkpi_hotro = b.thang and a.manv_hotro = b.ma_nv
 					 where thang_tlkpi_hotro = 202412 and (loaitb_id<>21 or loaitb_id is null)
@@ -154,7 +146,7 @@ select distinct a.*, b.*, c.ten_vtcv
 									and doanhthu_kpi_nvhotro >0
 --				 ---MANV_DAI
 					union all
-						select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_to * heso_hotro_dai, 'vb353_ptm' nguon
+						select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_to * heso_hotro_dai
 						from ttkd_bsc.ct_bsc_ptm a
 										join ttkd_bsc.nhanvien b on a.thang_tlkpi_to = b.thang and a.manv_tt_dai = b.ma_nv
 						where thang_tlkpi_to = 202412 and (loaitb_id<>21 or ma_kh='GTGT rieng')
@@ -162,13 +154,13 @@ select distinct a.*, b.*, c.ten_vtcv
 									and nvl(vanban_id, 0) != 764  ---only T7, 8,9, thang sau xoa
 				union all
 					---To  Nvien Cot MANV_PTM cho dthu DNHM
-					select ma_pb, ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_dnhm_phong * heso_hotro_nvptm as doanhthu_kpi_dnhm, 'vb353_ptm' nguon
+					select ma_pb, ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_dnhm_phong * heso_hotro_nvptm as doanhthu_kpi_dnhm
 					  from ttkd_bsc.ct_bsc_ptm a
 					 where thang_tlkpi_dnhm_to = 202412 and (loaitb_id<>21 or loaitb_id is null)
 									and doanhthu_kpi_dnhm_phong >0
 				union all
 					---To  Nvien Cot MANV_HOTRO cho dthu DNHM tren DIGISHOP
-					select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_dnhm_phong * heso_hotro_nvhotro as doanhthu_kpi_dnhm, 'vb353_ptm' nguon
+					select b.ma_pb, b.ma_to, ma_tb, loaitb_id, dichvuvt_id, doanhthu_kpi_dnhm_phong * heso_hotro_nvhotro as doanhthu_kpi_dnhm
 					  from ttkd_bsc.ct_bsc_ptm a
 								join ttkd_bsc.nhanvien b on a.thang_tlkpi_dnhm_to = b.thang and a.manv_hotro = b.ma_nv
 					 where thang_tlkpi_dnhm_to = 202412 and (loaitb_id<>21 or loaitb_id is null)
@@ -177,32 +169,30 @@ select distinct a.*, b.*, c.ten_vtcv
 									and nvl(vanban_id, 0) != 764 ---only T7,8,9, thang sau xoa
 --				union all ---dthu DNHM PGP không có tinh Tổ trưởng
 				union all
-					select ma_pb, ma_to, ma_tb, 20 loaitb_id, 2 dichvuvt_id, doanhthu_dongia, 'vnpts_ptm_ghtt' nguon
+					select ma_pb, ma_to, ma_tb, 20 loaitb_id, 2 dichvuvt_id, doanhthu_dongia 
 					from ttkd_bsc.ghtt_vnpts		----a Nguyen quan ly
-					  where thang=202412 and thang_giao is not null and ma_to is not null
---									and ma_nv = 'VNP031710'
+					  where thang=202412 and thang_giao is not null and ma_to is not null 
 				
 				union all
 					----GHTT toBHOL BHKV (Nhu Y)
-						select a.ma_pb, a.ma_to, 'ghtt' ma_tb, 58, 4, sum(TIEN) dthu_kpi, 'brcd_qd' nguon
+						select a.ma_pb, a.ma_to, 'ghtt' ma_tb, 58, 4, sum(TIEN) dthu_kpi
 						from ttkd_Bsc.tl_Giahan_Tratruoc a
 									join ttkd_bsc.nhanvien nv on a.thang = nv.thang and a.ma_nv = nv.ma_nv
 						where a.thang = 202412 and loai_tinh = 'DOANHTHU'
 --									and nv.ma_vtcv not in ('VNP-HNHCM_BHKV_52', 'VNP-HNHCM_BHKV_53')
 									and a.ma_to in ('VNP0703004') --- to OBBH - PBHOL
 						group by a.ma_pb, a.ma_to
-				----VB VNP hien huu 384 (Viet Anh)
+				----VB VNP hien huu 384
 					union all
-						select ma_pb, ma_to, ma_tb, decode(loaihinh_tb, 'TT', 21, 20), 2, dthu_kpi, 'vnp_qd' nguon
---						select sum(dthu_kpi)
-						from ttkd_bsc.va_ct_bsc_vnphh
+						select ma_pb, ma_to, ma_tb, decode(loaihinh_tb, 'TT', 21, 20), 2, dthu_kpi
+--						select *
+						from vietanhvh.dongia_DTHH
 						where thang = 202412 
 									and (ma_vtcv in ('VNP-HNHCM_BHKV_52', 'VNP-HNHCM_BHKV_53') ---To BHOL BHKV
-												or (ma_to in ('VNP0703004') and ma_vtcv in ('VNP-HNHCM_KDOL_17')) --- NV OBBH - To OBBH - PBHOL
+												or ma_to in ('VNP0703004') --- to OBBH - PBHOL
 												)
---									and ma_vtcv in ('VNP-HNHCM_KDOL_17') --- NV OBBH - To OBBH - PBHOL
 					  
-						) group by ma_pb, ma_to, loaitb_id, dichvuvt_id, nguon
+						) group by ma_pb, ma_to, loaitb_id, dichvuvt_id
 		;
 
 						 
@@ -261,8 +251,7 @@ select distinct a.*, b.*, c.ten_vtcv
 				union all
 					select ma_pb, ma_to, ma_tb, 20 loaitb_id, 2 dichvuvt_id, doanhthu_dongia, 'vnpts_ptm_ghtt' nguon
 					from ttkd_bsc.ghtt_vnpts		----a Nguyen quan ly
-					  where thang=202412 and thang_giao is not null and ma_to is not null
---									and ma_nv = 'VNP031710'
+					  where thang=202412 and thang_giao is not null and ma_to is not null 
 				
 				union all
 					----GHTT toBHOL BHKV (Nhu Y)
@@ -277,12 +266,11 @@ select distinct a.*, b.*, c.ten_vtcv
 					union all
 						select ma_pb, ma_to, ma_tb, decode(loaihinh_tb, 'TT', 21, 20), 2, dthu_kpi, 'vnp_qd' nguon
 --						select *
-						from ttkd_bsc.va_ct_bsc_vnphh
+						from vietanhvh.dongia_DTHH
 						where thang = 202412 
 										and (ma_vtcv in ('VNP-HNHCM_BHKV_52', 'VNP-HNHCM_BHKV_53') ---To BHOL BHKV
-												or (ma_to in ('VNP0703004') and ma_vtcv in ('VNP-HNHCM_KDOL_17')) --- NV OBBH - To OBBH - PBHOL
+												or ma_to in ('VNP0703004') --- to OBBH - PBHOL
 												)
---										and ma_vtcv in ('VNP-HNHCM_KDOL_17') --- NV OBBH - To OBBH - PBHOL
 
 						) group by ma_pb, ma_to, loaitb_id, dichvuvt_id, nguon
 		;
@@ -293,10 +281,10 @@ select distinct a.*, b.*, c.ten_vtcv
 						ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200') 
 						and ma_to  in (select ma_to from ttkd_bsc.nhanvien where thang = 202412)
 						; 4635206943.2
-		select * from ttkd_bsc.temp_021_ldp1; where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200');
+		select * from ttkd_bsc.temp_021_ldp1 where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200');
 		 select * from ttkd_bsc.x_temp_phong; where ma_pb not in ('VNP0702300', 'VNP0702400', 'VNP0702500'); 9379.411
 		 select sum(DTHU_KPI)/1000000 from ttkd_bsc.x_temp_phong 
-		 where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200');  ---3831.9225296
+		 where ma_pb in ('VNP0701100', 'VNP0701200', 'VNP0701300', 'VNP0701400', 'VNP0701500','VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200'); 4638825687.2 4640.3456872
 		 
 		 drop table  ttkd_bsc.temp_021_ldp1 purge
 		 ;
@@ -304,63 +292,60 @@ select distinct a.*, b.*, c.ten_vtcv
 				select a.ma_pb, a.ma_to, b.dv_cap1, b.dv_cap2
 							, case when dv_cap1 in ('VNP tra sau', 'VNP tra truoc', 'Mega+Fiber', 'MyTV') then dv_cap1
 										when dv_cap2 in ('Dich vu so doanh nghiep') then dv_cap2
-									else 'Con lai' end PHUTRACH
+									else 'Con lai' end dichvu
 							, case when dv_cap1 in ('VNP tra sau', 'VNP tra truoc', 'Mega+Fiber', 'MyTV') then 'Dichvu_cap1'
 										when dv_cap2 in ('Dich vu so doanh nghiep') then 'Dichvu_cap2'
-									else 'Dichvu' end NHOM
-							, case when nguon = 'vnp_qd' then nguon else 'ptm' end nguon
+									else 'Dichvu' end nhom_dichvu
 							, sum(dthu_kpi) dthu_kpi
 									from ttkd_bsc.x_temp_phong a
 											left join ttkd_bsc.dm_loaihinh_hsqd b on a.loaitb_id = b.loaitb_id 
 																and (dv_cap2 in ('Dich vu so doanh nghiep','Truyen so lieu', 'Internet truc tiep') or dv_cap1 in ('VNP tra sau', 'VNP tra truoc', 'Mega+Fiber', 'MyTV'))
-											group by a.ma_pb, a.ma_to, b.dv_cap1, b.dv_cap2, nguon
+											group by a.ma_pb, a.ma_to, b.dv_cap1, b.dv_cap2
 			;
 		select * from	ttkd_bsc.blkpi_dm_to_pgd pgd
 							where pgd.thang=202412 
 										and ma_pb in ('VNP0702300', 'VNP0702400', 'VNP0702500', 'VNP0703000')
 										;
-										select sum(DTHU_KPI)DTHU_KPI , PHUTRACH, NHOM from ttkd_bsc.temp_021_ldp group by PHUTRACH, NHOM
-										;a.PHUTRACH = pgd.PHUTRACH and a.NHOM = pgd.NHOM
 										
 			drop table  ttkd_bsc.temp_021_ldp purge;
 	create table ttkd_bsc.temp_021_ldp as	
 --			select * from (
-			with pgd as ( select distinct MA_PB, ten_to, MA_TO, MA_NV, THANG, dichvu, nhom_dichvu, TEN_NV, PHUTRACH, NHOM
+			with pgd as ( select distinct MA_PB, ten_to, MA_TO, MA_NV, THANG, dichvu, nhom_dichvu, TEN_NV
 									from ttkd_bsc.blkpi_dm_to_pgd pgd 
-									where thang = 202412 and ma_pb not in ('VNP0702300', 'VNP0702400', 'VNP0702500') and ma_kpi = 'HCM_DT_PTMOI_021'
+									where thang = 202412 and ma_pb not in ('VNP0702300', 'VNP0702400', 'VNP0702500')
 									)
 
 						select a.*, pgd.ma_nv 
 						from ttkd_bsc.temp_021_ldp1 a
 									  join pgd
-										on a.ma_to = pgd.ma_to and a.PHUTRACH = pgd.PHUTRACH and a.NHOM = pgd.NHOM and pgd.thang=202412 
+										on a.ma_to = pgd.ma_to and a.dichvu = pgd.dichvu and a.nhom_dichvu = pgd.nhom_dichvu  and pgd.thang=202412 
 						where a.ma_pb not in ('VNP0702300', 'VNP0702400', 'VNP0702500', 'VNP0703000')		---BHKV theo To va Dich vu VNP tra sau
-									and a.PHUTRACH in ('VNP tra sau', 'VNP tra truoc') --and a.nguon = 'ptm'
+									and a.dichvu = 'VNP tra sau'
 						union all
 						select a.*, pgd.ma_nv 
 						from ttkd_bsc.temp_021_ldp1 a
 									 join pgd
-										on a.ma_to = pgd.ma_to and a.PHUTRACH = pgd.PHUTRACH and a.NHOM = pgd.NHOM  and pgd.thang=202412 
+										on a.ma_to = pgd.ma_to and a.dichvu = pgd.dichvu and a.nhom_dichvu = pgd.nhom_dichvu  and pgd.thang=202412 
 						where a.ma_pb not in ('VNP0702300', 'VNP0702400', 'VNP0702500', 'VNP0703000')		---BHKV theo To va Dich vu 'Mega, Fiber', 'MyTV'
-										and a.PHUTRACH in ('Mega+Fiber', 'MyTV') and a.nguon = 'ptm'
+										and a.dichvu in ('Mega+Fiber', 'MyTV')
 						union all
 						select a.*, pgd.ma_nv 
 						from ttkd_bsc.temp_021_ldp1 a
 									  join pgd
-										on a.ma_to = pgd.ma_to and a.PHUTRACH = pgd.PHUTRACH and a.NHOM = pgd.NHOM  and pgd.thang=202412 
+										on a.ma_to = pgd.ma_to and a.dichvu = pgd.dichvu and a.nhom_dichvu = pgd.nhom_dichvu  and pgd.thang=202412 
 						where a.ma_pb not in ('VNP0702300', 'VNP0702400', 'VNP0702500', 'VNP0703000')		---BHKV theo To va Dich vu Dich vu so doanh nghiep
-										and a.PHUTRACH in ('Dich vu so doanh nghiep') and a.nguon = 'ptm'
+										and a.dichvu in ('Dich vu so doanh nghiep')
 						union all
 						select a.*, pgd.ma_nv 
 						from ttkd_bsc.temp_021_ldp1 a
-									  join pgd on a.ma_to = pgd.ma_to and a.PHUTRACH = pgd.PHUTRACH and a.NHOM = pgd.NHOM  and pgd.thang=202412 
+									  join pgd on a.ma_to = pgd.ma_to and a.dichvu = pgd.dichvu and a.nhom_dichvu = pgd.nhom_dichvu  and pgd.thang=202412 
 						where a.ma_pb not in ('VNP0702300', 'VNP0702400', 'VNP0702500', 'VNP0703000')		---BHKV theo To va Dich vu TSL, INT, con lai
-									and a.NHOM in ('Dichvu') and a.nguon = 'ptm'
+									and a.NHOM_DICHVU in ('Dichvu')
 						union all
 						select a.*, pgd.ma_nv 
 						from ttkd_bsc.temp_021_ldp1 a
 									  join pgd on a.ma_to = pgd.ma_to and pgd.thang=202412 
-						where a.ma_pb in ('VNP0703000')		---PBHOL theo To										
+						where a.ma_pb in ('VNP0703000')		---BHKV theo To va Dich vu TSL, INT, con lai
 --				) --select *  from ttkd_bsc.temp_021_ldp 
 --				where ma_nv in ('VNP017072', 'VNP017853')
 			;
@@ -388,22 +373,23 @@ select distinct a.*, b.*, c.ten_vtcv
 		select * from ttkdhcm_ktnv.ID430_TTDANGKY_CHOTTHANG where thang = 202412 and manv_hrm = 'VNP016902';
 ---*********--Tinh Tong dthu PTM (ngoai tru VNPtt)
 		update ttkd_bsc.dinhmuc_giao_dthu_ptm 
-					set KQTH = nvl(NHOMBRCD_KQTH, 0) + nvl(NHOMVINATS_KQTH, 0) + nvl(NHOMVINATT_KQTH, 0) + nvl(NHOMCNTT_KQTH, 0) + nvl(NHOMCONLAI_KQTH, 0) + nvl(NHOMVNPQD_KQTH, 0)
---						, canhan_thuchien = case when ma_vtcv in ('VNP-HNHCM_BHKV_27')
---																then nvl(NHOMBRCD_KQTH, 0) + nvl(NHOMVINATS_KQTH, 0) + nvl(NHOMVINATT_KQTH, 0) + nvl(NHOMCNTT_KQTH, 0) + nvl(NHOMCONLAI_KQTH, 0) 
---														else null end
---		select KQTH, canhan_thuchien from ttkd_bsc.dinhmuc_giao_dthu_ptm --14069433219.713 --14908415173.74
+					set KQTH = nvl(NHOMBRCD_KQTH, 0) + nvl(NHOMVINATS_KQTH, 0) + nvl(NHOMVINATT_KQTH, 0) + nvl(NHOMCNTT_KQTH, 0) + nvl(NHOMCONLAI_KQTH, 0)
+							, canhan_thuchien = case when ma_vtcv in ('VNP-HNHCM_BHKV_27')
+																then nvl(NHOMBRCD_KQTH, 0) + nvl(NHOMVINATS_KQTH, 0) + nvl(NHOMVINATT_KQTH, 0) + nvl(NHOMCNTT_KQTH, 0) + nvl(NHOMCONLAI_KQTH, 0) 
+														else null end
+--		select KQTH from ttkd_bsc.dinhmuc_giao_dthu_ptm --14069433219.713 --14908415173.74
 				where thang = 202412 
 				;
 		update ttkd_bsc.bangluong_kpi a 
 					set THUCHIEN = (select round(nvl(KQTH, 0)/1000000, 3) from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = a.thang and ma_nv = a.ma_nv)
 --				select * from  ttkd_bsc.bangluong_kpi a
 				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202412
+							and ma_nv not in ('VNP017072')	---loại chi Duyen PGD BHOL
 				;
 		----update DTHU thau 2 NV Phong GP, hang thang lien he Phuoc gui
 		update ttkd_bsc.bangluong_kpi
-			set THUCHIEN = case when ma_nv = 'VNP027259' then THUCHIEN + 31920000/1000000
-												when ma_nv = 'VNP017190' then THUCHIEN + 31920000/1000000
+			set THUCHIEN = case when ma_nv = 'VNP027259' then THUCHIEN + 33560000/1000000
+												when ma_nv = 'VNP017190' then THUCHIEN + 33560000/1000000
 												end
 --		select * from  ttkd_bsc.bangluong_kpi
 		where thang = 202412 and ma_kpi = 'HCM_DT_PTMOI_021' and ma_nv in ('VNP027259', 'VNP017190')
@@ -411,14 +397,8 @@ select distinct a.*, b.*, c.ten_vtcv
 		update ttkd_bsc.bangluong_kpi a set NGAYCONG = 22
 				where a.thang = 202412
 		;
-		---Khong GIAO Hong Duyen - BHOL
-		delete from ttkd_bsc.bangluong_kpi a where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202412
-							and ma_nv  in ('VNP017072')
-		;
-		---
 		update ttkd_bsc.bangluong_kpi a set CHITIEU_GIAO = 100
---			select * from ttkd_bsc.bangluong_kpi a 
-				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202412 
+				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202412
 		;
 		update ttkd_bsc.bangluong_kpi a set GIAO = 
 																					case 
@@ -444,14 +424,14 @@ select distinct a.*, b.*, c.ten_vtcv
 																										)
 																					end
 --				select * from ttkd_bsc.bangluong_kpi a
-				where a.ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202412 and ma_pb != 'VNP0703000'
+				where a.ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202412
 			;
 		update ttkd_bsc.bangluong_kpi a set tytrong = case when ma_vtcv in ('VNP-HNHCM_GP_3') then 40	---fix so theo vb ap dung T8 NV PS PGP
 																								when ma_vtcv in ('VNP-HNHCM_GP_3.4') and ma_to in ('VNP0702605') then 80		---fix so theo vb ap dung T11
-																								when ma_vtcv in ('VNP-HNHCM_KHDN_18') then 90	---fix so theo vb ap dung T1 NV AM chuyen ban BHDN
-																								
-																								when ma_vtcv in ('VNP-HNHCM_KDOL_4', 'VNP-HNHCM_KDOL_5') then 85		---fix so theo vb ap dung T8 NV KDOL, TT KDOL
-																								when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 50		---fix so theo vb ap dung T8	NV OB BH
+																								when ma_vtcv in ('VNP-HNHCM_KHDN_18') then 90	---fix so theo vb ap dung T12 NV AM chuyen ban BHDN
+																								when ma_nv in ('VNP017740') and ma_vtcv in ('VNP-HNHCM_KDOL_2') then 30	--PGD OL Tuyet
+																								when ma_vtcv in ('VNP-HNHCM_KDOL_4', 'VNP-HNHCM_KDOL_5') then 70		---fix so theo vb ap dung T12 NV KDOL, TT KDOL
+																								when ma_vtcv in ('VNP-HNHCM_KDOL_17') then 50		---fix so theo vb ap dung T12	NV OB BH
 																								when ma_vtcv in ('VNP-HNHCM_KDOL_3.1', 'VNP-HNHCM_KDOL_17.1') then 25		---fix so theo vb ap dung T11	Truong ca OB BH
 																								when ma_vtcv in ('VNP-HNHCM_BHKV_6', 'VNP-HNHCM_BHKV_42') then 80	---fix so theo vb ap dung T11 KDDB, TT KDDB
 --																								when ma_vtcv in ('VNP-HNHCM_BHKV_2') then 60	---fix so theo vb ap dung T11 PGD KV CSKH - CH
@@ -462,17 +442,9 @@ select distinct a.*, b.*, c.ten_vtcv
 																								when ma_vtcv in ('VNP-HNHCM_BHKV_52') then 100	--thay doi theo thang TT OBBH - BHKV
 																								when ma_vtcv in ('VNP-HNHCM_BHKV_22') then 50	--thay doi theo thang GDV
 																								when ma_vtcv in ('VNP-HNHCM_BHKV_28', 'VNP-HNHCM_BHKV_27') then 60	--thay doi theo thang CHT, CHT kGDV
-																								----vi tri PGD theo vb va theo bang phan cong KPI nao, sheet nao trong vb
-																								when ma_nv in ('VNP017740') and ma_vtcv in ('VNP-HNHCM_KDOL_2') then 30	--PGD OL Tuyet
-																								when ma_nv in ('VNP017721', 'VNP017813', 'VNP020231', 'VNP017528', 'VNP019931', 'VNP017853', 'VNP017601', 'VNP017604', 'VNP017305')
-																												then 80		---sheet PGD PT BH
-																								when ma_nv in ('VNP001757', 'VNP001724', 'VNP019529', 'VNP017948') then 100	---sheet PGD PT BH Ko PT BRCĐ
-																								when ma_nv in ('VNP016983') then 60 ---sheet PGD PT BH-CSKH-CH
-																								when ma_nv in ('VNP017496', 'VNP017585', 'VNP017947', 'VNP017729', 'VNP016659', 'VNP016898') then 70---sheet PGD PT BH-CSKH
-																								
 																						 end
 --				select * from ttkd_bsc.bangluong_kpi a
-				where a.ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202412 and ma_pb != 'VNP0703000'
+				where a.ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202412
 			;
 		update ttkd_bsc.bangluong_kpi a set TYLE_THUCHIEN = case when GIAO = 0 then null
 																												when ma_vtcv in ('VNP-HNHCM_BHKV_6', 'VNP-HNHCM_BHKV_41') ----KDDB, AM BHKV
@@ -525,12 +497,11 @@ select distinct a.*, b.*, c.ten_vtcv
 																												
 																												else ROUND(THUCHIEN/GIAO*100, 2) 
 																									end
---				select * from ttkd_bsc.bangluong_kpi a
 				where ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202412 
 			;
 		update ttkd_bsc.bangluong_kpi a set MUCDO_HOANTHANH = case 
 																														--- case: khong danh gia BSC
-																														when exists (select * from ttkd_bsc.nhanvien where thang = a.thang and ma_nv = a.ma_nv and tinh_bsc = 0)
+																														when exists (select 1 from ttkd_bsc.nhanvien where thang = a.thang and ma_nv = a.ma_nv and tinh_bsc = 0)
 																																	then 100
 																														----BHOL (NV OB_BH)
 																														when ma_vtcv in ('VNP-HNHCM_KDOL_17') and TYLE_THUCHIEN <= 70
@@ -545,24 +516,30 @@ select distinct a.*, b.*, c.ten_vtcv
 																																	then case when 100 + (1.2 * (TYLE_THUCHIEN - 100)) > 150 then 150
 																																						else round(100 + (1.2 * (TYLE_THUCHIEN - 100)), 2) end ---100% + 1.2 x (TLTH � 100%) -- max 150%
 																												end
---				select * from ttkd_bsc.bangluong_kpi a
+																													
 				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202412 -- and ma_vtcv in ('VNP-HNHCM_KDOL_17')
---							and ma_nv = 'VNP019532'
+				
 			;
 		---Update ket qua chi AUCO --> a Ba Vu (dac thu)
-		update ttkd_bsc.bangluong_kpi a 
-						set (giao, thuchien, tyle_thuchien, mucdo_hoanthanh) = (select giao, thuchien, tyle_thuchien, mucdo_hoanthanh 
-																														from ttkd_bsc.bangluong_kpi where ma_nv = 'VNP016730' and ma_kpi = a.ma_kpi and a.thang = thang)
-								, tytrong = 100
+		update ttkd_bsc.bangluong_kpi a set (giao, thuchien, tyle_thuchien, mucdo_hoanthanh) = (select giao, thuchien, tyle_thuchien, mucdo_hoanthanh from ttkd_bsc.bangluong_kpi where ma_nv = 'VNP016730' and ma_kpi = a.ma_kpi and a.thang = thang)
 		where ma_nv = 'VNP017014' and ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202412
 		;
 		select * from ttkd_bsc.bangluong_kpi where ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202412
-		and ma_nv in ('VNP017014', 'VNP016730')
+--		where ma_nv in ('VNP027259', 'VNP017190')
 --		where ma_nv = 'CTV028802'
 		;
 commit;
 rollback;
 		
+		create table ttkd_bsc.bangluong_kpi_202412_1021_2330 as select * from ttkd_bsc.bangluong_kpi where thang = 202412;
+		select * from  ttkd_bsc.bangluong_kpi where thang = 202412 and ma_kpi = 'HCM_DT_PTMOI_021' and ma_nv = 'CTV051559';
+	
+		select sum(HCM_DT_PTMOI_021) from  ttkd_bsc.bangluong_kpi_202412 where HCM_DT_PTMOI_021 is not null and ma_nv = 'CTV028802';
+		;
+		select a.ma_nv, a.ten_nv, a.ten_vtcv, a.ten_donvi, a.HCM_DT_PTMOI_021 HCM_DT_PTMOI_021_newa, b.HCM_DT_PTMOI_021 old
+		from ttkd_bsc.bangluong_kpi_202412 a
+				join ttkd_bsc.bangluong_kpi_202412_l3 b on a.ma_nv = b.ma_nv
+		where a.HCM_DT_PTMOI_021 != b.HCM_DT_PTMOI_021
 ;
 		----tinh heso doanhthu de tinh dongia
 		select * from ttkd_bsc.bldg_danhmuc_vtcv_p1 where thang = 202412;
@@ -575,12 +552,8 @@ rollback;
 		ON (a.thang = b.thang and a.ma_to = b.ma_to)
 		WHEN MATCHED THEN
 			UPDATE SET a.canhan_thuchien = a.kqth - b.kqth
---			select * from ttkd_bsc.dinhmuc_giao_dthu_ptm a
 		WHERE a.thang = 202412 and loai_kpi = 'KPI_CHT_GDV'
 		;
-		MERGE INTO ttkd_bsc.dinhmuc_giao_dthu_ptm a
-				USING ttkd_bsc.bldg_danhmuc_vtcv_p1 b
-				ON (a.thang = b.thang and a.ma_vtcv = b.ma_vtcv)
 		WHEN MATCHED THEN
 		update  
 							set HESO_QD_DT_PTM = case when KHDK < b.dinhmuc_3 and canhan_thuchien < b.dinhmuc_3 then 0.8 --12

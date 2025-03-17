@@ -1,0 +1,249 @@
+Diều kiện ngoài chuong trình:
+-- tính BSC: Hệ sinh thái giáo dục (Edu), CA, HDDT, thu 1 lần, các th khác thì không tính
+-- gia hạn Internet trực tiếp khong xét QLDA
+---Import fiel trong chuong trinh, ngoai chuong trinh                  
+
+             
+                     update ttkd_bsc.ct_ptm_ngoaictr_imp set so_hd = regexp_replace(so_hd, '') where REGEXP_INSTR(so_hd, '')>=1 and thang = 202407
+                     ;
+                     select so_hd, ASCIISTR( so_hd ), ASCII(''), regexp_replace(so_hd, '') from a_ptm_ngoaictr_imp where REGEXP_INSTR(so_hd, '')>=1;
+                     commit;
+
+----imp ds anh Nghia trong/ngoai ctr
+				commit;
+				rollback;
+				
+					update ttkd_bsc.ct_ptm_ngoaictr_imp set
+--										command = 'existed'
+--										command = 'thanhly' 
+--										command = 'insert_dot'
+										command = 'insert'
+--										command = 'update'
+--										command = 'update_flag'		--chi bât flag tinh luong
+--										command = 'khongtinh' 
+													,loaitb_id = 372, dichvuvt_id = 15
+--										, loaitb_id =180,
+--												, dthu_goi = 10800000
+												 ,ma_gd = 'HCM-LD/02045318'
+--												, ma_tb = 'hcm_ioff_00000713'
+--												, thuebao_id =12903316
+--											 doituong_kh = 'KHDN'
+--								HESO_HOSO = 0.8
+--								,  ghichu = ghichu || '; cGiao duyet'
+--								, DIEN_GIAI = DIEN_GIAI || '; ' ||GHICHU
+--									, ghichu = 'khong dung tgian quy dinh'
+--									, TENKIEU_LD = 'Mua them dich vu'
+--								mst = '0301239352'
+--, thang = 202408
+--				select * from ttkd_bsc.ct_ptm_ngoaictr_imp 
+				where thang = 202502 --and dichvuvt_id in (14, 15, 16)
+--							ma_tb = 'hcm_vbn_00001181'
+--							and DICHVU_VT = 'HMIS'
+--							and thuebao_id = 12574448 --chu upda, dang kiem tra vi sao tien hok c� trong ctr
+--							and thuebao_id in (12208645) 
+--							and ma_gd in ('HCM-TT/02965465')
+							and ma_tb = 'hcm_id_check_00001012'
+--							and rowid  in ( 'AAHL0jABeAAJsfxAAB')
+--'AAHL0jABkAAC7PDAAC')
+--							and ma_duan_banhang = '237001'
+--							and doituong_kh is null
+--							and manv_hotro = 'VNP017373; D?ch v? ch?a c� tr�n oneBSS'--is not null
+				;		
+
+				--ktra ma_gd da tinh tien
+				select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202407 and  ma_tb = 'smd_00008753';
+				select * from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202407 and  ma_duan_banhang = '373684';
+				
+				select dthu_goi, luong_dongia_nvptm, thang_tldg_dt, thang_tlkpi, thang_tlkpi_to, thang_tlkpi_phong, thang_tldg_dt_nvhotro, ma_tb, thuebao_id 
+				from ttkd_bsc.ct_bsc_ptm where thang_ptm >= 202407 and replace(ma_gd, ' ', '') = '00963996';'00928721'; 
+				
+				---ktra loaitb_id, dichvuvt_id
+				select a.ma_yeucau, a.id_ycdv, a.ma_dichvu, row_number() over(partition by a.MA_YEUCAU, a.MA_DICHVU order by a.NGAYCAPNHAT desc) rnk, b.*
+																	from ttkdhcm_ktnv.amas_yeucau_dichvu a
+																			join ttkdhcm_ktnv.amas_loaihinh_tb b on a.ma_dichvu = b.loaitb_id
+																	where a.MA_HIENTRANG <> 14 and a.MA_YEUCAU = 352970
+				;
+
+				select * from ttkd_bsc.ct_ptm_ngoaictr_imp 
+								where thang = 202502 and nvl(dichvuvt_id, 0)  in (7, 13, 14, 15, 16, 0) 
+												and command is   null ;and ghichu is not null;= 'update'; and ma_tb= 'hcm_vbn_00001065'
+												;
+												
+				select * from ttkd_bsc.dm_loaihinh_hsqd; where loaihinh_tb like '%ATP%'; 
+
+				select * from ttkd_bsc.ct_bsc_ptm where  thang_luong in ( 86, 87);
+				
+				desc ttkd_bsc.ct_bsc_ptm;
+				--- Internet Truc tiep & Smartcloud khong tinh dthu KPI
+				--- sau insert va update xong chay file 
+				insert into ttkd_bsc.ct_bsc_ptm (thang_luong, thang_ptm, ten_pb, ma_pb, ten_to, ma_to, manv_ptm, tennv_ptm, ma_vtcv, loai_ld, NHOM_TIEPTHI, TENKIEU_LD, ma_gd, ma_tb, ma_kh
+																		, SOHOPDONG, ten_tb, NGAY_BBBG, GOI_CUOC, DTHU_GOI, HESO_DICHVU, HESO_HOTRO_NVHOTRO, MANV_HOTRO, tyle_hotro, GHI_CHU
+																		, LOAITB_ID, DICHVUVT_ID, DOITUONG_KH, THUEBAO_ID, khachhang_id, thanhtoan_id, nguon, MST, MST_TT
+																		, DTHU_PS, trangthaitb_id, chuquan_id, dongia, dich_vu, nop_du, mien_hsgoc, trangthai_tt_id, hdkh_id, hdtb_id, loaihd_id, kieuld_id
+																		, ma_duan_banhang)
+							
+							select 86, a.THANG, b.ten_pb, b.ma_pb, b.ten_to, b.ma_to, a.MANV_PTM, a.TENNV_PTM, b.ma_vtcv, b.loai_ld, b.NHOMLD_ID NHOM_TIEPTHI
+											, nvl(kld.TEN_KIEULD, TENKIEU_LD) TEN_KIEULD , a.MA_GD, nvl(c.MA_TB, 'khongco'||rownum) ma_tb, nvl(kh.MA_KH, 'GTGT rieng') MA_KH, a.SO_HD
+											, nvl(kh.TEN_KH, a.ten_kh) ten_kh, a.NGAY_YC, a.GOI_CUOC_MOI, a.DTHU_GOI, a.HESO_DICHVU
+											, HESO_HOTRO_NVHOTRO, MANV_HOTRO, HESO_HOTRO_NVHOTRO tyle_hotro, DIEN_GIAI ||'; ' ||a.GHICHU GHI_CHU, a.LOAITB_ID, a.DICHVUVT_ID, a.DOITUONG_KH, a.THUEBAO_ID, c.khachhang_id, tt.thanhtoan_id
+											, 'ct_ptm_ngoaictr_imp_'||command as nguon, nvl(a.mst, kh.mst) mst, tt.mst mst_tt, nvl(db.dthu_ps, a.DTHU_GOI) dthu_ps, nvl(c.trangthaitb_id, 1) trangthaitb_id, 145 chuquan_id, null dongia, nvl(lh.loaihinh_tb, dichvu_vt) dich_vu
+--											, 1 nop_du, 1 mien_hsgoc			---khong co ma_gd
+											, null nop_du, null mien_hsgoc		--co ma_gd
+											, 1 trangthai_tt_id
+											, hdkh.hdkh_id, hdtb.hdtb_id, nvl(hdkh.loaihd_id, 1) loaihd_id, nvl(hdtb.kieuld_id, 13266) kieuld_id, a.ma_duan_banhang
+								from ttkd_bsc.ct_ptm_ngoaictr_imp a
+											left join ttkd_bsc.nhanvien b on b.thang = a.thang and a.MANV_PTM = b.ma_nv
+											left join css_hcm.db_thuebao c on a.thuebao_id = c.thuebao_id
+											left join css_hcm.db_khachhang kh on c.khachhang_id = kh.khachhang_id
+											left join css_hcm.db_thanhtoan tt on tt.thanhtoan_id = c.thanhtoan_id
+											left join (select x.thuebao_id, plkh_id, sum(dthu) dthu_ps
+																	from ttkd_bct.db_thuebao_ttkd x 
+																		join ttkd_bct.cuoc_thuebao_ttkd y on x.tb_id = y.tb_id 
+																group by x.thuebao_id, plkh_id) db on a.thuebao_id = db.thuebao_id
+--											left join css_hcm.phanloai_kh plk on db.plkh_id = plk.PHANLOAIKH_ID
+											left join css_hcm.loaihinh_tb lh on a.LOAITB_ID = lh.LOAITB_ID
+											left join css_hcm.hd_khachhang hdkh on a.ma_gd = hdkh.ma_gd
+											left join css_hcm.hd_thuebao hdtb on hdkh.hdkh_id = hdtb.hdkh_id and a.thuebao_id = hdtb.thuebao_id
+											left join css_hcm.kieu_ld kld on kld.kieuld_id = hdtb.kieuld_id
+								where a.thang = 202502 and a.dichvuvt_id in (14, 15, 16)-- not in ('VNP tra sau', 'Internet truc tiep')
+												and command = 'insert' 
+												and not exists (select 1 from ttkd_bsc.ct_bsc_ptm where thang_ptm = a.thang and nguon like 'ct_ptm_ngoaictr_imp%' and ma_gd = a.ma_gd and ma_tb = nvl(c.MA_TB, 'khongco'||rownum))
+--												and a.ma_gd  in ('HCM-LD/02045318')
+												--and a.thuebao_id in (8328877, 8592878)
+--												and a.ma_gd is not null
+												and hdkh.hdkh_id is not null
+--												and a.rowid in ( 'AAHL0jABmAAAaElAAA')
+					;
+					
+					commit;
+					rollback;
+					;					
+					---Update cac bảng ghi chưa tính
+					MERGE INTO ttkd_bsc.ct_bsc_ptm a
+					USING (
+							select 
+										a.THANG, a.MA_GD, a.SO_HD
+											, GOI_CUOC_MOI, DTHU_GOI, HESO_DICHVU, HESO_TRATRUOC, HESO_KHACHHANG, HESO_HOSO
+											, HESO_HOTRO_NVHOTRO, MANV_HOTRO, DIEN_GIAI, a.THUEBAO_ID
+											, 'ct_ptm_ngoaictr_imp_'||command as nguon, dthu_ps, c.trangthaitb_id, command, a.ghichu, a.ma_duan_banhang
+											, 1 nop_du, 1 mien_hsgoc, 1 trangthai_tt_id
+								from ttkd_bsc.ct_ptm_ngoaictr_imp a
+											left join ttkd_bsc.nhanvien b on a.thang = b.thang and a.MANV_PTM = b.ma_nv
+											left join css_hcm.db_thuebao c on a.thuebao_id = c.thuebao_id
+											left join css_hcm.db_khachhang kh on c.khachhang_id = kh.khachhang_id
+											left join (select x.thuebao_id, plkh_id, sum(dthu) dthu_ps
+																	from ttkd_bct.db_thuebao_ttkd x 
+																		join ttkd_bct.cuoc_thuebao_ttkd y on x.tb_id = y.tb_id 
+																group by x.thuebao_id, plkh_id) db on a.thuebao_id = db.thuebao_id
+											left join css_hcm.phanloai_kh plk on db.plkh_id = plk.PHANLOAIKH_ID
+								where a.thang = 202502 and a.dichvuvt_id in (13, 14, 15, 16, 7)
+												and command = 'update'
+								) t
+					ON (t.thuebao_id = a.thuebao_id and t.ma_gd = a.ma_gd)
+					WHEN MATCHED THEN
+						UPDATE SET a.sohopdong = t.so_hd, a.goi_cuoc = t.goi_cuoc_moi, a.dthu_goi = t.dthu_goi
+--												, a.heso_dichvu = nvl(t.heso_dichvu, a.heso_dichvu)
+--												, a.heso_tratruoc = nvl(t.heso_tratruoc, a.heso_tratruoc)
+--												, a.heso_khachhang = nvl(t.heso_khachhang, a.heso_khachhang)
+--												, a.heso_hoso = nvl(t.heso_hoso, a.heso_hoso)
+--												, a.heso_hotro_nvhotro = nvl(t.heso_hotro_nvhotro, a.heso_hotro_nvhotro)
+--												, a.tyle_hotro = nvl(t.heso_hotro_nvhotro, a.heso_hotro_nvhotro)
+												, a.ghi_chu = a.ghi_chu || '; ' || t.dien_giai || '; ' || t.ghichu
+												, a.nguon = a.nguon || '; ' || t.nguon
+												, a.dthu_ps = nvl(t.dthu_ps, a.dthu_ps)
+												, a.trangthaitb_id = nvl(t.trangthaitb_id, a.trangthaitb_id)
+												, a.trangthai_tt_id = t.trangthai_tt_id
+												, a.ma_duan_banhang = t.ma_duan_banhang
+												, a.chuquan_id = 145
+												, a.lydo_khongtinh_luong = null
+												, a.lydo_khongtinh_dongia = null
+												, a.thang_luong = 87
+--												, THANG_TLDG_DT = null, THANG_TLKPI = null
+--												, THANG_TLKPI_TO = null, THANG_TLKPI_PHONG = null
+--												, THANG_TLDG_DT_NVHOTRO = null, THANG_TLKPI_HOTRO = null, THANG_TLDG_DT_DAI = null
+						WHERE a.thuebao_id in (select thuebao_id from ttkd_bsc.ct_ptm_ngoaictr_imp where thang = 202502 and command = 'update')
+						
+					;
+					commit;
+					rollback;
+					
+					---Update cac bảng ghi chưa bat cờ
+					MERGE INTO ttkd_bsc.ct_bsc_ptm a
+					USING (
+							select 
+										a.THANG, a.MA_GD, a.SO_HD
+											, GOI_CUOC_MOI, DTHU_GOI, HESO_DICHVU, HESO_TRATRUOC, HESO_KHACHHANG, HESO_HOSO
+											, HESO_HOTRO_NVHOTRO, MANV_HOTRO, DIEN_GIAI, a.THUEBAO_ID
+											, 'ct_ptm_ngoaictr_imp_'||command as nguon, dthu_ps, c.trangthaitb_id, command, a.ghichu, a.ma_duan_banhang
+											, 1 nop_du, 1 mien_hsgoc, 1 trangthai_tt_id
+								from ttkd_bsc.ct_ptm_ngoaictr_imp a
+											left join ttkd_bsc.nhanvien b on a.thang = b.thang and a.MANV_PTM = b.ma_nv
+											left join css_hcm.db_thuebao c on a.thuebao_id = c.thuebao_id
+											left join css_hcm.db_khachhang kh on c.khachhang_id = kh.khachhang_id
+											left join (select x.thuebao_id, plkh_id, sum(dthu) dthu_ps
+																	from ttkd_bct.db_thuebao_ttkd x 
+																		join ttkd_bct.cuoc_thuebao_ttkd y on x.tb_id = y.tb_id 
+																group by x.thuebao_id, plkh_id) db on a.thuebao_id = db.thuebao_id
+											left join css_hcm.phanloai_kh plk on db.plkh_id = plk.PHANLOAIKH_ID
+								where a.thang = 202502 and a.dichvuvt_id in (13, 14, 15, 16, 7)
+												and command = 'update_flag'
+								) t
+					ON (t.thuebao_id = a.thuebao_id and t.ma_gd = a.ma_gd)
+					WHEN MATCHED THEN
+						UPDATE SET a.lydo_khongtinh_luong = null
+												, a.lydo_khongtinh_dongia = null
+												, a.thang_luong = 88
+												, THANG_TLDG_DT = 202502, THANG_TLKPI = 202502
+												, THANG_TLKPI_TO = 202502, THANG_TLKPI_PHONG = 202502
+												, THANG_TLDG_DT_NVHOTRO = 202502, THANG_TLKPI_HOTRO = 202502, THANG_TLDG_DT_DAI = 202502
+						WHERE a.thuebao_id in (select thuebao_id from ttkd_bsc.ct_ptm_ngoaictr_imp where thang = 202502 and command = 'update_flag')
+						
+					;
+					
+					----tinh nhieu Dot
+					INSERT INTO ttkd_bsc.ct_bsc_ptm 
+											(THANG_LUONG, THANG_PTM, MA_GD, MA_KH, MA_TB, SOHOPDONG, DICH_VU, TENKIEU_LD, TEN_TB, DIACHI_LD, SO_NHA, SO_GT, MST, MST_TT, SDT_LH, EMAIL_LH, CHUQUAN_ID, ID_447
+											, NGAY_BBBG, NGAY_CAT, NGAY_LUUHS_TTKD, NGAY_LUUHS_TTVT, NGAY_SCAN, SCANBOOK_DU, NOP_DU, MIEN_HSGOC, BS_LUUKHO
+											, GOI_CUOC, NHANVIEN_NHAN_ID, PBH_NHAN_ID, PBH_NHAN_GOC_ID, DICHVUVT_ID, LOAITB_ID, HDKH_ID, HDTB_ID, KIEUHD_ID, KIEULD_ID, LOAIHD_ID, KIEUTN_ID, KHACHHANG_ID
+											, THANHTOAN_ID, THUEBAO_ID, THUEBAO_CHA_ID, DOITUONG_ID, DOITUONG_CT_ID, TOCDO_ID, MUCUOCTB_ID, GOI_ID, PHANLOAI_ID, SL_MAILING, DOIVT_ID, TTVT_ID
+											, MA_TIEPTHI, MA_TIEPTHI_NEW, TO_TT_ID, DONVI_TT_ID, DONVI_TT, NHANVIENGT_ID, MA_NGUOIGT, NGUOI_GT, NHOM_GT, MANV_TT_DAI, MA_TO_DAI, MA_VTCV_DAI
+											, MANV_HOTRO, TYLE_HOTRO, TYLE_AM, GHI_CHU, LYDO_KHONGTINH_LUONG, KH_ID, MA_DT_KH, PBH_PTM_ID, MA_PB, TEN_PB, MA_TO, TEN_TO, MANV_PTM, TENNV_PTM, MA_VTCV
+											, LOAINV_ID, TEN_VTCV, LOAI_LD, NHOM_TIEPTHI, DATCOC_CSD, THANG_BDDC, THANG_KTDC, SOTHANG_DC, CHIPHI_TTKD, THANG_XN_CHIPHI_TTKD, TYLE_HUONGDT
+											, NGAY_TT, SOSERI, TIEN_TT, HT_TRA_ID, DTHU_PS_TRUOC, DTHU_PS, DTHU_PS_N1, DTHU_PS_N2, DTHU_PS_N3, TRANGTHAITB_ID, TRANGTHAITB_ID_N1
+											, TRANGTHAITB_ID_N2, TRANGTHAITB_ID_N3, TRANGTHAITB_ID_N5, NOCUOC_PTM, NOCUOC_N1, NOCUOC_N2, NOCUOC_N3, NOCUOC_T1, NOCUOC_T2, XACNHAN_KHKT, THANG_XACNHAN_KHKT
+											, DOITUONG_KH, KHHH_KHM, DIABAN, DTHU_GOI_GOC, DTHU_GOI, DTHU_GOI_NGOAIMANG, HESO_DICHVU, HESO_DICHVU_1, PHANLOAI_KH, HESO_KHACHHANG, HESO_TBNGANHAN
+											, HESO_TRATRUOC, HESO_KHUYENKHICH, HESO_KVDACTHU, HESO_VTCV_NVPTM, HESO_VTCV_DAI, HESO_VTCV_NVHOTRO, HESO_HOTRO_NVPTM, HESO_HOTRO_DAI, HESO_HOTRO_NVHOTRO
+											, HESO_QUYDINH_NVPTM, HESO_QUYDINH_DAI, HESO_QUYDINH_NVHOTRO, HESO_DIABAN_TINHKHAC, HESO_HOSO, DONGIA
+											, MA_DUAN_BANHANG, KIEMTRA_DUAN, NGUON, TRANGTHAI_TT_ID)
+							select 87 THANG_LUONG, THANG_PTM, a.MA_GD, MA_KH, a.MA_TB, SOHOPDONG, DICH_VU, TENKIEU_LD, TEN_TB, DIACHI_LD, SO_NHA, SO_GT, MST, MST_TT, SDT_LH, EMAIL_LH, CHUQUAN_ID, ID_447
+											, NGAY_BBBG, NGAY_CAT, NGAY_LUUHS_TTKD, NGAY_LUUHS_TTVT, NGAY_SCAN, SCANBOOK_DU, NOP_DU, MIEN_HSGOC, BS_LUUKHO
+											, GOI_CUOC, NHANVIEN_NHAN_ID, PBH_NHAN_ID, PBH_NHAN_GOC_ID, DICHVUVT_ID, a.LOAITB_ID, HDKH_ID, HDTB_ID, KIEUHD_ID, KIEULD_ID, LOAIHD_ID, KIEUTN_ID, KHACHHANG_ID
+											, THANHTOAN_ID, a.THUEBAO_ID, THUEBAO_CHA_ID, DOITUONG_ID, DOITUONG_CT_ID, TOCDO_ID, MUCUOCTB_ID, GOI_ID, PHANLOAI_ID, SL_MAILING, DOIVT_ID, TTVT_ID
+											, MA_TIEPTHI, MA_TIEPTHI_NEW, TO_TT_ID, DONVI_TT_ID, DONVI_TT, NHANVIENGT_ID, MA_NGUOIGT, NGUOI_GT, NHOM_GT, MANV_TT_DAI, MA_TO_DAI, MA_VTCV_DAI
+											, MANV_HOTRO, TYLE_HOTRO, TYLE_AM, GHI_CHU, LYDO_KHONGTINH_LUONG, KH_ID, MA_DT_KH, PBH_PTM_ID, MA_PB, TEN_PB, MA_TO, TEN_TO, MANV_PTM, TENNV_PTM, MA_VTCV
+											, LOAINV_ID, TEN_VTCV, LOAI_LD, NHOM_TIEPTHI, DATCOC_CSD, THANG_BDDC, THANG_KTDC, SOTHANG_DC, CHIPHI_TTKD, THANG_XN_CHIPHI_TTKD, TYLE_HUONGDT
+											, NGAY_TT, SOSERI, TIEN_TT, HT_TRA_ID, DTHU_PS_TRUOC, DTHU_PS, DTHU_PS_N1, DTHU_PS_N2, DTHU_PS_N3, TRANGTHAITB_ID, TRANGTHAITB_ID_N1
+											, TRANGTHAITB_ID_N2, TRANGTHAITB_ID_N3, TRANGTHAITB_ID_N5, NOCUOC_PTM, NOCUOC_N1, NOCUOC_N2, NOCUOC_N3, NOCUOC_T1, NOCUOC_T2, XACNHAN_KHKT, THANG_XACNHAN_KHKT
+											, DOITUONG_KH, KHHH_KHM, DIABAN, DTHU_GOI_GOC, b.DTHU_GOI, DTHU_GOI_NGOAIMANG, HESO_DICHVU, HESO_DICHVU_1, PHANLOAI_KH, HESO_KHACHHANG, HESO_TBNGANHAN
+											, HESO_TRATRUOC, HESO_KHUYENKHICH, HESO_KVDACTHU, HESO_VTCV_NVPTM, HESO_VTCV_DAI, HESO_VTCV_NVHOTRO, HESO_HOTRO_NVPTM, HESO_HOTRO_DAI, HESO_HOTRO_NVHOTRO
+											, HESO_QUYDINH_NVPTM, HESO_QUYDINH_DAI, HESO_QUYDINH_NVHOTRO, HESO_DIABAN_TINHKHAC, HESO_HOSO, DONGIA
+											, MA_DUAN_BANHANG, KIEMTRA_DUAN
+											, 'ct_ptm_ngoaictr_imp_'||b.command as nguon--, GHICHU
+											, 1 trangthai_tt_id
+								from ttkd_bsc.ct_bsc_ptm a
+											join (select ma_gd, ma_tb, thuebao_id, loaitb_id, DTHU_GOI, command from ttkd_bsc.ct_ptm_ngoaictr_imp
+																	where thang = 202502 and command = 'insert_dot') b on a.ma_gd = b.ma_gd and a.ma_tb = b.ma_tb and a.loaitb_id = b.loaitb_id--a.thuebao_id = b.thuebao_id 
+								
+								;				
+				
+						update ttkd_bsc.ct_bsc_ptm a
+										set THANG_TLKPI_DNHM = 0, THANG_TLKPI_DNHM_TO = 0, THANG_TLKPI_DNHM_PHONG = 0
+												, THANG_TLKPI = 0, THANG_TLKPI_HOTRO = 0, THANG_TLKPI_TO = 0, THANG_TLKPI_PHONG = 0
+												--	dich_vu = (select loaihinh_tb from css_hcm.loaihinh_tb where loaitb_id = a.loaitb_id)
+--						select * from ttkd_bsc.ct_bsc_ptm a
+						where nguon like 'ct_ptm_ngoaictr_imp%' and thang_luong in (88, 86,87, 70)
+									and exists (select * from ttkd_bsc.ct_ptm_ngoaictr_imp where thang = 202502 and nvl(GHINHAN_BSC, 0) = 0 and ma_gd = a.ma_gd)
+						;
+						commit;
+						rollback;
+						select* from css_hcm.chuquan
