@@ -401,13 +401,15 @@ select distinct a.*, b.*, c.ten_vtcv
 		select * from ttkd_bsc.bangluong_kpi a where ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202501;
 		select * from ttkdhcm_ktnv.ID430_TTDANGKY_CHOTTHANG where thang = 202501 and manv_hrm = 'VNP016902';
 ---*********--Tinh Tong dthu PTM (ngoai tru VNPtt)
-		update ttkd_bsc.dinhmuc_giao_dthu_ptm 
+		update ttkd_bsc.dinhmuc_giao_dthu_ptm a
 					set KQTH = nvl(NHOMBRCD_KQTH, 0) + nvl(NHOMVINATS_KQTH, 0) + nvl(NHOMVINATT_KQTH, 0) + nvl(NHOMCNTT_KQTH, 0) + nvl(NHOMCONLAI_KQTH, 0) + nvl(NHOMVNPQD_KQTH, 0)
 --						, canhan_thuchien = case when ma_vtcv in ('VNP-HNHCM_BHKV_27')
 --																then nvl(NHOMBRCD_KQTH, 0) + nvl(NHOMVINATS_KQTH, 0) + nvl(NHOMVINATT_KQTH, 0) + nvl(NHOMCNTT_KQTH, 0) + nvl(NHOMCONLAI_KQTH, 0) 
 --														else null end
---		select KQTH, canhan_thuchien from ttkd_bsc.dinhmuc_giao_dthu_ptm --14069433219.713 --14908415173.74
-				where thang = 202501 
+--		select ten_nv, KQTH, canhan_thuchien from ttkd_bsc.dinhmuc_giao_dthu_ptm a--14069433219.713 --14908415173.74
+				where thang = 202501  and exists (select * from ttkd_bsc.blkpi_danhmuc_kpi_vtcv
+									where ma_kpi in ('HCM_DT_PTMOI_021', 'HCM_DT_PTMOI_062') and thang = a.thang and giamdoc_phogiamdoc = 1 and ma_vtcv=a.ma_vtcv)
+					and ma_pb in ('VNP0701800', 'VNP0701200')
 				;
 		update ttkd_bsc.bangluong_kpi a 
 					set THUCHIEN = (select round(nvl(KQTH, 0)/1000000, 3) from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = a.thang and ma_nv = a.ma_nv)
@@ -543,7 +545,7 @@ select distinct a.*, b.*, c.ten_vtcv
 																												else ROUND(THUCHIEN/GIAO*100, 2) 
 																									end
 --				select * from ttkd_bsc.bangluong_kpi a
-				where ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202501  and ma_vtcv in ('VNP-HNHCM_BHKV_1', 'VNP-HNHCM_BHKV_2', 'VNP-HNHCM_BHKV_2.1') 
+				where ma_kpi in ('HCM_DT_PTMOI_021') and thang = 202501  and ma_vtcv in ('VNP-HNHCM_BHKV_1', 'VNP-HNHCM_BHKV_2', 'VNP-HNHCM_BHKV_2.1') and ma_nv in ('VNP017813', 'VNP016950');
 			;
 		update ttkd_bsc.bangluong_kpi a set MUCDO_HOANTHANH = case 
 																														--- case: khong danh gia BSC
@@ -567,7 +569,7 @@ select distinct a.*, b.*, c.ten_vtcv
 																																						else round(100 + (1.2 * (TYLE_THUCHIEN - 100)), 2) end ---100% + 1.2 x (TLTH � 100%) -- max 150%
 																												end
 --				select * from ttkd_bsc.bangluong_kpi a
-				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202501 and ma_vtcv in ('VNP-HNHCM_BHKV_1', 'VNP-HNHCM_BHKV_2', 'VNP-HNHCM_BHKV_2.1') 
+				where ma_kpi in ('HCM_DT_PTMOI_021') and a.thang = 202501 and ma_vtcv in ('VNP-HNHCM_BHKV_1', 'VNP-HNHCM_BHKV_2', 'VNP-HNHCM_BHKV_2.1') and ma_nv in ('VNP017813', 'VNP016950')
 --							and ma_nv = 'VNP019532'
 --and ma_nv in ('VNP016950', 'VNP001757', 'VNP017203', 'VNP016659', 'HCM004899', 'VNP019529')
 			;

@@ -18,7 +18,7 @@ create OR REPLACE VIEW ttkd_bsc.v_ct_bsc_ptm_202501 as
 				   heso_quydinh_nvptm,heso_quydinh_dai,heso_quydinh_nvhotro,heso_diaban_tinhkhac,tyle_huongdt, heso_hoso,
 				   doanhthu_dongia_nvptm,doanhthu_dongia_dai,doanhthu_dongia_nvhotro,
 				   heso_dichvu_dnhm,doanhthu_dongia_dnhm,doanhthu_kpi_nvptm, DOANHTHU_KPI_NVHOTRO, DOANHTHU_KPI_NVDAI
-				   thang_tldg_dnhm,thang_tldg_dt,thang_tlkpi,thang_tlkpi_to,lydo_khongtinh_dongia, dongia,
+				   , lydo_khongtinh_luong lydo_khongtinh_DTHUKPI, thang_tldg_dnhm,thang_tldg_dt,thang_tlkpi,thang_tlkpi_to,lydo_khongtinh_dongia, dongia,
 				   luong_dongia_dnhm_nvptm,luong_dongia_nvptm,luong_dongia_dai,luong_dongia_nvhotro, thang_tldg_dt_nvhotro,
 				   doanhthu_kpi_dnhm, thang_tlkpi_dnhm
 from ttkd_bsc.ct_bsc_ptm a

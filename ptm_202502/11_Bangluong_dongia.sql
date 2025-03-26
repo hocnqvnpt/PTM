@@ -166,7 +166,7 @@ drop table ttkd_bsc.bangluong_dongia_202502;
 --			select ma_nv, ten_nv, ten_vtcv, heso_dthu from ttkd_bsc.bang_heso_dthu a 
 			where  a.ma_vtcv in (select ma_vtcv
 													from ttkd_bsc.bldg_danhmuc_vtcv_p1 where thang = a.thang)
-					and a.thang = 202502 
+					and a.thang = 202502 --and ma_nv = 'CTV086828'
 					;		
 			
 			---Tat cả vị trí cấp tổ trương, LDP, gian tiêp, chức năng, không thuộc các vị trí xet thì hẹ số = 0.8, PS P.GP = 1
@@ -181,11 +181,11 @@ drop table ttkd_bsc.bangluong_dongia_202502;
 			select * from ttkd_bsc.bang_heso_dthu where thang = 202502;
 			commit;
 		
-			---Nhân viên trong tổ không giao BSC là các trường hợp: CTV mới chưa vào BSC, biệt phái, nghỉ chế độ không hưởng lương, Thai sản, nghỉ Ốm. --> assign = 1, nguoc lai giu nguyen 
+			---Nhân viên trong tổ không giao BSC là các trường hợp: CTV mới chưa vào BSC, biệt phái, nghỉ chế độ không hưởng lương, Thai sản, nghỉ Ốm. --> assign = 0.8, nguoc lai giu nguyen 
 			update ttkd_bsc.bang_heso_dthu a set heso_dthu = 0.8
 --			select * from ttkd_bsc.bang_heso_dthu a
-			where exists (select * from ttkd_bsc.nhanvien where thang = a.thang and tinh_bsc = 1 and ma_nv = a.ma_nv)
-						and heso_dthu is null
+			where exists (select * from ttkd_bsc.nhanvien where thang = a.thang and tinh_bsc = 0 and ma_nv = a.ma_nv)
+--						and heso_dthu is null
 						and thang = 202502 and donvi = 'TTKD'
 			;
 			commit;
@@ -233,7 +233,7 @@ drop table ttkd_bsc.bangluong_dongia_202502;
 		---Minh Viber nhom luong 14/08, heso vb 323 cua nv KDDTT chi ap dung tren dthu goi, khong ap dung dthu kich hoat, cac vi tri khac bthuong
 --		delete from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202502 ;
 
-select sum(TIEN_THULAO) from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202502; and donvi = 'VTTP'; and (thang_ptm <= 202411 or dichvuvt_id =4); and thang_ptm = 202502; ma_nv = 'VNP019958'; thang 01_ 825655391 --  -- 840598620- 6 149 210 184 -6 160 780 978 ---6 170 205 053
+select sum(TIEN_THULAO) from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202502; and donvi = 'VTTP'; and (thang_ptm <= 202411 or dichvuvt_id =4); and thang_ptm = 202502; ma_nv = 'VNP019958'; thang 01_ 825655391 --  -- 840598620- 6 149 210 184 -- 6 071 356 905 -- 6 071 488 821
 --create table ttkd_bsc.tonghop_ct_dongia_ptm as
 insert into ttkd_bsc.tonghop_ct_dongia_ptm
 			with nv as (select thang, donvi, ma_nv, ten_nv, ten_to, ten_pb, ma_to, ma_pb, ma_vtcv, nhomld_id
@@ -385,30 +385,25 @@ insert into ttkd_bsc.tonghop_ct_dongia_ptm
 			    
 			left join nv on nv.thang = a.thang_dongia and nv.ma_nv = a.manv_ptm
 			left join (select donvi, thang, ma_nv, ma_vtcv, ten_vtcv
+								, case when thang >= 202502 then heso_dthu
+									when ma_vtcv  in ('VNP-HNHCM_KHDN_23', 'VNP-HNHCM_KHDN_3.1', 'VNP-HNHCM_KHDN_18', 'VNP-HNHCM_KHDN_3') then heso_dthu		---all AM vb 292
+									when ma_vtcv  in ('VNP-HNHCM_BHKV_22', 'VNP-HNHCM_BHKV_41', 'VNP-HNHCM_BHKV_41.1', 'VNP-HNHCM_BHKV_53', 'VNP-HNHCM_BHKV_6', 'VNP-HNHCM_BHKV_27')	--all vb 323
+											then heso_dthu
+									when ma_vtcv  in ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_15.1')		--all KDDT vb 323
+												then heso_dthu
+											when donvi = 'VTTP' then heso_dthu		---VTTP vb 647
+							else 1 end heso_dthu from ttkd_bsc.bang_heso_dthu) hs on hs.thang = a.thang_ptm and a.manv_ptm = hs.ma_nv
+			where manv_ptm is not null --and nv.donvi = 'VTTP'
+			; 
+			
+select donvi, thang, ma_nv, ma_vtcv, ten_vtcv
 								, case when ma_vtcv  in ('VNP-HNHCM_KHDN_23', 'VNP-HNHCM_KHDN_3.1', 'VNP-HNHCM_KHDN_18', 'VNP-HNHCM_KHDN_3') then heso_dthu		---all AM vb 292
 											when ma_vtcv  in ('VNP-HNHCM_BHKV_22', 'VNP-HNHCM_BHKV_41', 'VNP-HNHCM_BHKV_41.1', 'VNP-HNHCM_BHKV_53', 'VNP-HNHCM_BHKV_6', 'VNP-HNHCM_BHKV_27')	--all vb 323
 									then heso_dthu
 											when ma_vtcv  in ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_15.1')		--all KDDT vb 323
 									then heso_dthu
 											when donvi = 'VTTP' then heso_dthu		---VTTP vb 647
-							else 1 end heso_dthu from ttkd_bsc.bang_heso_dthu) hs on hs.thang = a.thang_ptm and a.manv_ptm = hs.ma_nv
-			where manv_ptm is not null --and nv.donvi = 'VTTP'
-			; 
------Khong chay nua**AP dung chỉ T11**CAP NHAT tinh heso dongia = 1 doi voi nv CTV087512 chua vao BSC***----
---			insert into ttkd_bsc.tonghop_ct_dongia_ptm
---					select 202502 THANG, DONVI, MA_NV, TEN_NV, TEN_TO, TEN_PB, MA_TO, MA_PB, MA_VTCV, NHOMLD_ID
---								, PTM_ID, THANG_PTM, MA_GD, THUEBAO_ID, MA_TB, LOAITB_ID, DICHVUVT_ID, DOANHTHU_DONGIA
---								, DONGIA, LUONG_DONGIA_CDBR, LUONG_DONGIA_VNPTS, LUONG_DONGIA_KHAC, LUONG_DONGIA_DNHM_VNPTT
---								, LUONG_DONGIA_GOI_VNPTT, LUONG_DONGIA, 0.2 HESO_DTHU, round(LUONG_DONGIA * 0.2, 0) TIEN_THULAO, NGUON || 'bs20%obsc'
---					from ttkd_bsc.tonghop_ct_dongia_ptm where thang in (202409, 202410) and ma_nv = 'CTV087512'
---			;
-			
-select thang, ma_nv, ma_vtcv
-			, case when ma_vtcv  in ('VNP-HNHCM_KHDN_3.1', 'VNP-HNHCM_KHDN_18', 'VNP-HNHCM_KHDN_3') then heso_dthu
-			when ma_vtcv  in ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_22', 'VNP-HNHCM_BHKV_41', 'VNP-HNHCM_BHKV_53', 'VNP-HNHCM_BHKV_6', 'VNP-HNHCM_BHKV_27')
-				then heso_dthu
-						when ma_vtcv  in ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_15.1') then heso_dthu
-		else 1 end heso from ttkd_bsc.bang_heso_dthu;
+							else 1 end heso_dthu from ttkd_bsc.bang_heso_dthu;
 			
 	----all dvu ngoai tru VNPtt
 			select nguon, sum(LUONG_DONGIA) from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202502 and loaitb_id = 21 and donvi = 'TTKD' group by nguon;  
@@ -826,6 +821,24 @@ delete from ttkd_bsc.bangluong_dongia_202502  where ghichu = 'khongtontai';
 	   
 	   --	   7,498,923,396	 348,133,097	   7,150,790,299 11g30 ngay 17/3
 	   --	   7,510,765,899	 384,039,480	   7,126,726,419
+	   
+	   --   7,508,253,222	 348,133,097	   7,160,120,125	15g30 ngay 17/3
+	   --	   7,520,095,725	 384,039,480	   7,136,056,245
+	   
+	   --      7,508,278,629	 348,133,097	   7,160,145,532
+	   --	      7,520,121,132	 384,039,480	   7,136,081,652
+	   
+	   --		   7,508,438,629	 348,133,097	   7,160,305,532		14g30 ngay 18/03/2025
+	   --		   7,520,281,132	 384,039,480	   7,136,241,652
+	   
+	   --   7,418,591,863	 348,133,097	   7,070,458,766	10g ngay 19/03/2024
+	   -- 	   7,430,434,366	 384,039,480	   7,046,394,886 
+	   
+	   --	   7,400,075,248	 348,133,097	   7,051,942,151 1g ngay 23/03/25
+	   --	   7,411,917,751	 384,039,480	   7,027,878,271
+	   
+	   --	      7,400,207,164	 348,133,097	   7,052,074,067 12g22 ngay 24/03/25
+	   --	      7,412,049,667	 384,039,480	   7,028,010,187
 ----Backup bang---
 create table ttkd_bsc.bangluong_dongia_202502_dot5 as select * from ttkd_bsc.bangluong_dongia_202502; 
 select * from ttkd_bsc.bangluong_dongia_202502_dot2;

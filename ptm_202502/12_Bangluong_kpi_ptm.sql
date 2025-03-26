@@ -23,7 +23,7 @@ select distinct a.*, b.*, c.ten_vtcv
           select * from ttkd_bsc.temp_trasau_canhan;
 		drop table ttkd_bsc.temp_trasau_canhan purge;
 		desc ttkd_bsc.ghtt_vnpts;
-		;5541.9314985 -- 5522.3471035 -- 5522.4071035
+		;5541.9314985 -- 5522.3471035 -- 5522.4071035 -- 5522.4071035
 		select sum(dthu_kpi)/1000000
 		from ttkd_bsc.temp_trasau_canhan a
 							join ttkd_bsc.nhanvien nv on nv.thang = 202502 and a.ma_nv = nv.ma_nv
@@ -111,7 +111,7 @@ select distinct a.*, b.*, c.ten_vtcv
 		;
 	create index ttkd_bsc.temp_trasau_canhan_manv on ttkd_bsc.temp_trasau_canhan (ma_nv)
 	;
-	delete from ttkd_bsc.tonghop_dthu_ptm where thang = 202502;
+	select *  from ttkd_bsc.tonghop_dthu_ptm where thang = 202502;
 	insert into ttkd_bsc.tonghop_dthu_ptm
 		select cast(202502 as number) thang, DICH_VU, LOAITB_ID, DICHVUVT_ID, MA_NV, DTHU_KPI 
 		from ttkd_bsc.temp_trasau_canhan
@@ -380,7 +380,7 @@ select distinct a.*, b.*, c.ten_vtcv
 --						, canhan_thuchien = case when ma_vtcv in ('VNP-HNHCM_BHKV_27')
 --																then nvl(NHOMBRCD_KQTH, 0) + nvl(NHOMVINATS_KQTH, 0) + nvl(NHOMVINATT_KQTH, 0) + nvl(NHOMCNTT_KQTH, 0) + nvl(NHOMCONLAI_KQTH, 0) 
 --														else null end
---		select KQTH, canhan_thuchien from ttkd_bsc.dinhmuc_giao_dthu_ptm --14069433219.713 --14908415173.74
+--		select sum(KQTH) from ttkd_bsc.dinhmuc_giao_dthu_ptm --2 559 918 312 - 2 561 759 199
 				where thang = 202502 
 				;
 		update ttkd_bsc.bangluong_kpi a 
@@ -425,10 +425,11 @@ select distinct a.*, b.*, c.ten_vtcv
 																														--	and trunc(dateinput) = '28/07/2024'
 																										)
 																					end
---				select * from ttkd_bsc.bangluong_kpi a
+--				select ma_nv, ten_nv, giao, thuchien, tyle_thuchien, mucdo_hoanthanh from ttkd_bsc.bangluong_kpi a
 				where a.ma_kpi in ('HCM_DT_PTMOI_021', 'HCM_DT_PTMOI_065', 'HCM_DT_PTMOI_069') and a.thang = 202502-- and ma_pb != 'VNP0703000'
-			--	and ma_nv  in ('CTV072956', 'VNP017772')
---				and ma_to = 'VNP0701104'
+--				and ma_nv  in (select ma_nv from hocnq_ttkd.x_nv_tmp where XEPHANG_P1 is not null)
+--				and ma_nv = 'VNP017694'
+				
 			;
 		update ttkd_bsc.bangluong_kpi a set tytrong = case when ma_vtcv in ('VNP-HNHCM_GP_3') then 40	---fix so theo vb ap dung T8 NV PS PGP
 																								when ma_vtcv in ('VNP-HNHCM_GP_3.4') then 80		---fix so theo vb ap dung T11
@@ -467,7 +468,7 @@ select distinct a.*, b.*, c.ten_vtcv
 				where a.ma_kpi in ('HCM_DT_PTMOI_021', 'HCM_DT_PTMOI_065', 'HCM_DT_PTMOI_069') and a.thang = 202502-- and ma_pb != 'VNP0703000'
 			;
 		update ttkd_bsc.bangluong_kpi a set TYLE_THUCHIEN = case when GIAO = 0 then null
-																												when exists (select * from ttkd_bsc.bldg_danhmuc_vtcv_p1 where thang = a.thang and ma_vtcv = a.ma_vtcv)		---chi ap dung nhan vien
+																												when exists (select * from ttkd_bsc.bldg_danhmuc_vtcv_p1 where ma_vtcv not in ('VNP-HNHCM_BHKV_27') and thang = a.thang and ma_vtcv = a.ma_vtcv)		---chi ap dung nhan vien
 																															and exists (select * from ttkd_bsc.dinhmuc_giao_dthu_ptm where XEPHANG_P1 in (1, 2, 3) and thang = a.thang and ma_nv = a.ma_nv) ---chi nhan vien có XEPHANG mức tối thiểu
 																															and ROUND(THUCHIEN/GIAO*100, 2) >100		---tối đa 100%
 																														THEN	100
@@ -475,6 +476,7 @@ select distinct a.*, b.*, c.ten_vtcv
 																									end
 --				select * from ttkd_bsc.bangluong_kpi a
 				where ma_kpi in ('HCM_DT_PTMOI_021', 'HCM_DT_PTMOI_065', 'HCM_DT_PTMOI_069') and thang = 202502  
+				
 			;
 		update ttkd_bsc.bangluong_kpi a set MUCDO_HOANTHANH = case 
 																														--- case: khong danh gia BSC
@@ -522,7 +524,7 @@ select distinct a.*, b.*, c.ten_vtcv
 				where ma_kpi in ('HCM_DT_PTMOI_021', 'HCM_DT_PTMOI_065', 'HCM_DT_PTMOI_069') and a.thang = 202502 --and ma_vtcv in ('VNP-HNHCM_GP_3', 'VNP-HNHCM_GP_3.4') 
 --							and ma_nv = 'VNP019532'
 --and ma_nv in ('VNP016950', 'VNP001757', 'VNP017203', 'VNP016659', 'HCM004899', 'VNP019529')
-
+--and ma_nv in (select ma_nv from hocnq_ttkd.x_ds_lech_p1)
 			;
 		---Update ket qua chi AUCO --> a Ba Vu (dac thu)
 		update ttkd_bsc.bangluong_kpi a 
@@ -586,11 +588,12 @@ rollback;
 																				when XEPHANG_P1 = 1 and KQTH < dinhmuc_3 then 0.8 --20
 																				else null
 																		end
---					select * from ttkd_bsc.nhanvien a
+--					select * from ttkd_bsc.dinhmuc_giao_dthu_ptm a
 					where thang = 202502
 								and a.ma_vtcv in (select MA_VTCV
 													from ttkd_bsc.bldg_danhmuc_vtcv_p1 where thang = a.thang)
-								and a.ma_vtcv not in ('VNP-HNHCM_KHDN_3') 
+								and a.ma_vtcv not in ('VNP-HNHCM_KHDN_3') --and ma_nv  in (select ma_nv from hocnq_ttkd.x_nv_tmp where XEPHANG_P1 is not null)
+
 ;
 		---Ap dung vb 292 dv BHDN eO 552546 --> ap dung AM ban cham BHDN
 		update ttkd_bsc.dinhmuc_giao_dthu_ptm a 

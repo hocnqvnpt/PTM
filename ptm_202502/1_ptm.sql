@@ -1009,7 +1009,7 @@ create table ptm_codinh_202502_tsl as
 						when bc.loaitb_id=287 and phanloai_id=95 then nvl(muccuoc_tb,0)+nvl(tien_dvgt,0)+nvl(tien_tbi,0)     --  theo th�ng
 						when bc.loaitb_id=287 and phanloai_id=96 then nvl(datcoc_csd,0)+nvl(tien_dvgt,0)+nvl(tien_tbi,0)            --  Tron g�i
 				   
-				/*   bsug T3 quet PTM dvu loaitb_id = 372
+				/*   bsug T3 quet PTM dvu loaitb_id = 372, 261
 					    --Voice Brandname : Cuoc phat sinh binh quan trong thang n va thang n+1 (tinh doanh thu binh quan cua 2 thang n va n+1) (n la thang phat trien dich vu)     
 							 --when bc.loaitb_id=358   ==> pbh gui file ngoai CT cho anh Nghia vao thang n+1
 				

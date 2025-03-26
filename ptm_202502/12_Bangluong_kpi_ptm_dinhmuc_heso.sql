@@ -22,7 +22,10 @@
 																)
 				--, NHOMVNPQD_KQTH =  (select round(sum(dthu_kpi), 0) from ttkd_bsc.temp_trasau_canhan  where ma_nv = a.ma_nv and nguon =  'vnp_qd')
 --			select * from ttkd_bsc.dinhmuc_giao_dthu_ptm a
-			where thang = 202502
+			where thang = 202502 
+						and not exists (select * from ttkd_bsc.blkpi_danhmuc_kpi_vtcv
+															where ma_kpi in ('HCM_DT_PTMOI_021', 'HCM_DT_PTMOI_062', 'HCM_DT_PTMOI_065', 'HCM_DT_PTMOI_069') and giamdoc_phogiamdoc = 1 and ma_vtcv=a.ma_vtcv and thang = a.thang )
+											and exists(select * from ttkd_bsc.temp_021_ldp where ma_nv = a.ma_nv)
 	;
 	---To truong
 
@@ -76,14 +79,14 @@
 --					and exists(select * from ttkd_bsc.temp_021_ldp where ma_nv = a.ma_nv) 
 					and ma_nv in ('VNP017813', 'VNP016950')
 		;
-		--Phương Chi GD 80%
+		--Phương Chi GD 100% deal
 	update ttkd_bsc.dinhmuc_giao_dthu_ptm a
-		set NHOMVINATS_KQTH  =  301482581
+		set NHOMVINATS_KQTH  =  122551568
 		where ma_nv = 'VNP016950' and thang = 202502
 		;
-		---Trung PGD 20%
+		---Trung PGD 0% deal
 	update ttkd_bsc.dinhmuc_giao_dthu_ptm a
-			set NHOMVINATS_KQTH = round(NHOMVINATS_KQTH - (select NHOMVINATS_KQTH * 0.8 from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = 202502 and ma_nv in ('VNP016950')), 0)
+			set NHOMVINATS_KQTH = round(NHOMVINATS_KQTH - (select NHOMVINATS_KQTH from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = 202502 and ma_nv in ('VNP016950')), 0)
 	where a.thang = 202502 and ma_nv = 'VNP017813'
 	;
 	
@@ -102,7 +105,9 @@
 									and thang = 202501;
 	select * from
 	ttkd_bsc.dinhmuc_giao_dthu_ptm
-	where thang = 202502 and ma_vtcv  in ('VNP-HNHCM_KHDN_3.1', 'VNP-HNHCM_KHDN_18', 'VNP-HNHCM_KHDN_3') 
+	where thang = 202502
+	and ma_nv  in (select ma_nv from hocnq_ttkd.x_nv_tmp where XEPHANG_P1 is not null);
+	and ma_vtcv  in ('VNP-HNHCM_KHDN_3.1', 'VNP-HNHCM_KHDN_18', 'VNP-HNHCM_KHDN_3') 
 						and ma_pb in (
 											'VNP0702300',
 											'VNP0702400',

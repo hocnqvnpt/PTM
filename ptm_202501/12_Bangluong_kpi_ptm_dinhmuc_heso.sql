@@ -65,15 +65,17 @@
 					and exists (select * from ttkd_bsc.blkpi_danhmuc_kpi_vtcv
 									where ma_kpi in ('HCM_DT_PTMOI_021', 'HCM_DT_PTMOI_062') and thang = a.thang and giamdoc_phogiamdoc = 1 and ma_vtcv=a.ma_vtcv)
 					and exists(select * from ttkd_bsc.temp_021_ldp where ma_nv = a.ma_nv) --and ma_nv = 'VNP017813'
+					and ma_pb in ('VNP0701800', 'VNP0701200')
 					;
 	---Bỏ deal cho PGD- CLON (Trung) VNPts tu 4 To KDDB + CNTT qua GD_CL
 	update ttkd_bsc.dinhmuc_giao_dthu_ptm a
 		set NHOMVINATS_KQTH  =  400001678
-		where ma_nv = 'VNP016950' and thang = 202501
+		where and ma_nv = 'VNP016950' and thang = 202501
 		;
 
 	update ttkd_bsc.dinhmuc_giao_dthu_ptm a
-			set NHOMVINATS_KQTH = round(NHOMVINATS_KQTH - (select NHOMVINATS_KQTH * 0.73 from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = 202501 and ma_nv in ('VNP016950')), 0)
+			set NHOMVINATS_KQTH = round(694450647 - 400001678-- + (400001678 * 0.27)--(select NHOMVINATS_KQTH * 0.73 from ttkd_bsc.dinhmuc_giao_dthu_ptm where thang = 202501 and ma_nv in ('VNP016950'))
+														, 0)
 	where a.thang = 202501 and ma_nv = 'VNP017813'
 	;
 	
